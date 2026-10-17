@@ -43,3 +43,23 @@ Actual local semantic workbench: 480 fictional records, source uniqueness480/480
 The actual local unpaired audit imported `examples/semantic_benchmark/external_protected.csv`:480rows,6fields,0%sampleuniqueness,k20,verifiedlinkageNotApplicable,queryloss0.15(responseerror0; heightmeanerror1.2cm). Rows were explicitly independent; no correspondence or generating mechanism was inferred. Source CSV/JSON/XLSX acceptance files and measured report are committed with the fixture package.
 
 The previous three frontend approvals apply to c5404fd/revisiond only. The semantic extension receives new approvals after Gemini's concrete edge-case repairs. Final public revision, downloads, screenshots, package and saved submission updates will be recorded below after execution.
+
+
+## Final published semantic release — r20261017e
+
+Archie reported **Published** and the actual public page loaded `archie-assets/r20261017e/assets/index-BR81gbXs.js` from the Vercel asset origin. The old Archie runtime entry is replaced; the additional Archie-generated script is only its build polyfill. The app origin remains the canonical Archie URL.
+
+The fresh public browser actually invoked Jev on the architecture fixture. `stage` became **Disease stage**, probability **86%**, served model `typesafe/jev-1.14-20261014`, provider status `ok`, two remote calls. The semantic ambiguity button then loaded the separate 480-row, nine-field appointment fixture. Its reviewed first candidate measured 96 unique rows and query loss zero. Confirming DOS as encounter date persisted a user correction, marked C1 stale and blocked export; reassessing produced C2 with the same 96/480 result and zero query loss.
+
+**Evaluate alternatives** ran eight real evaluations, 11 recipe attempts, six nondominated results and one result meeting the returned hard checks. These counts describe this finite search, not a guarantee of the globally best recipe. Protection preference selected actual S5 (0% sample uniqueness, query loss0.15, k20), and restoring C2 restored its exact recipe and 20% sample uniqueness. No model interpretation was requested by those actions. All six public views rendered; the Attack Lab returned four actual fixed computations and Research Intent displayed both selected questions within tolerance.
+
+The actual owner JSON download contains 24 semantic findings, confirmed user encounter-date lineage and recipe hash `58aadf56e4416e19689d854e5334874b36faf4558e1e4bc1ec84f17a32fdb435`. The actual CSV download, after the three review acknowledgments, has 480 rows and seven columns; PAT_ID and NOTES are absent. Downloaded files are retained in ignored `artifacts/final-public-semantic-*`. The captured fresh public console error list was empty. Pitch HTML, PDF and immutable e JavaScript returned HTTP200; PDF had application/pdf content type and assets allowed cross-origin loading.
+
+Actual deployed screenshots are tracked under `docs/screenshots/`; the responsive local source images reviewed by all three agents are tracked as `artifacts/prism-workbench-{1440,768,390}.png`. Three fresh independent reviews of frozen source9f40ec1 approved successively; their reports are under `docs/frontend-reviews/semantic-review-{1,2,3}.md`. The remaining non-blocking scroll-region outline issue is disclosed in review3. These are scoped design approvals, not universal optimality or formal accessibility certification.
+
+
+## Final package and submission handoff
+
+The final production build and `scripts/package.py` passed. The wheel `prism_local_workbench-0.1.0-py3-none-any.whl` is2,561,779bytes, SHA256 `22968326a7914105b52bf06a7cc5cc14467f815f25a8b532ddf5c15dd49e4edc`. An isolated installed-target smoke with Python-I verified the installed import path, current JS/CSS, seven-page PDF, both original fixtures, registry,145-type ontology,96-row semantic result, recipe hash, JSON and XLSX intake. It used existing dependencies, not a fresh dependency installation. See `docs/LOCAL_PACKAGE_VERIFICATION.md`. The final source ZIP reuses that tested wheel and refreshes documentation/media from the same bounded source inventory. External release checksums avoid a self-referential archive hash.
+
+The eMerge form visibly confirmed **Draft saved!** with Enterprise AI, PRISM, the current972-character Jev/semantic description, canonical Archie demo, public GitHub repository, live pitch URL, updated technology stack and three uploaded screenshots. The actual form still exposes **Submit Project**, which was never clicked. The completed form screenshot is retained locally as ignored `artifacts/submission-draft.png`. The live app and form tabs were marked as deliverables for user review.

@@ -1,62 +1,64 @@
-# Local package verification
+# Final local package verification
 
-Verified on 2026-10-17 at approximately 15:02 Eastern using the wheel and source ZIP built at 14:56. This records a working package checkpoint; final screenshots, report exports, submission copy, and subsequent frontend changes still require rebuilding the release artifacts.
+Verified on October 17, 2026 at approximately 16:32 Eastern, after the application freeze at `9f40ec1` and immutable Archie release `r20261017e` at `7759f22`. The frontend production build and `scripts/package.py` completed successfully. The wheel below contains the final application, semantic engine, intake adapters, current frontend, pitch and bundled fictional fixtures.
 
 ## Installed wheel
 
-The wheel installed successfully without dependency downloads into a new target outside the editable backend tree:
+| Artifact | Value |
+| --- | --- |
+| Filename | `prism_local_workbench-0.1.0-py3-none-any.whl` |
+| Size | 2,561,779 bytes |
+| SHA-256 | `22968326a7914105b52bf06a7cc5cc14467f815f25a8b532ddf5c15dd49e4edc` |
+| Python | 3.11.15 |
+| Package version | 0.1.0 |
+
+The wheel installed without dependency downloads into a new directory outside the editable backend:
 
 ```powershell
-.\.venv\Scripts\python.exe -m pip install --no-deps --target artifacts/wheel-smoke/20261017-150123/installed dist/prism_local_workbench-0.1.0-py3-none-any.whl
+.\.venv\Scripts\python.exe -m pip install --no-deps --target artifacts/wheel-smoke/20261017-final-e/installed dist/prism_local_workbench-0.1.0-py3-none-any.whl
 ```
 
-The smoke script ran from `artifacts/wheel-smoke/20261017-150123/`, using the existing Python 3.11.15 virtual environment with `-I` and explicitly prepending only the installed package target. It asserted that `app.__file__` resolved inside `installed/app/`, rather than the editable `backend/app/` tree. Existing dependencies supplied the runtime; this was not a fresh dependency installation.
+The smoke script ran with Python `-I`, with its working directory at `artifacts/wheel-smoke/20261017-final-e/`. It explicitly prepended the installed target and asserted that `app.__file__` resolved to `installed/app/__init__.py`, outside `backend/`. Existing virtual-environment dependencies supplied the runtime; this was **not a fresh dependency installation**. Remote Jev execution was disabled for the smoke check, and no model calls were made.
 
-`TestClient` used the allowed loopback origin `http://127.0.0.1:8000`. All checks below passed against the installed wheel:
+All checks used `TestClient` against the allowed loopback origin, `http://127.0.0.1:8000`:
 
-| Route | Result |
+| Check | Result |
 | --- | --- |
 | `/health` | HTTP 200; package version 0.1.0 |
-| `/` | HTTP 200; production frontend HTML |
-| HTML-referenced `/assets/index-EgU1iSKI.js` | HTTP 200; 349,305 bytes |
-| HTML-referenced `/assets/index-sAhFYr1D.css` | HTTP 200; 56,281 bytes |
-| `/pitch/` | HTTP 200; HTML deck |
-| `/pitch/PRISM-Pitch.pdf` | HTTP 200; 52,264 bytes; valid PDF header |
-| `/v1/demo?fixture=kit` | HTTP 200; 480 records and 9 schema fields |
-| `/v1/registry` | HTTP 200; 26 threat families and 17 protection entries |
+| `/` | HTTP 200; production HTML, 1,760 bytes |
+| HTML-referenced `/assets/index-BUB_Zi3l.js` | HTTP 200; 360,453 bytes |
+| HTML-referenced `/assets/index-DyXvwGmB.css` | HTTP 200; 57,005 bytes |
+| `/pitch/` | HTTP 200; revised semantic pitch |
+| `/pitch/PRISM-Pitch.pdf` | HTTP 200; 76,959 bytes; PDF header, seven page objects, canonical Archie demo annotation |
+| `/v1/demo?fixture=kit` | 480 fictional records and nine schema fields |
+| `/v1/registry` | 26 threat families and 17 protection entries |
+| `/v1/semantics/ontology` | 145 types, 13 families and 24 semantic attack categories |
+| Semantic fixture | 480 fictional records; initial classification made zero provider calls |
+| Default semantic candidate | 96 combination-unique rows; selected diagnosis-response query error zero |
+| Candidate provenance | 64-character hexadecimal recipe hash retained in evidence JSON |
+| Semantic evidence JSON | HTTP 200; 340,909 bytes; no literal fictional source record identifier |
+| JSON record-array intake | Two imported rows |
+| XLSX intake | Two imported rows using existing openpyxl 3.1.5 |
 
-The installed package also contains the fictional benchmark CSV, bundled catalog JSON, and complete frontend runtime license notices. The run emitted the existing Starlette warning that its `httpx` TestClient integration is deprecated; the checks passed.
+The tested semantic recipe hash was `58aadf56e4416e19689d854e5334874b36faf4558e1e4bc1ec84f17a32fdb435`. This identifies a recipe, not a release approval. The 96-row result describes sample combination uniqueness; it is separate from the kit's verified-linkage benchmark.
 
-Reproduction script and machine-readable results are retained locally in `artifacts/wheel-smoke/20261017-150123/verify.py` and `verification.json`. These machine-specific smoke artifacts are excluded from the source release.
+The installed wheel also contains the fictional benchmark CSV, catalog JSON, ontology JSON, Jev adapter and complete frontend runtime license notices. The run emitted the existing Starlette warning that its `httpx` TestClient integration is deprecated; all checks passed.
 
-## Source ZIP
+The reproduction script and machine-readable receipt are retained locally at `artifacts/wheel-smoke/20261017-final-e/verify.py` and `verification.json`. These machine-specific files and the installed smoke target are excluded from the source release.
 
-`dist/PRISM-workbench.zip` passed ZIP CRC validation. Its 344 members include all 24 checked release paths, including:
+## Source handoff inventory
 
-- Backend source, pinned dependency lock, bundled static app and benchmark/catalog fixtures.
-- Frontend source, dependency manifest and lock, and the production build.
-- `api/index.py`, `pitch/render.mjs`, the web deck and PDF.
-- `Dockerfile`, `.dockerignore`, `.vercelignore`, `vercel.json`, and root `requirements.txt`.
-- `setup.ps1`, `start.ps1`, README, implementation contract, license and attribution files, and the wheel under `PRISM/dist/`.
+The package-time `dist/PRISM-workbench.zip` checkpoint was 10,520,408 bytes with 794 members. Its CRC check passed. All 38 required release paths were present, including:
 
-No archive member had a conventional `.env` filename, private credential path or key filename, machine credential directory, `node_modules`, virtual environment, Git state, logs, or JSONL transcript. A bounded content scan found no recognized GitHub token, AWS access-key identifier, Anthropic API-key, or private-key signature. This is a release-content check, not a general security certification.
+- Backend source, pinned requirements, production static app, benchmark and catalog fixtures.
+- Semantic ontology, Jev adapter, deterministic rule engine, structured intake and integration tests.
+- Frontend source, manifests and lockfile, production build, web pitch and portable PDF.
+- Both Archie deployment adapters: the published static HTML entry/build utility and the alternative Next.js source/lockfile/regeneration utility.
+- All 39 assets for immutable Archie revision `r20261017e`; the static entry references that revision.
+- API entry, deployment configuration, local setup/start scripts, license/attribution material, documentation and the tested wheel.
 
-The following planned review artifacts were absent at this checkpoint and must be generated before rebuilding the final handoff ZIP:
+The inventory excluded conventional environment files, credential directories, private key filenames, caches, logs, transcripts, Git state, `node_modules`, virtual environments, `.next`, `.hosting-root`, private pitch renders and generated duplicate Next.js assets. A bounded content check found no recognized OpenRouter/GitHub/Anthropic credential, AWS key identifier or private-key signature. This is a release-content check, not a general security certification.
 
-- `artifacts/prism-workbench-1440.png`
-- `artifacts/prism-workbench-768.png`
-- `artifacts/prism-workbench-390.png`
-- `artifacts/default-report.json`
+The release owner refreshes the source ZIP from the same `source_paths()` inventory after final documentation, screenshots and submission-draft evidence are complete. That refresh reuses the **tested wheel above**. Source ZIP checksums belong in the external release receipt or checksum file; embedding a ZIP's own final hash inside a document contained by that ZIP would be circular. The package-time ZIP hash is retained in the ignored machine-readable receipt rather than represented here as the final handoff hash.
 
-The archive already included `artifacts/DELIVERY_STATUS.json`, `artifacts/verification.md`, and `artifacts/alternative-report.json`; their final metadata may still change.
-
-The later source-inventory update includes `deploy/archie/` source, lockfile and regeneration instructions. Its `.next`, `node_modules`, generated `.hosting-root/` staging directory, and generated `content/` and `public/` assets are excluded. The archive's existing `frontend/dist/` plus `node deploy/archie/scripts/sync-vite.mjs` recreates the adapter's assets after extraction. This is an inventory change only: the earlier archive hashes and wheel smoke above do not verify the final adapter-hosted release. A final package rebuild and archive check remain pending after the frontend freezes.
-
-## Checkpoint hashes and scope
-
-| Artifact | SHA-256 |
-| --- | --- |
-| Wheel | `3495adb535a7fb2807a3804f04a7fecb97b9aa5289a93424b9821879f20cedc6` |
-| Source ZIP | `048d2b6eee9896e584bfdd88fd8061013cabcdae6b712510fcabfcb68b31bd3e` |
-
-These hashes identify only the tested checkpoint. This smoke check establishes that the packaged local frontend, pitch assets, and fixture/catalog backend routes are available from the installed wheel. It does not replace browser interaction checks, hosted deployment verification, or the final release rebuild.
+This verification establishes installed-package execution and release inventory. It does not replace the separate hosted browser checks, semantic provider verification or full backend suite recorded by the release owner.

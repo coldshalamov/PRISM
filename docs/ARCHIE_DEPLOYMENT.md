@@ -86,8 +86,8 @@ need the backend. A successful build alone does not verify a usable public app.
 
 ## Rebuild and publish the static Archie entry
 
-The previously verified entry pins revision **`r20261017d`** under
-`frontend/public/archie-assets/r20261017d/`. Final semantic-release revision is recorded in the delivery status. These versioned JS, CSS and font
+The final verified semantic entry pins revision **`r20261017e`** under
+`frontend/public/archie-assets/r20261017e/`. Its public browser checks are recorded in the delivery status. These versioned JS, CSS and font
 files are public, immutable application assets, not private visitor data.
 Keep every revision still referenced by a published Archie page in Git and
 subsequent Vercel deployments.

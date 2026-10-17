@@ -1,6 +1,6 @@
 # PRISM
 
-[Open the fictional demo](https://41d0bdfd-0065-4b0b-a973-efbe1c1a9c5e.archie.site/) · [Pitch deck](https://prism-healthcare-taupe.vercel.app/pitch/) · [Download pitch PDF](https://prism-healthcare-taupe.vercel.app/pitch/PRISM-Pitch.pdf)
+[Open the fictional demo](https://41d0bdfd-0065-4b0b-a973-efbe1c1a9c5e.archie.site/) · [Pitch deck](https://prism-healthcare-taupe.vercel.app/pitch/) · [Download pitch PDF](https://prism-healthcare-taupe.vercel.app/pitch/PRISM-Pitch.pdf) · [Local app and source release](https://github.com/coldshalamov/PRISM/releases/tag/v0.1.0)
 
 PRISM is a privacy preflight workbench for structured research datasets. It understands field meanings, explains measured disclosure pathways, and compares protective recipes against the research questions you need to preserve. Original and protected tables, distributions, correlations, findings and reproducible evidence stay in one connected workflow.
 

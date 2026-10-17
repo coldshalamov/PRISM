@@ -1,6 +1,6 @@
 {
   "application": "PRISM",
-  "status": "semantic_frontend_release_in_progress",
+  "status": "ready_for_user_hackathon_review",
   "backend": {
     "tests": 157,
     "result": "passed integrated semantic checkpoint",
@@ -24,28 +24,50 @@
       "Pareto Explorer",
       "Report"
     ],
-    "implementation": "six views plus Sonnet semantic extension integrated; Gemini repair pass finishing",
+    "implementation": "Six views and Sonnet semantic extension integrated; all three Gemini interaction repairs complete",
     "requiredConsecutiveAuditApprovals": 3,
-    "actualConsecutiveAuditApprovals": 0,
-    "liveVerification": "new local semantic workflow and 1440/768/390 responsive screens passed; final extension reviews and public revision pending",
-    "previousFrozenApprovals": 3
+    "actualConsecutiveAuditApprovals": 3,
+    "liveVerification": "Final Archie r20261017e: all six views, actual Jev classification, semantic correction/stale/reassessment, eight-recipe search, cached alternative selection/restoration, JSON and CSV downloads passed; no captured public console errors",
+    "previousFrozenApprovals": 3,
+    "reviewedSource": "9f40ec12e0178d4eabe4c9bc2663ceb0938c861d",
+    "reviewReports": [
+      "docs/frontend-reviews/semantic-review-1.md",
+      "docs/frontend-reviews/semantic-review-2.md",
+      "docs/frontend-reviews/semantic-review-3.md"
+    ],
+    "nonBlockingFollowUp": "Focusable semantic-table scroll region lacks its own focus-visible outline; contained native controls retain focus styles. Not a WCAG certification."
   },
   "model": {
     "frontend": "Claude Sonnet 5.5 XHigh through Devin3000.11.3, tungsten-shampoo, completed",
-    "improvement": "Gemini4 Argon completed original pass; new semantic frontend pass found three concrete edge cases being repaired through correct npm OpenCode2.0.31",
+    "improvement": "OpenCode Go Gemini4 Argon completed semantic audit; malformed data, unindexed candidate restoration and unconfirmed correction draft repairs verified",
     "semanticFrontend": "Claude Sonnet5.5 XHigh via Devin, pickled-border, completed; controller integrated exact ontology, revisions, previews and group focus"
   },
-  "packaging": "earlier wheel smoke passed; final semantic wheel/source ZIP rebuild pending frontend freeze",
+  "packaging": {
+    "wheel": "prism_local_workbench-0.1.0-py3-none-any.whl",
+    "wheelBytes": 2561779,
+    "wheelSha256": "22968326a7914105b52bf06a7cc5cc14467f815f25a8b532ddf5c15dd49e4edc",
+    "installedSmoke": "passed isolated installed target with existing dependencies; no Jev calls",
+    "sourceZip": "Final documentation/media inventory refreshed from source_paths with the independently tested wheel; checksum accompanies external release assets"
+  },
   "releaseCleared": false,
   "track": "Enterprise AI",
   "deployment": {
     "demo": "https://41d0bdfd-0065-4b0b-a973-efbe1c1a9c5e.archie.site/",
     "repository": "https://github.com/coldshalamov/PRISM",
     "backend": "Archie HTML entry and Core durable fictional configuration; Vercel immutable frontend assets and deterministic Python; optional OpenRouter Jev",
-    "verified": "public d: Kit75→20, four downloads, architecture5000-row24search/6frontier. Semantic frontend revision pending publication.",
-    "publishedRevision": "r20261017d"
+    "verified": "Final e: architecture Jev disease_stage 86%, two calls; semantic480→96, user correction+reassessment, 8real searchresults/11attempts/6nondominated/1checksmet, allsixviews, JSON+CSVdownloads. Earlier d: kit75→20, fourdownloads, architecture24search.",
+    "publishedRevision": "r20261017e"
   },
-  "submission": "Enterprise AI project text and canonical URLs saved successfully as draft; refreshed Jev copy and final screenshots pending; never submitted",
+  "submission": {
+    "state": "Draft saved! confirmed in actual eMerge form",
+    "track": "Enterprise AI",
+    "project": "PRISM",
+    "description": "Current Jev and semantic benchmark copy",
+    "screenshots": 3,
+    "submitted": false,
+    "submitAuthority": "User only; Submit Project never clicked",
+    "url": "https://hackathon.miamiaihub.com/submit"
+  },
   "semantic": {
     "ontologyTypes": 145,
     "families": 13,
@@ -63,6 +85,27 @@
       "externalUnique": 0,
       "responseQueryError": 0
     },
-    "localBrowser": "actual Jev requests, abstention, user correction, reassessment, draft preview, cached selection, all-field focus and unpaired external audit passed"
-  }
+    "localBrowser": "actual Jev requests, abstention, user correction, reassessment, draft preview, cached selection, all-field focus and unpaired external audit passed",
+    "publicBrowser": {
+      "providerStatus": "ok",
+      "stageMeaning": "disease_stage",
+      "probability": 0.86,
+      "servedModel": "typesafe/jev-1.14-20261014",
+      "remoteCalls": 2,
+      "semanticCandidateUniqueRows": 96,
+      "rows": 480,
+      "correction": "DOS encounter_date user confirmed; stale then reassessed",
+      "search": {
+        "evaluated": 8,
+        "attempts": 11,
+        "nondominated": 6,
+        "checksMet": 1
+      },
+      "downloads": [
+        "owner JSON with24semanticfindings and confirmedDOS",
+        "protected CSV480rows7columns withoutPAT_IDandNOTES"
+      ]
+    }
+  },
+  "readyForHackathonReview": true
 }
