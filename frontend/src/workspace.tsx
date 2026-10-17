@@ -1,6 +1,6 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import type { ReactNode } from 'react';
-import { api, ApiError, isAbort, SESSION_LOST_CODES } from './api';
+import { api, ApiError, isAbort, isCandidateLimitError, isStorageError, markHostedMode, SESSION_LOST_CODES } from './api';
 import type { Acknowledgment, Fixture, SearchConstraints, ThreatRequest } from './api';
 import { isAudit, staleReasons } from './analysis';
 import type { StaleReason } from './analysis';
@@ -78,6 +78,10 @@ export interface Workspace {
   reviewed: boolean;
   rowUnit: RowUnit | null;
   sessionLost: boolean;
+  limitReached: boolean;
+  storedCandidateCount: number;
+  storageError: string;
+  dismissStorageError: () => void;
 
   threat: Threat;
   setThreat: (threat: Threat) => void;
@@ -100,6 +104,10 @@ export interface Workspace {
 
   workload: ResearchQuery[];
   setWorkload: (workload: ResearchQuery[]) => void;
+  workloadDirty: boolean;
+  workloadDraft: { id: string; draft: unknown } | null;
+  setWorkloadDraft: (next: { id: string; draft: unknown; dirty: boolean } | null) => void;
+  discardWorkloadDraft: () => void;
 
   baseline: Candidate | null;
   baselineUsable: boolean;
@@ -127,7 +135,7 @@ export interface Workspace {
   dismissToast: (id: number) => void;
 
   loadDemo: (fixture?: Fixture) => Promise<void>;
-  recoverSession: () => void;
+  recoverSession: (clearExisting?: boolean) => Promise<void>;
   importOriginal: (dataset: Dataset) => void;
   saveSchema: (schema: ColumnSpec[], rowUnit?: { entityColumn?: string | null; oneRowPerPersonConfirmed?: boolean }, thenApply?: boolean) => Promise<boolean>;
   apply: (options?: { steps?: RecipeStep[] }) => Promise<Candidate | null>;
@@ -157,13 +165,18 @@ export function WorkspaceProvider({ children }: { children: ReactNode }) {
   const [bootError, setBootError] = useState('');
   const [reviewed, setReviewed] = useState(false);
   const [sessionLost, setSessionLost] = useState(false);
+  const [limitHit, setLimitHit] = useState(false);
+  const [storageError, setStorageError] = useState('');
   const [threat, setThreatState] = useState<Threat>(emptyThreat);
   const [scenarioId, setScenarioId] = useState<string>(defaultScenario.id);
   const [constraints, setConstraints] = useState<SearchConstraints>(defaultScenario.limits);
   const [steps, setStepsState] = useState<RecipeStep[]>([]);
   const [workload, setWorkloadState] = useState<ResearchQuery[]>([]);
+  const [workloadDirty, setWorkloadDirty] = useState(false);
+  const [workloadDraft, setWorkloadDraftState] = useState<{ id: string; draft: unknown } | null>(null);
   const [baseline, setBaseline] = useState<Candidate | null>(null);
   const [candidates, setCandidates] = useState<Candidate[]>([]);
+  const [storedCandidateIds, setStoredCandidateIds] = useState<string[]>([]);
   const [activeId, setActiveId] = useState<string | null>(null);
   const [meta, setMeta] = useState<Record<string, CandidateMeta>>({});
   const [search, setSearch] = useState<SearchResult | null>(null);
@@ -207,12 +220,32 @@ export function WorkspaceProvider({ children }: { children: ReactNode }) {
       setSessionLost(true);
       return;
     }
+    if (isCandidateLimitError(error)) {
+      setLimitHit(true);
+      notify(errorText(error, 'This session reached its stored-candidate limit. Download any evidence you want to keep, then clear the session to continue.'), 'error');
+      return;
+    }
+    if (isStorageError(error)) {
+      const msg = errorText(error, 'Session storage could not be updated. Retry or clear the session to start fresh.');
+      setStorageError(msg);
+      notify(msg, 'error');
+      return;
+    }
     if (error instanceof ApiError && error.code === 'UNREACHABLE') setHealth('down');
     notify(errorText(error, fallback), 'error');
   }, [notify]);
+  const dismissStorageError = useCallback(() => setStorageError(''), []);
 
   const run = useCallback(async <T,>(key: BusyKey, fallback: string, work: (signal: AbortSignal) => Promise<T>): Promise<T | null> => {
     if (flights.current[key]) return null;
+    // Archie uses one optimistic version for this visitor. Even exporting can
+    // renew that version, so session operations must not overlap a search/write.
+    // Boot/reference/health reads retain their existing independent recovery.
+    const pending = Object.keys(flights.current)[0] as BusyKey | undefined;
+    if (key !== 'boot' && pending) {
+      notify(`Wait for ${BUSY_LABEL[pending]} to finish before ${BUSY_LABEL[key]}.`, 'warn');
+      return null;
+    }
     const flight: Flight = { id: ++flightCounter.current, controller: new AbortController(), epoch: epoch.current };
     flights.current[key] = flight;
     setBusyCount(current => ({ ...current, [key]: current[key] + 1 }));
@@ -227,7 +260,7 @@ export function WorkspaceProvider({ children }: { children: ReactNode }) {
       if (flights.current[key] === flight) delete flights.current[key];
       setBusyCount(current => ({ ...current, [key]: Math.max(0, current[key] - 1) }));
     }
-  }, [handleFailure]);
+  }, [handleFailure, notify]);
 
   const cancel = useCallback((key: BusyKey) => {
     const flight = flights.current[key];
@@ -259,6 +292,18 @@ export function WorkspaceProvider({ children }: { children: ReactNode }) {
     return { host, local: isLocalHost(host) };
   }, []);
   const deployment = useMemo(() => deriveDeployment(origin, health, healthInfo), [origin, health, healthInfo]);
+  useEffect(() => { markHostedMode(deployment.hosted); }, [deployment.hosted]);
+  const maxStoredCandidates = healthInfo?.maxCandidates ?? (deployment.hosted ? 40 : null);
+  const storedCandidateCount = useMemo(() => new Set([
+    ...storedCandidateIds,
+    ...candidates.map(candidate => candidate.candidateId),
+    ...(search?.candidates.map(candidate => candidate.candidateId) ?? []),
+    ...(baseline ? [baseline.candidateId] : []),
+  ]).size, [storedCandidateIds, candidates, search, baseline]);
+  const limitReached = limitHit || (maxStoredCandidates !== null && storedCandidateCount >= maxStoredCandidates);
+  const rememberCandidates = useCallback((items: (Candidate | null)[]) => {
+    setStoredCandidateIds(current => [...new Set([...current, ...items.flatMap(candidate => candidate ? [candidate.candidateId] : [])])]);
+  }, []);
 
   /* ----- service health ----- */
   const checkHealth = useCallback(async () => {
@@ -297,8 +342,9 @@ export function WorkspaceProvider({ children }: { children: ReactNode }) {
   const labelOf = useCallback((id: string) => (baseline?.candidateId === id ? 'Unprotected' : meta[id]?.label ?? 'Candidate'), [meta, baseline]);
 
   const controls = useMemo(() => (dataset ? {
-    steps, known: threat.known, secret: threat.secret, membershipKnown: threat.membershipKnown, workload, schema: dataset.schema,
-  } : null), [dataset, steps, threat, workload]);
+    steps, known: threat.known, secret: threat.secret, membershipKnown: threat.membershipKnown,
+    workload, workloadDirty, schema: dataset.schema, rowUnit: dataset.rowUnit ?? null,
+  } : null), [dataset, steps, threat, workload, workloadDirty]);
   const stale = useMemo<StaleReason[]>(() => {
     if (!active || !controls) return [];
     const all = staleReasons(active, controls);
@@ -315,7 +361,24 @@ export function WorkspaceProvider({ children }: { children: ReactNode }) {
   }, [baseline, controls]);
 
   const setSteps = useCallback((next: RecipeStep[]) => setStepsState(next), []);
-  const setWorkload = useCallback((next: ResearchQuery[]) => setWorkloadState(next), []);
+  const setWorkload = useCallback((next: ResearchQuery[]) => {
+    setWorkloadState(next);
+    setWorkloadDirty(false);
+    setWorkloadDraftState(null);
+  }, []);
+  const setWorkloadDraft = useCallback((next: { id: string; draft: unknown; dirty: boolean } | null) => {
+    if (!next || !next.dirty) {
+      setWorkloadDirty(false);
+      setWorkloadDraftState(null);
+    } else {
+      setWorkloadDirty(true);
+      setWorkloadDraftState({ id: next.id, draft: next.draft });
+    }
+  }, []);
+  const discardWorkloadDraft = useCallback(() => {
+    setWorkloadDirty(false);
+    setWorkloadDraftState(null);
+  }, []);
   const setThreat = useCallback((next: Threat) => setThreatState(next), []);
 
   const resetEverything = useCallback(() => {
@@ -328,6 +391,8 @@ export function WorkspaceProvider({ children }: { children: ReactNode }) {
     setReviewed(false);
     setStepsState([]);
     setWorkloadState([]);
+    setWorkloadDirty(false);
+    setWorkloadDraftState(null);
     setThreatState(emptyThreat);
     setBaseline(null);
     setCandidates([]);
@@ -336,6 +401,8 @@ export function WorkspaceProvider({ children }: { children: ReactNode }) {
     setSearch(null);
     setCompare([]);
     setSessionLost(false);
+    setLimitHit(false);
+    setStorageError('');
     labelCounters.current = { created: 0, audit: 0 };
   }, []);
 
@@ -392,12 +459,6 @@ export function WorkspaceProvider({ children }: { children: ReactNode }) {
     loadReference();
     if (!dataset && bootError && !busy.boot) void loadDemo('architecture');
   }, [bootError, busy.boot, dataset, health, loadDemo, loadReference]);
-
-  const recoverSession = useCallback(() => {
-    resetEverything();
-    void loadDemo(fixture ?? 'architecture');
-    loadReference();
-  }, [fixture, loadDemo, loadReference, resetEverything]);
 
   const importOriginal = useCallback((next: Dataset) => {
     if (!deployment.uploadsAllowed) {
@@ -478,12 +539,16 @@ export function WorkspaceProvider({ children }: { children: ReactNode }) {
       notify('Review field classifications before creating a candidate.', 'warn');
       return null;
     }
+    if (workloadDirty) {
+      notify('Save or discard your unsaved research question edits in Research Intent before evaluating.', 'warn');
+      return null;
+    }
     const recipe = normalizeSteps(options?.steps ?? steps, threat.known);
     const request = threatRequest();
     const needsBaseline = !baseline || !baselineUsable;
     const created = await run('apply', 'The candidate could not be created.', async signal => {
-      // Archie uses optimistic session writes. The baseline depends on the
-      // candidate's completed write; parallel requests conflict on one visitor.
+      // Archie serializes writes to one visitor's session. Create the baseline
+      // after the candidate so their optimistic writes cannot conflict.
       const candidate = await api.createCandidate(dataset.datasetId, recipe, request, workload, undefined, signal);
       const base = needsBaseline
         ? await api.createCandidate(dataset.datasetId, [], request, workload, 'Unprotected baseline', signal).catch(() => null)
@@ -491,6 +556,7 @@ export function WorkspaceProvider({ children }: { children: ReactNode }) {
       return { candidate, base };
     });
     if (!created) return null;
+    rememberCandidates([created.candidate, created.base]);
     const label = nextCreatedLabel();
     setCandidates(current => [...current, created.candidate]);
     setMeta(current => ({ ...current, [created.candidate.candidateId]: { kind: 'created', label } }));
@@ -502,7 +568,7 @@ export function WorkspaceProvider({ children }: { children: ReactNode }) {
       notify('The unprotected baseline could not be measured, so before-and-after comparisons are unavailable.', 'warn');
     }
     return created.candidate;
-  }, [baseline, baselineUsable, dataset, nextCreatedLabel, notify, reviewed, run, steps, threat.known, threatRequest, workload]);
+  }, [baseline, baselineUsable, dataset, nextCreatedLabel, notify, rememberCandidates, reviewed, run, steps, threat.known, threatRequest, workload, workloadDirty]);
 
   /* After a first review the dialog asks for an immediate candidate; wait until the saved schema
      (and therefore known fields and default steps) has reached state before calling apply. */
@@ -517,6 +583,10 @@ export function WorkspaceProvider({ children }: { children: ReactNode }) {
      The service creates a new immutable candidate; the earlier one stays in the library. */
   const assess = useCallback(async () => {
     if (!active) return false;
+    if (workloadDirty) {
+      notify('Save or discard your unsaved research question edits in Research Intent before re-evaluating.', 'warn');
+      return false;
+    }
     const request = threatRequest();
     const result = await run('assess', 'The re-evaluation failed.', async signal => {
       const updated = await api.assess(active.candidateId, request, workload, signal);
@@ -526,6 +596,7 @@ export function WorkspaceProvider({ children }: { children: ReactNode }) {
       return { updated, base };
     });
     if (!result) return false;
+    rememberCandidates([result.updated, result.base]);
     const audit = isAudit(active);
     let label: string;
     if (audit) {
@@ -537,7 +608,7 @@ export function WorkspaceProvider({ children }: { children: ReactNode }) {
     setActiveId(result.updated.candidateId);
     if (result.base) setBaseline(result.base);
     return true;
-  }, [active, baseline, nextCreatedLabel, run, threatRequest, workload]);
+  }, [active, baseline, nextCreatedLabel, notify, rememberCandidates, run, threatRequest, workload, workloadDirty]);
 
   const runSearch = useCallback(async (maxCandidates: number) => {
     if (!dataset) return false;
@@ -546,8 +617,19 @@ export function WorkspaceProvider({ children }: { children: ReactNode }) {
       notify(`This service accepts up to ${cap} candidates per search. Choose a smaller budget.`, 'warn');
       return false;
     }
+    const remaining = maxStoredCandidates === null ? null : Math.max(0, maxStoredCandidates - storedCandidateCount);
+    if (remaining !== null && maxCandidates > remaining) {
+      notify(remaining > 0
+        ? `This session has room for at most ${remaining} more candidates. Lower the search budget to ${remaining} or fewer, or clear the session.`
+        : 'This session has reached its stored-candidate limit. Download evidence you want to keep, then clear the session.', 'warn');
+      return false;
+    }
     if (!reviewed) {
       notify('Review field classifications before searching.', 'warn');
+      return false;
+    }
+    if (workloadDirty) {
+      notify('Save or discard your unsaved research question edits in Research Intent before searching.', 'warn');
       return false;
     }
     const limits: SearchConstraints = {
@@ -559,6 +641,7 @@ export function WorkspaceProvider({ children }: { children: ReactNode }) {
     const request = threatRequest();
     const result = await run('search', 'The candidate search failed.', signal => api.search(dataset.datasetId, request, workload, maxCandidates, limits, signal));
     if (!result) return false;
+    rememberCandidates(result.candidates);
     setSearch(result);
     setCompare([]);
     setMeta(current => {
@@ -567,7 +650,7 @@ export function WorkspaceProvider({ children }: { children: ReactNode }) {
       return next;
     });
     return true;
-  }, [constraints, dataset, deployment.hosted, healthInfo?.maxSearchCandidates, notify, reviewed, run, threatRequest, workload]);
+  }, [constraints, dataset, deployment.hosted, healthInfo?.maxSearchCandidates, maxStoredCandidates, notify, rememberCandidates, reviewed, run, storedCandidateCount, threatRequest, workload, workloadDirty]);
 
   /** Selecting an evaluated snapshot restores its exact recipe into the composer. */
   const select = useCallback((id: string) => {
@@ -605,18 +688,23 @@ export function WorkspaceProvider({ children }: { children: ReactNode }) {
       threat: request, workload, columnMapping: payload.columnMapping, ...(payload.lineage ? { lineage: payload.lineage } : {}),
     }, signal));
     if (!candidate) return null;
+    rememberCandidates([candidate]);
     labelCounters.current.audit += 1;
     const label = `A${labelCounters.current.audit}`;
     setCandidates(current => [...current, candidate]);
     setMeta(current => ({ ...current, [candidate.candidateId]: { kind: 'audit', label } }));
     setActiveId(candidate.candidateId);
     return candidate;
-  }, [dataset, deployment.uploadsAllowed, deployment.uploadsNote, notify, run, threatRequest, workload]);
+  }, [dataset, deployment.uploadsAllowed, deployment.uploadsNote, notify, rememberCandidates, run, threatRequest, workload]);
 
   const exportCandidate = useCallback(async (id: string, format: ExportFormat, acknowledgments?: Acknowledgment[]) => {
     const candidate = findCandidate(id);
+    if (workloadDirty) {
+      notify('Save or discard your unsaved research question edits in Research Intent before downloading.', 'warn');
+      return false;
+    }
     if (!candidate || !reviewed || sessionLost || health !== 'ok' || staleFor(candidate).length
-      || busy.apply || busy.assess || busy.schema || busy.import || busy.audit || busy.boot || busy.clear || busy.export) {
+      || busy.apply || busy.assess || busy.search || busy.schema || busy.import || busy.audit || busy.boot || busy.clear || busy.export) {
       notify('Export is unavailable until the selected snapshot matches the reviewed controls and the service is ready.', 'warn');
       return false;
     }
@@ -628,16 +716,16 @@ export function WorkspaceProvider({ children }: { children: ReactNode }) {
     const name = await run('export', 'Export failed.', () => api.exportReport(id, format, acknowledgments));
     if (name) notify(`Downloaded ${name}`);
     return Boolean(name);
-  }, [findCandidate, reviewed, sessionLost, health, staleFor, busy, notify, run, setView]);
+  }, [findCandidate, workloadDirty, reviewed, sessionLost, health, staleFor, busy, notify, run, setView]);
 
   const clearSession = useCallback(async () => {
-    try {
+    const cleared = await run('clear', 'The service did not confirm cleanup. Nothing was cleared from this page.', async () => {
       await api.clearSession();
-    } catch (error) {
-      notify(`The service did not confirm the cleanup, so nothing was cleared here either. ${errorText(error, '')}`.trim(), 'error');
-      return false;
-    }
+      return true;
+    });
+    if (!cleared) return false;
     resetEverything();
+    setStoredCandidateIds([]);
     setRegistry(null);
     setLab(null);
     try { localStorage.removeItem(UI_KEY); } catch { /* ignore */ }
@@ -645,7 +733,19 @@ export function WorkspaceProvider({ children }: { children: ReactNode }) {
     api.registry().then(setRegistry).catch(() => undefined);
     api.lab().then(setLab).catch(() => undefined);
     return true;
-  }, [deployment.hosted, notify, resetEverything]);
+  }, [deployment.hosted, notify, resetEverything, run]);
+
+  const recoverSession = useCallback(async (clearExisting = false) => {
+    if (clearExisting) {
+      // Preserve the visible snapshots and quota until durable cleanup succeeds.
+      if (!await clearSession()) return;
+    } else {
+      resetEverything();
+      setStoredCandidateIds([]);
+    }
+    await loadDemo(fixture ?? 'architecture');
+    loadReference();
+  }, [clearSession, fixture, loadDemo, loadReference, resetEverything]);
 
   const setScenario = useCallback((id: string) => {
     setScenarioId(id);
@@ -654,11 +754,11 @@ export function WorkspaceProvider({ children }: { children: ReactNode }) {
 
   const value: Workspace = {
     view, setView, health, healthInfo, origin, deployment, prefs, setPrefs,
-    dataset, fixture, bootError, reviewed, rowUnit, sessionLost,
+    dataset, fixture, bootError, reviewed, rowUnit, sessionLost, limitReached, storedCandidateCount, storageError, dismissStorageError,
     threat, setThreat, qi, sensitive,
     scenarioId, setScenarioId: setScenario, constraints, setConstraints,
     steps, setSteps, requestPreset, presetPrompt, resolvePreset, replacePrompt, requestReplace, resolveReplace,
-    workload, setWorkload,
+    workload, setWorkload, workloadDirty, workloadDraft, setWorkloadDraft, discardWorkloadDraft,
     baseline, baselineUsable, candidates, active, select, meta, labelOf, findCandidate, stale, staleFor,
     search, compare, toggleCompare, registry, lab,
     busy, cancel, toasts, notify, dismissToast,

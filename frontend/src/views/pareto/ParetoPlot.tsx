@@ -61,17 +61,19 @@ export function ParetoPlot({ candidates, metric, metricLabel, frontier, selected
           const conflict = feasibility(candidate) === 'conflict';
           const rows = rowLoss(candidate, originalRows);
           const name = `${labelOf(candidate.candidateId)}: ${metricLabel} ${pct(x)}, query loss ${y.toFixed(4)}, row loss ${rows === null ? 'unknown' : pct(rows)}. ${nondominated ? 'Nondominated across four measured objectives.' : 'Not marked nondominated.'} ${conflict ? 'Hard constraint conflict.' : 'No failed returned checks.'}${group.length > 1 ? ` ${group.length} recipes share this position; activate to cycle.` : ''}`;
+          const nearRight = x / maxX > 0.82;
           return <button
             key={`${x}:${y}`} ref={element => { buttons.current[index] = element; }} type="button"
             className={`px-point${selected ? ' selected' : ''}${nondominated ? ' frontier' : ''}${conflict ? ' conflict' : ''}`}
             style={{ left: `${x / maxX * 100}%`, bottom: `${y / maxY * 100}%`, '--point-size': `${10 + (rows ?? 0) * 12}px` } as CSSProperties}
+            title={name}
             aria-label={name} aria-pressed={selected} tabIndex={index === activeGroup ? 0 : -1}
             onKeyDown={event => onKey(event, index)}
             onClick={() => {
               const current = group.findIndex(point => point.candidate.candidateId === selectedId);
               onSelect(group[(current + 1) % group.length].candidate.candidateId);
             }}
-          ><span className="px-dot" aria-hidden="true">{group.length > 1 ? group.length : ''}</span><span className="px-point-name" aria-hidden="true">{labelOf(candidate.candidateId)}</span></button>;
+          ><span className="px-dot" aria-hidden="true">{group.length > 1 ? group.length : ''}</span><span className={`px-point-name${nearRight ? ' edge-right' : ''}`} aria-hidden="true">{labelOf(candidate.candidateId)}</span></button>;
         })}
         {!points.length ? <div className="px-no-points"><b>No measurable positions in this view.</b><span>Missing attack or workload measurements remain unknown in the table.</span></div> : null}
         <span className="px-better" aria-hidden="true">↙ lower on both axes</span>

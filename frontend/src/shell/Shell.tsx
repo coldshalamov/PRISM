@@ -38,9 +38,10 @@ function useAppMenus(): { id: string; label: string; items: MenuItem[] }[] {
   const ws = useWorkspace();
   const dialogs = useDialogs();
   const { dataset, active, prefs, setPrefs, busy, deployment } = ws;
+  const sessionBusy = Object.values(busy).some(Boolean);
   const uploadHint = deployment.uploadsAllowed ? undefined : 'Not available in this demo; run locally';
   const exportItem = (id: string, label: string, format: 'html' | 'json' | 'recipe' | 'csv', hint: string): MenuItem => ({
-    id, label, hint, icon: <Download size={15} />, disabled: !active || busy.export || ws.stale.length > 0 || !ws.reviewed || ws.sessionLost,
+    id, label, hint, icon: <Download size={15} />, disabled: !active || sessionBusy || ws.stale.length > 0 || !ws.reviewed || ws.sessionLost,
     onSelect: () => { if (format === 'csv') ws.setView('report'); else if (active) void ws.exportCandidate(active.candidateId, format); },
   });
   return [
@@ -62,7 +63,7 @@ function useAppMenus(): { id: string; label: string; items: MenuItem[] }[] {
     {
       id: 'data', label: 'Data', items: [
         { id: 'review', label: 'Review classifications…', icon: <ClipboardCheck size={15} />, disabled: !dataset, onSelect: () => dialogs.open('review') },
-        { id: 'apply', label: 'Apply and evaluate recipe', icon: <Play size={15} />, shortcut: 'Ctrl+↵', disabled: !dataset || busy.apply, onSelect: () => { ws.setView('workbench'); void ws.apply(); } },
+        { id: 'apply', label: 'Apply and evaluate recipe', icon: <Play size={15} />, shortcut: 'Ctrl+↵', disabled: !dataset || sessionBusy, onSelect: () => { ws.setView('workbench'); void ws.apply(); } },
         { id: 'reset', label: 'Reset to the service default recipe', icon: <RotateCcw size={15} />, disabled: !dataset, onSelect: () => ws.requestPreset('default') },
         { id: 's3', separator: true },
         { id: 'search', label: 'Find better configurations', icon: <FlaskConical size={15} />, disabled: !dataset || !ws.reviewed, onSelect: () => ws.setView('pareto') },
@@ -120,18 +121,46 @@ function ModeSelector() {
 function SessionBanner() {
   const ws = useWorkspace();
   const dialogs = useDialogs();
-  if (!ws.sessionLost) return null;
   return (
-    <div className="session-banner" role="alert">
-      <div>
-        <b>This {ws.deployment.hosted ? '' : 'local '}session ended.</b>
-        <span> The service no longer holds the dataset or candidates shown here (it restarted, or the session was cleared elsewhere). Numbers on screen are from the earlier session and cannot be re-evaluated or exported.</span>
-      </div>
-      <span className="session-actions">
-        <button type="button" className="btn small" onClick={() => ws.recoverSession()}>Start over with the demo</button>
-        {ws.deployment.uploadsAllowed ? <button type="button" className="btn small" onClick={() => dialogs.open('import')}>Import a CSV</button> : null}
-      </span>
-    </div>
+    <>
+      {ws.sessionLost ? (
+        <div className="session-banner" role="alert">
+          <div>
+            <b>This {ws.deployment.hosted ? '' : 'local '}session ended.</b>
+            <span> The service no longer holds the dataset or candidates shown here (it restarted, expired, or was cleared elsewhere). Numbers on screen are from the earlier session and cannot be re-evaluated or exported.</span>
+          </div>
+          <span className="session-actions">
+            <button type="button" className="btn small primary" onClick={() => ws.recoverSession()}>Start over with the demo</button>
+            {ws.deployment.uploadsAllowed ? <button type="button" className="btn small" onClick={() => dialogs.open('import')}>Import a CSV</button> : null}
+          </span>
+        </div>
+      ) : null}
+      {ws.limitReached && !ws.sessionLost ? (
+        <div className="session-banner" role="status">
+          <div>
+            <b>{ws.storedCandidateCount >= (ws.healthInfo?.maxCandidates ?? 40) ? 'Stored-candidate limit reached' : 'Candidate capacity blocked a request'} ({ws.storedCandidateCount} known saved / {ws.healthInfo?.maxCandidates ?? 40}).</b>
+            <span> Baselines and search results also use capacity. Try a smaller search if space remains, or download evidence you want to keep from Report before clearing the session.</span>
+          </div>
+          <span className="session-actions">
+            {ws.active ? <button type="button" className="btn small" onClick={() => ws.setView('report')}>Open Report to download</button> : null}
+            <button type="button" className="btn small primary" onClick={() => dialogs.open('clear')}>{ws.deployment.hosted ? 'Clear session…' : 'Clear local session…'}</button>
+          </span>
+        </div>
+      ) : null}
+      {ws.storageError && !ws.sessionLost ? (
+        <div className="session-banner" role="alert">
+          <div>
+            <b>Session storage could not complete the request.</b>
+            <span> {ws.storageError} Earlier snapshots on screen remain untouched. You can retry, or clear the session and reload the fictional demo.</span>
+          </div>
+          <span className="session-actions">
+            <button type="button" className="btn small" onClick={() => void ws.recoverSession(true)}>Clear and reload demo</button>
+            <button type="button" className="btn small" onClick={() => dialogs.open('clear')}>{ws.deployment.hosted ? 'Clear session…' : 'Clear local session…'}</button>
+            <button type="button" className="btn small" onClick={() => ws.dismissStorageError()}>Dismiss</button>
+          </span>
+        </div>
+      ) : null}
+    </>
   );
 }
 
@@ -247,7 +276,7 @@ export default function Shell() {
       if (event.altKey && /^[1-6]$/.test(event.key)) {
         event.preventDefault();
         setView(NAV[Number(event.key) - 1].id);
-      } else if (event.key === 'Enter' && (event.ctrlKey || event.metaKey) && view === 'workbench' && dataset && !busy.apply) {
+      } else if (event.key === 'Enter' && (event.ctrlKey || event.metaKey) && view === 'workbench' && dataset && !Object.values(busy).some(Boolean)) {
         event.preventDefault();
         void ws.apply();
       } else if (!typing && !event.ctrlKey && !event.metaKey && !event.altKey) {

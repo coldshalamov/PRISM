@@ -50,6 +50,8 @@ The following planned review artifacts were absent at this checkpoint and must b
 
 The archive already included `artifacts/DELIVERY_STATUS.json`, `artifacts/verification.md`, and `artifacts/alternative-report.json`; their final metadata may still change.
 
+The later source-inventory update includes `deploy/archie/` source, lockfile and regeneration instructions. Its `.next`, `node_modules`, generated `.hosting-root/` staging directory, and generated `content/` and `public/` assets are excluded. The archive's existing `frontend/dist/` plus `node deploy/archie/scripts/sync-vite.mjs` recreates the adapter's assets after extraction. This is an inventory change only: the earlier archive hashes and wheel smoke above do not verify the final adapter-hosted release. A final package rebuild and archive check remain pending after the frontend freezes.
+
 ## Checkpoint hashes and scope
 
 | Artifact | SHA-256 |

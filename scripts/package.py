@@ -12,13 +12,13 @@ from pathlib import Path
 from zipfile import ZIP_DEFLATED, ZipFile
 
 ROOT = Path(__file__).resolve().parents[1]
-SOURCE_ROOTS = ("backend", "frontend", "api", "pitch", "docs", "examples", "schemas", "scripts")
+SOURCE_ROOTS = ("backend", "frontend", "api", "pitch", "docs", "examples", "schemas", "scripts", "deploy/archie")
 ROOT_FILES = ("README.md", "LICENSE", "NOTICE", "THIRD_PARTY_NOTICES.md", "IMPLEMENTATION_CONTRACT.md",
               "setup.ps1", "start.ps1", ".gitignore", "Dockerfile", ".dockerignore", ".vercelignore", "vercel.json", "requirements.txt")
 ARTIFACT_FILES = ("DELIVERY_STATUS.json", "prism-workbench-1440.png", "prism-workbench-768.png",
                   "prism-workbench-390.png", "default-report.json", "alternative-report.json", "verification.md")
 EXCLUDED_DIRECTORIES = {"node_modules", ".venv", "__pycache__", ".pytest_cache", "build", ".claude", ".codex",
-                        ".git", ".vercel", ".netlify", ".ssh", ".aws", ".azure", ".gcloud", ".vscode",
+                        ".git", ".vercel", ".netlify", ".next", ".hosting-root", ".ssh", ".aws", ".azure", ".gcloud", ".vscode",
                         "private", "secrets", "credentials"}
 EXCLUDED_SUFFIXES = {".pyc", ".log", ".jsonl", ".tsbuildinfo", ".pem", ".key", ".p12", ".pfx", ".jks", ".keystore"}
 EXCLUDED_FILES = {".envrc", ".npmrc", ".pypirc", ".netrc", ".git-credentials", ".ds_store", "thumbs.db",
@@ -32,6 +32,10 @@ def source_name_allowed(relative: Path) -> bool:
     if any(part in EXCLUDED_DIRECTORIES or part.endswith(".egg-info") for part in parts):
         return False
     if parts[:2] == ("pitch", "renders") or parts[:3] == ("frontend", "tools", "out"):
+        return False
+    # The source ZIP already carries frontend/dist. The isolated Archie host
+    # recreates these duplicate generated assets with scripts/sync-vite.mjs.
+    if parts[:3] in {("deploy", "archie", "content"), ("deploy", "archie", "public")}:
         return False
     if name.startswith(".env") or name.endswith(".env") or name in EXCLUDED_FILES:
         return False

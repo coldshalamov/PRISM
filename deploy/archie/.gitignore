@@ -1,0 +1,7 @@
+node_modules/
+.next/
+.hosting-root/
+.env*
+content/
+public/
+*.tsbuildinfo

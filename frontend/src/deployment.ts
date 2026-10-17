@@ -46,6 +46,6 @@ export function deriveDeployment(origin: { host: string; local: boolean }, healt
       : health === 'checking' ? 'Waiting for the service to report whether uploads are available.'
         : 'This service has turned uploads off.',
     label: kind === 'hosted' ? 'Hosted fictional demo' : kind === 'remote' ? 'Remote origin' : 'Local',
-    place: kind === 'local' ? 'on this computer' : kind === 'hosted' ? 'on the hosted demo server' : `on ${origin.host || 'a remote server'}`,
+    place: kind === 'hosted' ? 'on the hosted demo server' : kind === 'remote' ? `on ${origin.host || 'a remote server'}` : health === 'checking' ? 'by the service' : 'on this computer',
   };
 }

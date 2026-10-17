@@ -286,6 +286,9 @@ export interface RegistryEntry {
   name?: string;
   status?: string;
   description?: string;
+  assumptions?: string[] | string;
+  controls?: string[] | string;
+  control?: string;
   limitations?: string[] | string;
   limitation?: string;
   source?: string;
@@ -327,7 +330,9 @@ export interface LabResult { experiments: LabExperiment[] }
 /** `deploymentMode: 'synthetic_demo'` with `uploadsAllowed: false` identifies the hosted fictional-only demo. */
 export interface ApiHealth {
   status: string; version?: string; deploymentMode?: 'synthetic_demo' | 'local' | string; uploadsAllowed?: boolean;
-  backendProvider?: string; sessionTtlSeconds?: number; maxSearchCandidates?: number; maxCandidates?: number;
+  backendProvider?: string; computeProvider?: string; storageProvider?: string; modelInRuntime?: boolean;
+  sessionTtlSeconds?: number; maxSearchCandidates?: number; maxCandidates?: number;
+  [key: string]: unknown;
 }
 
 export type ViewId = 'workbench' | 'map' | 'lab' | 'intent' | 'pareto' | 'report';

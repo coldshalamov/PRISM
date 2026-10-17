@@ -52,25 +52,28 @@ export function CorrelationMatrix({ correlations, side }: { correlations: Correl
           }
           const pair = lookup.get(`${rowName}|${colName}`);
           const value = pair ? read(pair) : null;
-          const t = value === null || value === undefined ? 0 : Math.min(1, Math.abs(value));
+          const isNull = value === null || value === undefined;
+          const t = isNull ? 0 : Math.min(1, Math.abs(value));
           const tipContent = pair ? (
             <>
               <strong>{rowName} × {colName}</strong>
-              <span>Original {signed(pair.original, 3)} → protected {signed(pair.protected, 3)}</span>
+              <span>Original {pair.original === null ? 'Unavailable' : signed(pair.original, 3)} → protected {pair.protected === null ? 'Unavailable' : signed(pair.protected, 3)}</span>
+              {typeof pair.original === 'number' && typeof pair.protected === 'number' ? <span>Δr = {signed(pair.protected - pair.original, 3)}</span> : <span className="muted">Correlation undefined / unavailable</span>}
               {pair.sign_flip ? <span className="risk-text">Direction reversed after protection</span> : null}
               {pair.midpoint_approximation ? <span className="muted">Band midpoints approximate this value</span> : null}
               <span className="muted">n = {num(side === 'protected' ? pair.n_protected : pair.n_original, 0)}</span>
             </>
           ) : null;
           return (
-            <g key={`${r}-${c}`} tabIndex={pair ? 0 : -1} role="img" aria-label={pair ? `${rowName} by ${colName}: ${signed(value, 2)}${pair.sign_flip ? ', direction reversed' : ''}` : undefined}
+            <g key={`${r}-${c}`} tabIndex={pair ? 0 : -1} role="img" aria-label={pair ? `${rowName} by ${colName}: ${isNull ? 'unavailable (undefined correlation)' : signed(value, 2)}${pair.sign_flip ? ', direction reversed' : ''}` : undefined}
               className="mark" onPointerMove={event => tipContent && showAt(event.clientX, event.clientY, tipContent)}
               onFocus={event => tipContent && showFor(event.currentTarget, tipContent)} onBlur={hide}>
-              <rect x={x + 1} y={y + 1} width={cell - 2} height={cell - 2} fill={value === null || value === undefined ? 'transparent' : `rgba(${rgb}, ${0.1 + t * 0.85})`} className={value === null || value === undefined ? 'matrix-empty' : ''} />
+              <rect x={x + 1} y={y + 1} width={cell - 2} height={cell - 2} fill={isNull ? 'transparent' : `rgba(${rgb}, ${0.1 + t * 0.85})`} className={isNull ? 'matrix-empty' : ''} />
+              {isNull ? <line x1={x + 3} y1={y + cell - 3} x2={x + cell - 3} y2={y + 3} className="matrix-null-slash" /> : null}
               {pair?.sign_flip && side === 'protected' ? <rect x={x + 1.5} y={y + 1.5} width={cell - 3} height={cell - 3} className="matrix-flip" /> : null}
-              {cell >= 34 ? (
-                <text x={x + cell / 2} y={y + cell / 2 + 4} textAnchor="middle" className="matrix-value" fill={t > 0.5 ? '#fff' : '#0f1218'}>
-                  {value === null || value === undefined ? '—' : signed(value, 2).replace('0.', '.')}
+              {cell >= 28 ? (
+                <text x={x + cell / 2} y={y + cell / 2 + 4} textAnchor="middle" className="matrix-value" fill={isNull ? 'var(--uncovered)' : t > 0.5 ? '#fff' : '#0f1218'}>
+                  {isNull ? 'N/A' : signed(value, 2).replace('0.', '.')}
                 </text>
               ) : null}
             </g>
@@ -79,16 +82,25 @@ export function CorrelationMatrix({ correlations, side }: { correlations: Correl
       </svg>
       <ChartTipLayer tip={tip} width={width} />
       <p className="viz-foot">
-        Colour intensity = |r|; sign printed. {side === 'protected' ? 'Orange outline = direction reversed. ' : ''}Binary fields use 0/1; bands use midpoints.
+        Colour intensity = |r|; sign printed; hatched N/A = undefined/unavailable (distinct from 0). {side === 'protected' ? 'Orange outline = direction reversed. ' : ''}Binary fields use 0/1; bands use midpoints.
       </p>
       <details className="viz-table">
         <summary>View as table</summary>
         <table className="data-table compact">
-          <thead><tr><th scope="col">Pair</th><th scope="col">Original</th><th scope="col">Protected</th><th scope="col">Direction</th></tr></thead>
+          <thead><tr><th scope="col">Pair</th><th scope="col" className="num">Original r</th><th scope="col" className="num">Protected r</th><th scope="col" className="num">Difference (Δr)</th><th scope="col">Direction</th></tr></thead>
           <tbody>
-            {correlations.map(pair => (
-              <tr key={`${pair.x}-${pair.y}`}><th scope="row">{pair.x} × {pair.y}</th><td>{signed(pair.original, 3)}</td><td>{signed(pair.protected, 3)}</td><td>{pair.sign_flip ? 'Reversed' : 'Same'}</td></tr>
-            ))}
+            {correlations.map(pair => {
+              const bothFinite = typeof pair.original === 'number' && typeof pair.protected === 'number';
+              return (
+                <tr key={`${pair.x}-${pair.y}`}>
+                  <th scope="row">{pair.x} × {pair.y}{pair.midpoint_approximation ? <small className="muted"> · band midpoints</small> : null}</th>
+                  <td className="num">{pair.original === null || pair.original === undefined ? <span className="na">Unavailable</span> : signed(pair.original, 3)}</td>
+                  <td className="num">{pair.protected === null || pair.protected === undefined ? <span className="na">Unavailable</span> : signed(pair.protected, 3)}</td>
+                  <td className="num">{bothFinite ? signed((pair.protected as number) - (pair.original as number), 3) : <span className="na">—</span>}</td>
+                  <td>{pair.sign_flip ? <span className="risk-text">Reversed</span> : bothFinite ? 'Same' : <span className="na">Unavailable</span>}</td>
+                </tr>
+              );
+            })}
           </tbody>
         </table>
       </details>

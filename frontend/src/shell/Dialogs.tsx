@@ -332,20 +332,32 @@ export function PrivacyDialog({ onClose }: { onClose: () => void }) {
                 : 'This page and its service run on this computer, so private files are read only here.'}
           </dd>
         </div>
-        <div><dt>Service</dt><dd>{health === 'ok' ? `Connected, version ${healthInfo?.version ?? 'unknown'}` : health === 'checking' ? 'Checking…' : 'Not reachable'}</dd></div>
-        <div><dt>This page is served from</dt><dd>{origin.host}{origin.local ? ' (this computer)' : hosted ? ' (the hosted demo; not this computer)' : ' (not this computer: do not load real data)'}</dd></div>
+        <div><dt>Service</dt><dd>{health === 'ok' ? `Connected, version ${healthInfo?.version ?? 'unknown'}${healthInfo?.backendProvider ? ` · ${healthInfo.backendProvider}` : ''}` : health === 'checking' ? 'Checking…' : 'Not reachable'}</dd></div>
+        <div><dt>This page is served from</dt><dd>{origin.host}{hosted ? ' (the hosted demo; not this computer)' : origin.local ? ' (this computer)' : ' (not this computer: do not load real data)'}</dd></div>
         <div>
           <dt>Where rows live</dt>
           <dd>{hosted
             ? healthInfo?.backendProvider === 'Archie'
-              ? 'Fictional rows are rebuilt for each calculation on Vercel. Archie Core stores fixture choices, reviewed schema, recipes and research questions, not uploaded files or raw row previews. The page shows at most 30 preview rows per table.'
+              ? 'Fictional rows are deterministically rebuilt for each Python calculation on Vercel. Archie Core persists compact fictional configuration (fixture choice, reviewed schema, recipes and research questions), never uploaded files or raw row previews. The page shows at most 30 preview rows per table.'
               : 'In the hosted demo server’s memory for this session. They are fictional records. The page shows at most 30 preview rows per table.'
             : `In the ${origin.local ? 'local ' : ''}service’s memory for this session. The page shows at most 30 preview rows per table.`}</dd>
         </div>
-        {hosted && healthInfo?.backendProvider === 'Archie' ? <div><dt>Session storage</dt><dd>Archie-backed sessions become inaccessible after {Math.round((healthInfo.sessionTtlSeconds ?? 1800) / 60)} minutes of inactivity. Expired metadata is removed when that visitor returns; abandoned expired records are not proactively purged. Clear session removes your current session record.</dd></div> : null}
+        {hosted ? (
+          <div>
+            <dt>Session storage & caps</dt>
+            <dd>
+              Up to {healthInfo?.maxSearchCandidates ?? 24} candidates per search and {healthInfo?.maxCandidates ?? 40} stored candidates per session.
+              {healthInfo?.backendProvider === 'Archie'
+                ? ` Archie-backed sessions expire after ${Math.round((healthInfo.sessionTtlSeconds ?? 1800) / 60)} minutes of inactivity. Clear session removes your current session record immediately.`
+                : ' Clear session removes your current session state immediately.'}
+            </dd>
+          </div>
+        ) : null}
         <div>
           <dt>Where measurements run</dt>
-          <dd>{hosted ? 'On the hosted demo server, not on this computer. They are genuine computations on the fictional records.' : origin.local ? 'On this computer, by the local service.' : `On ${origin.host}, by the service behind this page.`}</dd>
+          <dd>{hosted
+            ? 'Actual Python calculations run through Vercel on the hosted demo server, not on this computer. No AI or LLM model is in the application runtime.'
+            : origin.local ? 'On this computer, by the local Python service. No AI model is in the application runtime.' : `On ${origin.host}, by the service behind this page.`}</dd>
         </div>
         <div><dt>Uploads</dt><dd>{deployment.uploadsAllowed ? 'Original and protected CSV files can be imported. They are read by the local service on this computer only.' : deployment.uploadsNote}</dd></div>
         <div><dt>Stored in this browser</dt><dd>Only panel layout preferences (key prism.ui.v1). Rows, candidates and reports are never written to browser storage.</dd></div>

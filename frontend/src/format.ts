@@ -18,11 +18,22 @@ export function pct(value: unknown, digits = 1): string {
 export function pointsDelta(from: number | null | undefined, to: number | null | undefined, digits = 1): string {
   if (typeof from !== 'number' || typeof to !== 'number') return '—';
   const delta = (to - from) * 100;
-  if (delta === 0) return '0 pts';
+  if (Math.abs(delta) < 1e-9) return '0 pts';
   const step = 10 ** -digits;
   const sign = delta > 0 ? '+' : '−';
   if (Math.abs(delta) < step / 2) return `${sign}<${num(step, digits)} pts`;
   return `${sign}${num(Math.abs(delta), digits)} pts`;
+}
+
+/** Signed difference between two numbers. A non-zero difference never rounds to "+0" or "−0". */
+export function numDelta(from: number | null | undefined, to: number | null | undefined, digits = 2): string {
+  if (typeof from !== 'number' || typeof to !== 'number') return '—';
+  const delta = to - from;
+  if (Math.abs(delta) < 1e-9) return '0';
+  const step = 10 ** -digits;
+  const sign = delta > 0 ? '+' : '−';
+  if (Math.abs(delta) < step / 2) return `${sign}<${num(step, digits)}`;
+  return `${sign}${num(Math.abs(delta), digits)}`;
 }
 
 export function signed(value: unknown, digits = 3): string {

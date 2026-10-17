@@ -25,8 +25,16 @@ export function Tip({ content, children, block = false, delay = 140 }: { content
     if (!open) return undefined;
     /* Escape dismisses the tooltip only; preventing the default keeps it from also cancelling a modal dialog behind it. */
     const onKey = (event: KeyboardEvent) => { if (event.key === 'Escape') { event.preventDefault(); hideNow(); } };
+    const onPointerDown = (event: PointerEvent) => {
+      const target = event.target as Node | null;
+      if (target && !anchor.current?.contains(target) && !bubble.current?.contains(target)) hideNow();
+    };
     document.addEventListener('keydown', onKey);
-    return () => document.removeEventListener('keydown', onKey);
+    document.addEventListener('pointerdown', onPointerDown);
+    return () => {
+      document.removeEventListener('keydown', onKey);
+      document.removeEventListener('pointerdown', onPointerDown);
+    };
   }, [open, hideNow]);
 
   useLayoutEffect(() => {
@@ -46,8 +54,9 @@ export function Tip({ content, children, block = false, delay = 140 }: { content
         ref={anchor}
         className={block ? 'tip-anchor block' : 'tip-anchor'}
         aria-describedby={open ? id : undefined}
-        onPointerEnter={show}
-        onPointerLeave={hide}
+        onPointerEnter={event => { if (event.pointerType !== 'touch') show(); }}
+        onPointerLeave={event => { if (event.pointerType !== 'touch') hide(); }}
+        onPointerDown={event => { if (event.pointerType === 'touch') { window.clearTimeout(timer.current); setOpen(current => !current); } }}
         onFocus={show}
         onBlur={hide}
       >

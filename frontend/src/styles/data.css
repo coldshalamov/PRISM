@@ -27,8 +27,8 @@
 
 /* ---------- workbench ---------- */
 .wb { height: 100%; display: grid; grid-template-rows: minmax(0, 1fr) auto; min-height: 0; }
-.panes-wrap { min-height: 0; overflow: auto; padding: 12px 12px 6px; display: grid; gap: 10px; align-content: start; grid-template-rows: auto minmax(0, 1fr); outline: none; }
-.panes { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 12px; min-height: 0; grid-row: 2; }
+.panes-wrap { min-height: 0; overflow: auto; padding: 10px 12px 6px; display: flex; flex-direction: column; gap: 10px; outline: none; }
+.panes { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 12px; min-height: 260px; flex: 1 1 0; }
 .panes.single { grid-template-columns: minmax(0, 1fr); }
 .pane { display: flex; flex-direction: column; min-width: 0; min-height: 260px; background: var(--surface); border: 1px solid var(--line); border-radius: var(--r-2); box-shadow: 0 1px 0 rgba(15, 18, 24, 0.03); overflow: hidden; }
 .pane.protected { border-top: 2px solid var(--accent); }
@@ -45,7 +45,7 @@
 .swatch.original { background: var(--original); }
 .swatch.protected { background: var(--accent); }
 .panes.stack { grid-template-columns: 1fr; }
-@media (max-width: 979px) { .panes { grid-template-columns: minmax(0, 1fr); } }
+@media (max-width: 979px) { .panes { grid-template-columns: minmax(0, 1fr); flex: none; min-height: 0; } }
 
 /* spreadsheet-like grid */
 .grid-scroll { overflow: auto; flex: 1; min-height: 0; outline: none; }
@@ -82,7 +82,8 @@
 .chart-svg .mark { cursor: default; }
 .chart-svg .mark:hover > rect:nth-of-type(2), .chart-svg .mark:hover > path { filter: brightness(1.12); }
 .chart-svg .matrix-diag { fill: var(--surface-3); }
-.chart-svg .matrix-empty { stroke: var(--line); stroke-dasharray: 2 2; fill: none; }
+.chart-svg .matrix-empty { stroke: var(--line-strong); stroke-dasharray: 2 2; fill: var(--surface-2); }
+.chart-svg .matrix-null-slash { stroke: var(--line-strong); stroke-width: 1; pointer-events: none; }
 .chart-svg .matrix-flip { fill: none; stroke: var(--risk); stroke-width: 2; }
 .chart-svg .matrix-value { font-size: 11px; font-family: var(--font-mono); pointer-events: none; }
 .viz-foot { font-size: 11.5px; color: var(--ink-3); }
@@ -157,7 +158,7 @@
 .field-list { display: grid; gap: 0; }
 .field-row { display: grid; gap: 6px; padding: 9px 0; border-bottom: 1px solid var(--line); }
 .field-row:last-child { border-bottom: 0; }
-.field-row.exposed .field-title b { box-shadow: inset 2px 0 0 var(--risk); padding-left: 6px; }
+.field-row.exposed { border-left: 2.5px solid var(--risk); padding-left: 8px; background: rgba(217, 72, 15, 0.035); }
 .field-line { display: grid; grid-template-columns: minmax(0, 1fr) 138px; gap: 8px; align-items: center; }
 .field-line select { height: 28px; font-size: 12.5px; width: 100%; }
 .field-title { display: grid; min-width: 0; line-height: 1.25; }

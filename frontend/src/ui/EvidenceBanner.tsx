@@ -29,23 +29,30 @@ export function EvidenceBanner({ compact = false }: { compact?: boolean }) {
   const diffs = stale.includes('recipe') ? diffSteps(active.recipe.steps, normalizeSteps(steps, threat.known), dataset.schema) : [];
   const audit = isAudit(active);
   const needsApply = !audit && (stale.includes('recipe') || stale.includes('classifications'));
+  const verb = stale.length === 1 && stale[0] === 'recipe' ? 'differs' : 'differ';
   return (
     <div className="evidence-banner stale" role="status">
       <History size={15} aria-hidden="true" />
       <div>
         <b>These numbers are stale.</b>{' '}
-        They describe the frozen snapshot {label}. Current {stale.map(reason => STALE_LABEL[reason]).join(' and ')} differ{stale.length === 1 ? 's' : ''}. Export is unavailable until an evaluation matches.
+        They describe the frozen snapshot {label}. Current {stale.map(reason => STALE_LABEL[reason]).join(' and ')} {verb}.
+        {ws.workloadDirty ? ' Unsaved research question edits are open in Research Intent.' : ''} Export is unavailable until an evaluation matches.
         {!compact && diffs.length ? <ul>{diffs.slice(0, 5).map(line => <li key={line}>{line}</li>)}{diffs.length > 5 ? <li>and {diffs.length - 5} more</li> : null}</ul> : null}
       </div>
       <span className="evidence-actions">
-        {needsApply ? (
+        {ws.workloadDirty ? (
+          <>
+            {ws.view !== 'intent' ? <button type="button" className="btn small primary" onClick={() => ws.setView('intent')}>Review question edits</button> : null}
+            <button type="button" className="btn small" onClick={() => ws.discardWorkloadDraft()}>Discard unsaved edits</button>
+          </>
+        ) : needsApply ? (
           <button type="button" className="btn small primary" disabled={!ws.reviewed} onClick={() => void ws.apply()}>Evaluate current recipe</button>
         ) : audit && stale.includes('classifications') ? (
           <button type="button" className="btn small" onClick={() => dialogs.open('audit')}>Re-run the audit</button>
         ) : (
           <button type="button" className="btn small primary" onClick={() => void ws.assess()}>Re-evaluate this snapshot</button>
         )}
-        {stale.includes('recipe') ? <button type="button" className="btn small" onClick={() => ws.select(active.candidateId)}>Restore {label}’s recipe</button> : null}
+        {stale.includes('recipe') && !ws.workloadDirty ? <button type="button" className="btn small" onClick={() => ws.select(active.candidateId)}>Restore {label}’s recipe</button> : null}
       </span>
     </div>
   );

@@ -134,6 +134,8 @@
 .al-candidate-findings > ul { list-style: none !important; padding-left: 0 !important; gap: 12px !important; }
 .al-candidate-findings p { margin-top: 4px; }
 .al-candidate-findings small { display: block; color: var(--ink-3); font-size: 11px; margin-top: 5px; }
+.al-source-block { display: flex; flex-wrap: wrap; gap: 6px 14px; align-items: center; }
+.al-source-citation { color: var(--ink-3); font-size: 11px; }
 .al-source-link { width: fit-content; display: inline-flex; align-items: center; gap: 5px; font-size: 11px; text-decoration: underline; text-underline-offset: 3px; }
 .al-reference-unavailable { color: var(--ink-3); font-size: 11px; }
 .al-register-caveat { font-size: 11px; color: var(--ink-3); line-height: 1.6; border-left: 2px dashed var(--line-strong); padding-left: 12px; }

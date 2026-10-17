@@ -38,7 +38,7 @@ export function Rail({ compact, onNavigate }: { compact: boolean; onNavigate?: (
             >
               <span className="rail-icon" aria-hidden="true">{item.icon}</span>
               <span className="rail-label">{item.label}</span>
-              <kbd className="rail-key" aria-hidden="true">{item.key}</kbd>
+              <kbd className="rail-key" aria-hidden="true">Alt+{item.key}</kbd>
             </a>
           </li>
         ))}
@@ -116,7 +116,7 @@ export function Library({ onPick }: { onPick?: () => void }) {
           </ul>
         ) : <p className="library-empty">No dataset loaded.</p>}
 
-        <h3 className="library-sub">Candidates <span>{candidates.length}</span></h3>
+        <h3 className="library-sub">Candidates <span>{candidates.length}{ws.healthInfo?.maxCandidates ? ` / ${ws.healthInfo.maxCandidates}` : deployment.hosted ? ' / 40' : ''}</span></h3>
         {candidates.length ? (
           <ul className="library-list" aria-label="Candidate history">
             {[...candidates].reverse().map((candidate, index) => {
@@ -176,8 +176,8 @@ export function SessionFooter() {
     : hosted ? 'Hosted fictional demo' : deployment.kind === 'remote' ? 'Remote session' : 'Local session';
   const detail = health === 'ok'
     ? (hosted ? `Service${version} · fictional records · uploads off` : `Service${version} on ${origin.host || 'this computer'}`)
-    : health === 'checking' ? (hosted ? 'Checking the hosted demo service' : 'Checking the local service')
-      : (origin.local ? 'Start the backend on 127.0.0.1:8000' : 'Retrying automatically');
+    : health === 'checking' ? (hosted ? 'Checking the hosted demo service' : 'Checking the service')
+      : (!hosted && origin.local ? 'Start the backend on 127.0.0.1:8000' : 'Retrying automatically');
   return (
     <footer className="rail-foot">
       <button type="button" className={`session-line ${deployment.kind}`} onClick={() => dialogs.open('privacy')}>

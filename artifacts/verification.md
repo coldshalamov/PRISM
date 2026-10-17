@@ -12,7 +12,14 @@ This record distinguishes calculation/API checks from live browser use. The appl
 
 ## Final integration checks
 
-Pending integrated Sonnet polish, production build, all-view live route, responsive layouts, downloads, package smoke check and the three requested sequential independent design approvals. No final approval is claimed by the preliminary evidence above.
+Sonnet 5.5 XHigh polish and the OpenCode Go Gemini 4 Argon improvement pass are integrated. TypeScript and production build passed. The following live checks used the real Python service, separately from Sonnet's mocked browser exercise:
+
+- All six local views rendered with the 5,000-row fixture. A real 24-candidate search evaluated 24 recipes (27 attempts), found six measured frontier members, and correctly reported zero candidates meeting all constraints. A comparison candidate was adopted.
+- Saved research-question changes marked frozen evidence stale and blocked exports. Restoring the saved workload restored matching evidence. JSON, HTML, recipe JSON and three-acknowledgment CSV downloads completed. The CSV contained 5,000 rows and no direct identifier headers.
+- Responsive views were inspected at 390, 768 and 1440 pixels. A reproduced tablet toolbar/header clipping issue was corrected with wrapping rows. Reduced-motion emulation disabled view animation. Skip-to-content moved focus to main; native dialog Escape dismissal passed. Background-tab focus wrapping was inconclusive and is not claimed as verified.
+- The public browser initially reproduced an optimistic Archie session-write conflict when candidate and baseline were created simultaneously. Their writes are now sequential. Repeating the public schema-review/create flow returned C1 with 75/480 matches and no conflict notification.
+
+Final Gemini editor/recovery fixes, the final deployed frontend check, refreshed packages and three successive independent design approvals remain pending at this checkpoint.
 
 ## Initial deployed backend check
 

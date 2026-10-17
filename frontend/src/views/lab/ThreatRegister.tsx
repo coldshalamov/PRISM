@@ -25,7 +25,18 @@ function sourceOf(entry: RegistryEntry, registry: Registry): string | null {
 
 function SourceLink({ entry, registry }: { entry: RegistryEntry; registry: Registry }) {
   const source = sourceOf(entry, registry);
-  return source ? <a className="al-source-link" href={source} target="_blank" rel="noreferrer noopener">Open reference <ExternalLink size={12} aria-hidden="true" /><span className="sr-only"> in a new tab</span></a> : <span className="al-reference-unavailable">No source URL supplied</span>;
+  const refEntry = registry.sources?.find(item => item.id === entry.sourceId);
+  const citation = refEntry?.title ?? (typeof entry.source === 'string' && !/^https?:\/\//i.test(entry.source) ? entry.source : null);
+  return (
+    <div className="al-source-block">
+      {citation ? <span className="al-source-citation">Reference: {citation}</span> : null}
+      {source ? (
+        <a className="al-source-link" href={source} target="_blank" rel="noreferrer noopener">
+          Open source link <ExternalLink size={12} aria-hidden="true" /><span className="sr-only"> in a new tab</span>
+        </a>
+      ) : !citation ? <span className="al-reference-unavailable">No source URL supplied</span> : null}
+    </div>
+  );
 }
 
 function EntryDetails({ entry, registry, family = false }: { entry: RegistryEntry; registry: Registry; family?: boolean }) {
@@ -33,16 +44,21 @@ function EntryDetails({ entry, registry, family = false }: { entry: RegistryEntr
   const aliases = entry.aliases ?? [];
   const analyses = (registry.engineAnalyses ?? []).filter(analysis => aliases.includes(analysis.id));
   const findings = family ? ws.active?.risk.findings.filter(finding => aliases.includes(finding.attackId ?? '') || finding.attackId === entry.id) ?? [] : [];
+  const assumptions = list(entry.assumptions);
+  const controls = [...new Set([...list(entry.controls), ...list(entry.control)])];
   const limits = [...new Set([...list(entry.limitations), ...list(entry.limitation)])];
   return <div className="al-register-detail">
     {entry.summary ? <p>{entry.summary}</p> : null}
     <dl>
-      {entry.implemented ? <><dt>Implemented portion</dt><dd>{entry.implemented}</dd></> : entry.description ? <><dt>Description</dt><dd>{entry.description}</dd></> : null}
+      {entry.implemented ? <><dt>Implemented portion</dt><dd>{entry.implemented}</dd></> : null}
+      {entry.description && entry.description !== entry.implemented && entry.description !== entry.summary ? <><dt>Description</dt><dd>{entry.description}</dd></> : null}
       {entry.applicability ? <><dt>Applicability</dt><dd>{entry.applicability}</dd></> : null}
-      {entry.mitigation ? <><dt>Possible response</dt><dd>{entry.mitigation}</dd></> : null}
+      {assumptions.length ? <><dt>Assumptions</dt><dd><ul>{assumptions.map((item, index) => <li key={index}>{item}</li>)}</ul></dd></> : null}
+      {controls.length ? <><dt>Controls</dt><dd><ul>{controls.map((item, index) => <li key={index}>{item}</li>)}</ul></dd></> : null}
+      {entry.mitigation ? <><dt>Mitigation / response</dt><dd>{entry.mitigation}</dd></> : null}
       {entry.scientific_tradeoff ? <><dt>Research tradeoff</dt><dd>{entry.scientific_tradeoff}</dd></> : null}
       {entry.engineMethod ? <><dt>Engine method</dt><dd><code>{entry.engineMethod}</code></dd></> : null}
-      {limits.length ? <><dt>Limits</dt><dd><ul>{limits.map((limit, index) => <li key={index}>{limit}</li>)}</ul></dd></> : null}
+      {limits.length ? <><dt>Limitations</dt><dd><ul>{limits.map((limit, index) => <li key={index}>{limit}</li>)}</ul></dd></> : null}
     </dl>
     {family ? <div className="al-aliases"><h4>Mapped engine analyses</h4>{analyses.length ? <ul>{analyses.map(analysis => <li key={analysis.id}><span>{analysis.name ?? analysis.id}</span><Capability status={analysis.status} /></li>)}</ul> : <p>No executable analysis is mapped to this family.</p>}<p className="al-note">Aliases organize the catalogue. They do not mean every part of the broad family was tested.</p></div> : null}
     {family ? <div className="al-candidate-findings"><h4>{ws.active ? `Mapped findings in ${ws.labelOf(ws.active.candidateId)}` : 'Candidate evidence'}</h4>{findings.length ? <ul>{findings.map(finding => <li key={finding.id}><Capability status={finding.status} label={finding.status === 'implemented' ? 'Measured' : undefined} /><p>{finding.narrative}</p>{finding.caveats?.length ? <small>{finding.caveats.join(' ')}</small> : null}</li>)}</ul> : <p>{ws.active ? 'No matching finding was returned for this snapshot. The family has not passed.' : 'No candidate is selected. Catalogue capabilities are independent of candidate measurements.'}</p>}</div> : null}
@@ -67,6 +83,7 @@ export function ThreatRegister({ registry }: { registry: Registry }) {
   const unsupported = registry.attacks.filter(entry => entry.status === 'unsupported').length;
   return <section className="al-register">
     <div className="al-register-counts"><div><strong>{num(registry.attacks.length, 0)}</strong><span>threat families</span></div><div><strong>{num(implemented, 0)}</strong><span>implemented scope</span></div><div><strong>{num(partial, 0)}</strong><span>partial scope</span></div><div><strong>{num(unsupported, 0)}</strong><span>unsupported</span></div></div>
+    <p className="al-register-caveat"><b>Catalogue coverage is not candidate execution:</b> not all {num(registry.attacks.length, 0)} threat families are executed. Only the implemented or partial analyses mapped to returned findings run on a candidate; unsupported families remain unassessed.</p>
     <Notice tone="warn" title="Genomic and family inference are uncovered.">Tabular uniqueness and generalization do not evaluate variant linkage, relatives, trajectories or operational external record linkage. The fictional linkage demonstration does not close those gaps.</Notice>
     {ws.active ? <EvidenceBanner compact /> : null}
     <div className="al-register-controls"><label className="al-search"><Search size={15} aria-hidden="true" /><span className="sr-only">Search threat families</span><input type="search" placeholder="Search threats, methods, limitations…" value={query} onChange={event => setQuery(event.target.value)} /></label><label className="al-status-filter"><span className="sr-only">Filter threat implementation status</span><select value={status} onChange={event => setStatus(event.target.value)}><option value="all">All statuses</option><option value="implemented">Implemented</option><option value="partial">Partial</option><option value="unsupported">Unsupported</option></select></label><span role="status">{num(filtered.length, 0)} of {num(registry.attacks.length, 0)}</span></div>

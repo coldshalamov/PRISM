@@ -16,8 +16,19 @@ export class ApiError extends Error {
 }
 
 /** Codes the service returns when the in-memory session no longer holds an object. */
-export const SESSION_LOST_CODES = new Set(['dataset_not_found', 'candidate_not_found', 'search_not_found']);
+export const SESSION_LOST_CODES = new Set(['dataset_not_found', 'candidate_not_found', 'search_not_found', 'session_not_found', 'session_expired']);
+export const CANDIDATE_LIMIT_CODES = new Set(['candidate_limit_exceeded', 'max_candidates_exceeded', 'session_candidate_limit', 'too_many_candidates', 'candidate_cap_reached', 'session_limit_exceeded']);
+export const STORAGE_ERROR_CODES = new Set(['storage_error', 'storage_unavailable', 'archie_error', 'persistence_failed', 'session_storage_failed']);
 export const isAbort = (error: unknown) => error instanceof ApiError && error.code === 'ABORTED';
+export const isCandidateLimitError = (error: unknown) =>
+  error instanceof ApiError && (CANDIDATE_LIMIT_CODES.has(error.code) || /candidate limit|max(imum)?\s+candidates|too many candidates|session.*candidate.*cap/i.test(error.message));
+export const isStorageError = (error: unknown) =>
+  error instanceof ApiError && (STORAGE_ERROR_CODES.has(error.code) || /archie|session storage|storage unavailable|persistence failed/i.test(error.message));
+
+let hostedModeSeen = false;
+export function markHostedMode(isHosted: boolean) {
+  hostedModeSeen = isHosted;
+}
 
 function describeDetails(details: unknown): string {
   if (!details) return '';
@@ -35,7 +46,7 @@ function describeDetails(details: unknown): string {
 }
 
 /** The wording depends on where the page is served from: a local run can be restarted, a hosted demo cannot. */
-const unreachableMessage = (): string => (isLocalHost(window.location.hostname)
+const unreachableMessage = (): string => (isLocalHost(window.location.hostname) && !hostedModeSeen
   ? 'The local PRISM service is not reachable. Start the backend on 127.0.0.1:8000 and retry.'
   : 'The PRISM service is not reachable. Check your connection and retry in a moment.');
 

@@ -1,7 +1,7 @@
 import { cleanSteps, cleanWorkload } from './api';
 import { normalizeSteps } from './recipe';
 import type { RecipeStep } from './recipe';
-import type { Candidate, ColumnSpec, Dataset, Finding, ResearchQuery, UtilityQuery } from './types';
+import type { Candidate, ColumnSpec, Dataset, Finding, ResearchQuery, RowUnit, UtilityQuery } from './types';
 
 /* Client-side readings of service results. Nothing here invents measurements: it only
    classifies, compares, or re-checks values the local service already computed. */
@@ -55,15 +55,32 @@ export const OBJECTIVES = [
 ] as const;
 export type ObjectiveKey = typeof OBJECTIVES[number]['key'];
 
+const finiteFraction = (value: unknown): number | null =>
+  typeof value === 'number' && Number.isFinite(value) && value >= 0 && value <= 1 ? value : null;
+
 export function objectiveValues(candidate: Candidate, originalRows: number): Record<ObjectiveKey, number | null> {
   const metrics = candidate.risk.metrics;
-  const suppression = candidate.suppression_rate
-    ?? (originalRows > 0 ? Math.max(0, (originalRows - candidate.rowCount) / originalRows) : null);
+  const targets = candidate.threatModel?.sensitive ?? candidate.risk.sensitive_targets;
+  const results = candidate.risk.sensitive;
+  const sensitiveCovered = Boolean(
+    targets?.length && results
+    && targets.every(target => results.some(result => result.column === target && result.status === 'implemented'))
+    && !candidate.constraints.some(check => !check.pass && ['sensitive-target-coverage', 'sensitive-inference-coverage'].includes(check.id)),
+  );
+  const returnedSuppression = finiteFraction(candidate.suppression_rate ?? candidate.transformReport?.suppression_rate);
+  const sourceRows = typeof candidate.utility.rows_original === 'number' && Number.isFinite(candidate.utility.rows_original)
+    ? candidate.utility.rows_original
+    : originalRows;
+  const suppression = returnedSuppression !== null
+    ? returnedSuppression
+    : candidate.recipe.releaseMode === 'row_release' && !candidate.auditMode && sourceRows > 0 && candidate.rowCount <= sourceRows
+      ? finiteFraction((sourceRows - candidate.rowCount) / sourceRows)
+      : null;
   return {
-    sample_unique: metrics.sample_unique ?? null,
-    sensitive_guess_advantage: metrics.sensitive_guess_advantage ?? null,
+    sample_unique: finiteFraction(metrics.sample_unique),
+    sensitive_guess_advantage: sensitiveCovered ? finiteFraction(metrics.sensitive_guess_advantage) : null,
     suppression_rate: suppression,
-    scientific_query_loss: candidate.utility.loss ?? null,
+    scientific_query_loss: typeof candidate.utility.loss === 'number' && Number.isFinite(candidate.utility.loss) ? candidate.utility.loss : null,
   };
 }
 
@@ -113,12 +130,18 @@ export const STALE_LABEL: Record<StaleReason, string> = {
   recipe: 'recipe', threat: 'attacker assumptions', workload: 'research questions', classifications: 'field classifications',
 };
 
+const normalizePositive = (value: unknown): string => {
+  if (value === true || value === 1 || value === '1' || (typeof value === 'string' && value.trim().toLowerCase() === 'true')) return '1';
+  if (value === false || value === 0 || value === '0' || (typeof value === 'string' && value.trim().toLowerCase() === 'false')) return '0';
+  return String(value ?? '1').trim();
+};
 const canonQuery = (query: ResearchQuery) => ({
   id: query.id, type: query.type, groupBy: query.groupBy ?? [], target: query.target ?? null, filter: query.filter ?? {},
-  positiveValue: query.positiveValue ?? 1, weight: query.weight, tolerance: query.tolerance, minCohort: query.minCohort,
+  positiveValue: ['group_rate', 'difference_in_rates'].includes(query.type) ? normalizePositive(query.positiveValue) : null,
+  weight: query.weight, tolerance: query.tolerance, minCohort: query.minCohort,
 });
 export const workloadKey = (workload: ResearchQuery[]) => JSON.stringify(cleanWorkload(workload).map(canonQuery));
-const schemaKey = (schema: ColumnSpec[]) => JSON.stringify(schema.map(c => [c.name, c.dtype, c.role, c.unit ?? null]));
+const schemaKey = (schema: ColumnSpec[]) => JSON.stringify(schema.map(c => [c.name, c.dtype, c.role, c.unit ?? null, c.importance]));
 const setKey = (items: string[]) => JSON.stringify([...items].sort());
 
 export interface CurrentControls {
@@ -127,7 +150,9 @@ export interface CurrentControls {
   secret: string[];
   membershipKnown: boolean;
   workload: ResearchQuery[];
+  workloadDirty?: boolean;
   schema: ColumnSpec[];
+  rowUnit?: RowUnit | null;
 }
 
 export function staleReasons(candidate: Candidate | null, current: CurrentControls | null): StaleReason[] {
@@ -140,12 +165,18 @@ export function staleReasons(candidate: Candidate | null, current: CurrentContro
   }
   const frozenKnown = candidate.threatModel?.qi ?? candidate.risk.qi;
   const frozenSecret = candidate.threatModel?.sensitive ?? candidate.risk.sensitive_targets;
-  const frozenMembership = (candidate.threatContext ?? candidate.risk.threat_context)?.membershipKnown;
+  const frozenContext = candidate.threatContext ?? candidate.risk.threat_context;
+  const frozenMembership = frozenContext?.membershipKnown;
   if ((frozenKnown && setKey(frozenKnown) !== setKey(current.known))
     || (frozenSecret && setKey(frozenSecret) !== setKey(current.secret))
     || frozenMembership !== current.membershipKnown) reasons.push('threat');
-  if (candidate.workload && workloadKey(candidate.workload) !== workloadKey(current.workload)) reasons.push('workload');
-  if (candidate.schema && schemaKey(candidate.schema) !== schemaKey(current.schema)) reasons.push('classifications');
+  if (current.workloadDirty || (candidate.workload && workloadKey(candidate.workload) !== workloadKey(current.workload))) reasons.push('workload');
+  const unitDrifted = Boolean(
+    current.rowUnit && frozenContext
+    && ((frozenContext.entityColumn !== undefined && (frozenContext.entityColumn ?? null) !== (current.rowUnit.entityColumn ?? null))
+      || (frozenContext.oneRowPerPersonConfirmed !== undefined && Boolean(frozenContext.oneRowPerPersonConfirmed) !== Boolean(current.rowUnit.oneRowPerPersonConfirmed))),
+  );
+  if ((candidate.schema && schemaKey(candidate.schema) !== schemaKey(current.schema)) || unitDrifted) reasons.push('classifications');
   return reasons;
 }
 

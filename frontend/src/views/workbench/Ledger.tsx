@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { ChevronDown, ChevronUp, ShieldAlert } from 'lucide-react';
 import { findingCoverage, isAudit, isLinkageFinding, linkageOf, queryOutcome, rowCountNote, STALE_LABEL } from '../../analysis';
-import { num, pct, pointsDelta } from '../../format';
+import { num, numDelta, pct, pointsDelta } from '../../format';
 import { queryValue, resultUnit } from '../intent/QueryResults';
 import { Empty, Notice } from '../../ui/Feedback';
 import { Facts } from '../../ui/Facts';
@@ -60,10 +60,10 @@ function measuresFor(candidate: Candidate, baseline: Candidate | null, originalR
       toText: link.state === 'measured' ? `${num(link.numerator, 0)} / ${num(link.denominator, 0)}` : undefined,
       format: v => pct(v), higherIsBetter: false, bar: true, delta: (f, t) => pointsDelta(f, t),
     },
-    { id: 'k_min', label: 'Smallest group (k)', glossary: 'k_min', from: get(b, 'k_min'), to: get(m, 'k_min'), format: v => num(v, 0), higherIsBetter: true, delta: (f, t) => `${t >= f ? '+' : '−'}${num(Math.abs(t - f), 0)}` },
+    { id: 'k_min', label: 'Smallest group (k)', glossary: 'k_min', from: get(b, 'k_min'), to: get(m, 'k_min'), format: v => num(v, 0), higherIsBetter: true, delta: (f, t) => numDelta(f, t, 0) },
     { id: 'sensitive_guess_advantage', label: 'Sensitive inference advantage', glossary: 'guess_advantage', from: get(b, 'sensitive_guess_advantage'), to: get(m, 'sensitive_guess_advantage'), format: v => pct(v), higherIsBetter: false, bar: true, delta: (f, t) => pointsDelta(f, t) },
     { id: 'p_guess', label: 'Single-guess correctness', glossary: 'p_guess', from: membershipKnown ? get(b, 'p_guess') : null, to: membershipKnown ? get(m, 'p_guess') : null, naText: membershipKnown ? undefined : 'Not applicable: membership unknown', format: v => pct(v), higherIsBetter: false, bar: true, delta: (f, t) => pointsDelta(f, t) },
-    { id: 'row_entropy_bits', label: 'Row-index uncertainty (bits)', glossary: 'row_entropy', from: membershipKnown ? get(b, 'row_entropy_bits') : null, to: membershipKnown ? get(m, 'row_entropy_bits') : null, naText: membershipKnown ? undefined : 'Not applicable: membership unknown', format: v => num(v, 2), higherIsBetter: true, delta: (f, t) => `${t >= f ? '+' : '−'}${num(Math.abs(t - f), 2)}` },
+    { id: 'row_entropy_bits', label: 'Row-index uncertainty (bits)', glossary: 'row_entropy', from: membershipKnown ? get(b, 'row_entropy_bits') : null, to: membershipKnown ? get(m, 'row_entropy_bits') : null, naText: membershipKnown ? undefined : 'Not applicable: membership unknown', format: v => num(v, 2), higherIsBetter: true, delta: (f, t) => numDelta(f, t, 2) },
     {
       id: 'suppression', label: external ? 'Rows fewer than the source' : 'Rows suppressed', glossary: 'suppression',
       from: baselineMissing !== null ? Math.max(0, baselineMissing) : null, to: moreRows ? null : missing,
@@ -73,7 +73,7 @@ function measuresFor(candidate: Candidate, baseline: Candidate | null, originalR
     {
       id: 'loss', label: 'Research-query loss', glossary: 'loss', from: baseline ? baseline.utility.loss ?? null : null, to: candidate.utility.loss,
       naText: candidate.utility.queries.length ? 'Unavailable: a weighted question could not be computed' : 'Unavailable: no research questions', format: v => num(v, 3), higherIsBetter: false,
-      delta: (f, t) => `${t >= f ? '+' : '−'}${num(Math.abs(t - f), 3)}`,
+      delta: (f, t) => numDelta(f, t, 3),
     },
   ];
 }
@@ -81,6 +81,7 @@ function measuresFor(candidate: Candidate, baseline: Candidate | null, originalR
 function MeasureRow({ measure }: { measure: Measure }) {
   const { from, to } = measure;
   const direction = from === null || to === null ? 'unknown' : Math.abs(to - from) < 1e-9 ? 'same' : (to > from) === measure.higherIsBetter ? 'better' : 'worse';
+  const signGlyph = from === null || to === null || Math.abs(to - from) < 1e-9 ? '·' : to < from ? '▾' : '▴';
   const unavailable = to === null;
   return (
     <tr className={unavailable ? 'row-na' : ''}>
@@ -94,7 +95,7 @@ function MeasureRow({ measure }: { measure: Measure }) {
       <td className={`delta ${direction}`}>
         {from !== null && to !== null && measure.delta ? (
           <>
-            <span aria-hidden="true">{direction === 'better' ? '▾' : direction === 'worse' ? '▴' : '·'}</span>
+            <span aria-hidden="true">{signGlyph}</span>
             <span>{measure.delta(from, to)}</span>
             <span className="sr-only">{direction === 'better' ? ' (improved)' : direction === 'worse' ? ' (worse)' : ''}</span>
           </>
@@ -249,11 +250,18 @@ export function Ledger({ onShowSubgroups }: { onShowSubgroups: () => void }) {
                           <tr key={query.id}>
                             <th scope="row">
                               {query.label}
+                              {query.inputUnit && query.comparisonUnit ? (
+                                <small className="muted" style={{ display: 'block', fontWeight: 400 }}>
+                                  Compared in {query.comparisonUnit} (converted from source {query.inputUnit}{query.inputTolerance !== undefined ? `; tolerance ${num(query.inputTolerance, 3)} ${query.inputUnit} → ${num(query.tolerance, 3)} ${query.comparisonUnit}` : ''})
+                                </small>
+                              ) : null}
                               {query.issues?.length ? <small className="issue">{query.issues.join(' · ')}</small> : null}
-                              {query.filterCoverage || query.inclusionBounds ? (
-                                <details className="why"><summary>Why this may be unavailable</summary>
-                                  {query.filterCoverage ? <Facts value={query.filterCoverage} /> : null}
-                                  {query.inclusionBounds ? <Facts value={query.inclusionBounds} /> : null}
+                              {query.warnings?.length ? <small className="muted" style={{ display: 'block', fontWeight: 400 }}>{query.warnings.join(' · ')}</small> : null}
+                              {query.filterCoverage !== undefined || query.inclusionBounds !== undefined ? (
+                                <details className="why" open={outcome === 'uncovered'}>
+                                  <summary>Interval filter coverage and inclusion bounds</summary>
+                                  {query.filterCoverage !== undefined ? <div><b>Filter coverage</b><Facts value={query.filterCoverage} /></div> : null}
+                                  {query.inclusionBounds !== undefined ? <div><b>Inclusion bounds</b><Facts value={query.inclusionBounds} /></div> : null}
                                 </details>
                               ) : null}
                             </th>
