@@ -264,7 +264,7 @@
 }
 
 /* ---------- guided review: one full-width sheet, no rail, toolbar or inspector ---------- */
-.app.is-guide { grid-template-columns: minmax(0, 1fr); grid-template-rows: var(--topbar-h) minmax(0, 1fr); grid-template-areas: 'top' 'main'; }
+.app.is-guide, .app.is-guide.insp-open:has(.inspector:empty) { grid-template-columns: minmax(0, 1fr); grid-template-rows: var(--topbar-h) minmax(0, 1fr); grid-template-areas: 'top' 'main'; }
 .app.is-guide .rail, .app.is-guide .toolbar, .app.is-guide .inspector, .app.is-guide .bottom-nav { display: none; }
 .app.is-guide .canvas { border-radius: var(--r-4) var(--r-4) 0 0; }
 .guide-switch { margin-left: 4px; background: rgba(255, 255, 255, 0.1); color: var(--shell-ink); box-shadow: none; }
