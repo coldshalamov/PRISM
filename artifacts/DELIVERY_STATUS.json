@@ -1,9 +1,9 @@
 {
   "application": "PRISM",
-  "status": "v3_hosted_upload_release_in_progress",
+  "status": "cloud_frontend_integration_and_publication_in_progress",
   "backend": {
     "tests": 179,
-    "result": "passed integrated hosted upload/v3 checkpoint",
+    "result": "179 integrated tests passed",
     "laterFocused": "9 semantic pipeline/alternative tests passed after concrete attacker prerequisites; recipe identity and representation-aware severity directly checked",
     "warning": "Starlette TestClient httpx deprecation; checks passed"
   },
@@ -26,35 +26,36 @@
     ],
     "implementation": "Desktop-first source-visible workspace, direct hosted import/audit/export, canceled-upload response guards and optional model input view",
     "requiredConsecutiveAuditApprovals": 3,
-    "actualConsecutiveAuditApprovals": 0,
-    "liveVerification": "Local native CSV file import, direct Jev and1440/768/390 first-use views passed; final hosted browser route pending",
+    "actualConsecutiveAuditApprovals": 3,
+    "liveVerification": "Public native CSV import, manual field roles, C1 exact matches 0/480; keeping AGE exact and re-evaluating C2 changed to480/480; external audit0unique andlinkageNotapplicable; real4formatdownloads; JSON/XLSX480x9andbadJSONrecovery passed. Userrequestedcloudagent simplifytheinterface; simplificationpendingcloudpush.",
     "previousFrozenApprovals": 3,
-    "reviewedSource": "9f40ec12e0178d4eabe4c9bc2663ceb0938c861d",
+    "reviewedSource": "8edb1e130eb73fdba24fff916a1bb248a017cc02",
     "reviewReports": [
-      "docs/frontend-reviews/semantic-review-1.md",
-      "docs/frontend-reviews/semantic-review-2.md",
-      "docs/frontend-reviews/semantic-review-3.md"
+      "docs/frontend-reviews/v3-final-1.md",
+      "docs/frontend-reviews/v3-final-2.md",
+      "docs/frontend-reviews/v3-final-3.md"
     ],
-    "nonBlockingFollowUp": "Focusable semantic-table scroll region lacks its own focus-visible outline; contained native controls retain focus styles. Not a WCAG certification."
+    "reviewScope": "Approvals cover h; later cloud layout and plain-copy changes need targeted rendered acceptance, not inherited approval."
   },
   "model": {
     "frontend": "Claude Sonnet 5.5 XHigh through Devin3000.11.3, tungsten-shampoo, completed",
     "improvement": "OpenCode Go Gemini4 Argon completed semantic audit; malformed data, unindexed candidate restoration and unconfirmed correction draft repairs verified",
-    "semanticFrontend": "Claude Sonnet5.5 XHigh via Devin, pickled-border, completed; controller integrated exact ontology, revisions, previews and group focus"
+    "semanticFrontend": "Claude Sonnet5.5 XHigh via Devin, pickled-border, completed; controller integrated exact ontology, revisions, previews and group focus",
+    "copy": "AGY1.4.0 Gemini3.8FlashHigh completed136.33s; conversationc68f4978-42d1-4cdc-b21c-3a523b039b94; corrected provider topology and identity overclaims before integration"
   },
-  "packaging": "v0.1.0 available; v0.1.1 rebuild pending final app freeze",
+  "packaging": "0.1.1 rebuild after merged cloud assets in progress; prior installed backend/current formats passed",
   "releaseCleared": false,
   "track": "Enterprise AI",
   "deployment": {
     "demo": "https://41d0bdfd-0065-4b0b-a973-efbe1c1a9c5e.archie.site/",
     "repository": "https://github.com/coldshalamov/PRISM",
-    "backend": "Archie HTML entry and Core durable fictional configuration; Vercel immutable frontend assets and deterministic Python; optional OpenRouter Jev",
-    "verified": "Final e: architecture Jev disease_stage 86%, two calls; semantic480→96, user correction+reassessment, 8real searchresults/11attempts/6nondominated/1checksmet, allsixviews, JSON+CSVdownloads. Earlier d: kit75→20, fourdownloads, architecture24search.",
-    "publishedRevision": "r20261017e",
-    "nextRevision": "r20261017f",
+    "backend": "Archie HTML entry and Core uploaded tables/session configuration; Vercel immutable frontend assets and Python computation; optional OpenRouter Jev",
+    "verified": "Final e: architecture Jev disease_stage 86%, two calls; semantic480\u219296, user correction+reassessment, 8real searchresults/11attempts/6nondominated/1checksmet, allsixviews, JSON+CSVdownloads. Earlier d: kit75\u219220, fourdownloads, architecture24search.",
+    "publishedRevision": "r20261017h",
+    "nextRevision": "r20261017k",
     "uploads": {
       "enabledInSource": true,
-      "publicVerification": "pending final publication",
+      "publicVerification": "Passed native CSV, JSON, XLSX; malformed JSON recovery; external protected CSV unknown pairing; actual HTML/JSON/recipe/CSV downloads on public revision h",
       "formats": [
         "CSV",
         "JSON",
@@ -69,14 +70,15 @@
     }
   },
   "submission": {
-    "state": "Existing draft retained; upload-enabled copy and final screenshot refresh pending",
+    "state": "Page observed Project Submitted with user description and Update Submission button; agent never clicked Submit or Update",
     "track": "Enterprise AI",
     "project": "PRISM",
     "description": "Current Jev and semantic benchmark copy",
     "screenshots": 3,
-    "submitted": false,
+    "submitted": true,
     "submitAuthority": "User only; Submit Project never clicked",
-    "url": "https://hackathon.miamiaihub.com/submit"
+    "url": "https://hackathon.miamiaihub.com/submit",
+    "submittedBy": "not the agent; existing state observed in authenticated page"
   },
   "semantic": {
     "ontologyTypes": 145,
