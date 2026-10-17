@@ -1,7 +1,7 @@
 import { lazy, Suspense, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
   ClipboardCheck, Download, FileUp, HelpCircle, Keyboard, Library as LibraryIcon, Menu as MenuIcon, PanelLeft,
-  PanelRight, RotateCcw, ScanSearch, ShieldCheck, Trash2, FlaskConical, Play, Database, X, Beaker,
+  PanelRight, Sparkles, Wrench, RotateCcw, ScanSearch, ShieldCheck, Trash2, FlaskConical, Play, Database, X, Beaker,
 } from 'lucide-react';
 import { DialogContext, useDialogs } from '../dialogs';
 import type { DialogId } from '../dialogs';
@@ -21,6 +21,7 @@ import { ImportDialog, ClearDialog, PrivacyDialog, ShortcutsDialog, PresetDialog
 import { SchemaReview } from './SchemaReview';
 import type { ViewId } from '../types';
 
+const Guide = lazy(() => import('../views/Guide'));
 const Workbench = lazy(() => import('../views/Workbench'));
 const KnowledgeMap = lazy(() => import('../views/KnowledgeMap'));
 const AttackLab = lazy(() => import('../views/AttackLab'));
@@ -29,7 +30,7 @@ const ParetoExplorer = lazy(() => import('../views/ParetoExplorer'));
 const Report = lazy(() => import('../views/Report'));
 
 const VIEW_COMPONENTS: Record<ViewId, React.LazyExoticComponent<() => React.JSX.Element>> = {
-  workbench: Workbench, map: KnowledgeMap, lab: AttackLab, intent: ResearchIntent, pareto: ParetoExplorer, report: Report,
+  guide: Guide, workbench: Workbench, map: KnowledgeMap, lab: AttackLab, intent: ResearchIntent, pareto: ParetoExplorer, report: Report,
 };
 
 /* Menus are rebuilt on every render on purpose: each action closes over the current recipe, attacker
@@ -165,7 +166,8 @@ function SessionBanner() {
 }
 
 function TopBar({ small, onLibrary, onInspector }: { small: boolean; onLibrary: () => void; onInspector: () => void }) {
-  const { dataset, health, healthInfo, active, labelOf, deployment } = useWorkspace();
+  const { dataset, health, healthInfo, active, labelOf, deployment, view, setView } = useWorkspace();
+  const guide = view === 'guide';
   const menus = useAppMenus();
   const flat = menus.flatMap(menu => [...menu.items, { id: `sep-${menu.id}`, separator: true }]).slice(0, -1) as MenuItem[];
   const fictional = isFictional(deployment, dataset);
@@ -174,7 +176,7 @@ function TopBar({ small, onLibrary, onInspector }: { small: boolean; onLibrary: 
       : deployment.kind === 'hosted' ? 'Hosted demo' : deployment.kind === 'remote' ? 'Remote origin' : 'Local';
   return (
     <header className="topbar">
-      {small ? <Logo size={26} /> : null}
+      {small || guide ? <Logo size={26} /> : null}
       {small ? <button type="button" className="icon-btn dark" aria-label="Open library" onClick={onLibrary}><LibraryIcon size={18} /></button> : null}
       <div className="doc-title">
         <span className="doc-name" title={dataset?.name}>{dataset ? dataset.name : 'PRISM'}</span>
@@ -185,11 +187,13 @@ function TopBar({ small, onLibrary, onInspector }: { small: boolean; onLibrary: 
           </span>
         ) : null}
       </div>
-      {small ? (
+      {guide ? null : small ? (
         <MenuButton className="icon-btn dark" ariaLabel="Application menu" icon={<MenuIcon size={18} />} caret={false} align="right" items={flat} />
       ) : <MenuBar menus={menus} />}
       <div className="topbar-spacer" />
-      {!small ? <ModeSelector /> : null}
+      {guide ? <button type="button" className="btn small guide-switch" onClick={() => setView('workbench')}><Wrench size={14} />Advanced tools</button>
+        : <button type="button" className="btn small guide-switch" onClick={() => setView('guide')}><Sparkles size={14} />Simple view</button>}
+      {!small && !guide ? <ModeSelector /> : null}
       <span
         className={`health-line ${health} ${deployment.kind}`} role="status"
         title={`${deployment.label}${health === 'ok' && healthInfo?.version ? ` · service ${healthInfo.version}` : ''}`}
@@ -197,7 +201,7 @@ function TopBar({ small, onLibrary, onInspector }: { small: boolean; onLibrary: 
         <span className={`dot ${health}`} aria-hidden="true" />
         {modeText}
       </span>
-      <button type="button" className="icon-btn dark" aria-label="Toggle inspector" onClick={onInspector}><PanelRight size={18} /></button>
+      {guide ? null : <button type="button" className="icon-btn dark" aria-label="Toggle inspector" onClick={onInspector}><PanelRight size={18} /></button>}
     </header>
   );
 }
@@ -314,7 +318,7 @@ export default function Shell() {
   }, []);
 
   /* A view change is announced and titled, and a long page starts at its top. */
-  const viewLabel = NAV.find(item => item.id === view)?.label ?? 'Workbench';
+  const viewLabel = view === 'guide' ? 'Guided review' : NAV.find(item => item.id === view)?.label ?? 'Workbench';
   const [announcement, setAnnouncement] = useState('');
   useEffect(() => {
     document.title = `${viewLabel} · PRISM${deployment.hosted ? ' · Hosted fictional demo' : ''}`;
@@ -342,6 +346,7 @@ export default function Shell() {
     inspectorDocked ? 'insp-open' : 'insp-closed',
     small ? 'is-small' : '',
     deployment.hosted ? 'is-hosted' : '',
+    view === 'guide' ? 'is-guide' : '',
   ].join(' ');
 
   return (

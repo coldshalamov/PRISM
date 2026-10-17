@@ -393,6 +393,6 @@ export interface ApiHealth {
   [key: string]: unknown;
 }
 
-export type ViewId = 'workbench' | 'map' | 'lab' | 'intent' | 'pareto' | 'report';
+export type ViewId = 'guide' | 'workbench' | 'map' | 'lab' | 'intent' | 'pareto' | 'report';
 export type ExportFormat = 'json' | 'html' | 'recipe' | 'csv';
 export type AuditMode = 'unpaired_microdata' | 'paired_row_preserving' | 'synthetic';

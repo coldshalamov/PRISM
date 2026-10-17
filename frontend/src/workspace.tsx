@@ -33,7 +33,9 @@ export interface CandidateMeta { kind: 'created' | 'search' | 'audit'; label: st
 export interface UiPrefs { library: boolean; inspector: boolean; ledger: boolean }
 
 const UI_KEY = 'prism.ui.v1';
-const VIEWS: ViewId[] = ['workbench', 'map', 'lab', 'intent', 'pareto', 'report'];
+const VIEWS: ViewId[] = ['guide', 'workbench', 'map', 'lab', 'intent', 'pareto', 'report'];
+/* The screen a visitor lands on when the address names none. */
+const DEFAULT_VIEW: ViewId = 'workbench';
 const BUSY_KEYS: BusyKey[] = ['boot', 'apply', 'assess', 'search', 'schema', 'import', 'audit', 'export', 'clear'];
 const BUSY_LABEL: Record<BusyKey, string> = {
   boot: 'loading the demo', apply: 'the candidate evaluation', assess: 'the re-evaluation', search: 'the candidate search',
@@ -50,7 +52,7 @@ function loadPrefs(): UiPrefs {
 }
 function viewFromHash(): ViewId {
   const hash = window.location.hash.replace(/^#\/?/, '') as ViewId;
-  return VIEWS.includes(hash) ? hash : 'workbench';
+  return VIEWS.includes(hash) ? hash : DEFAULT_VIEW;
 }
 const errorText = (error: unknown, fallback: string) => (error instanceof Error && error.message ? error.message : fallback);
 const emptyThreat: Threat = { known: [], secret: [], membershipKnown: true };
