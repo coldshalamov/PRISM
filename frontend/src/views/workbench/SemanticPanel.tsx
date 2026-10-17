@@ -514,13 +514,13 @@ export function SemanticPanel({ selectedColumn, onSelectColumn, onSelectColumns 
 }
 
 /* ---------- Protection preference ---------- */
-interface Position { candidate: Candidate; label: string; unique: number; loss: number; kMin: number; pGuess: number | null; rows: number | null; checks: Feasibility }
+export interface Position { candidate: Candidate; label: string; unique: number; loss: number; kMin: number; pGuess: number | null; rows: number | null; checks: Feasibility }
 type Exclusion = 'dataset' | 'audit' | 'controls' | 'incomplete';
-interface PoolContext { datasetId: string; originalRows: number; membershipKnown: boolean; staleFor: (candidate: Candidate) => string[]; labelOf: (id: string) => string }
+export interface PoolContext { datasetId: string; originalRows: number; membershipKnown: boolean; staleFor: (candidate: Candidate) => string[]; labelOf: (id: string) => string }
 
 /* A snapshot is a position only if it is a real evaluated candidate of this dataset, measured under the controls now on screen
    (recipe drift is allowed), carries finite measurements, and has a recipe that can be restored. */
-function classify(candidate: Candidate, context: PoolContext): Position | Exclusion {
+export function classify(candidate: Candidate, context: PoolContext): Position | Exclusion {
   if (candidate.datasetId !== context.datasetId) return 'dataset';
   if (isAudit(candidate)) return 'audit';
   if (context.staleFor(candidate).some(reason => reason !== 'recipe')) return 'controls';
@@ -537,7 +537,7 @@ function classify(candidate: Candidate, context: PoolContext): Position | Exclus
 }
 
 /* Actual measured sample exposure orders the positions. Utility breaks ties; it is shown separately because loss need not be monotonic. */
-const byExposure = (a: Position, b: Position) => b.unique - a.unique || a.loss - b.loss || (b.pGuess ?? -1) - (a.pGuess ?? -1) || a.kMin - b.kMin
+export const byExposure = (a: Position, b: Position) => b.unique - a.unique || a.loss - b.loss || (b.pGuess ?? -1) - (a.pGuess ?? -1) || a.kMin - b.kMin
   || a.label.localeCompare(b.label, 'en', { numeric: true })
   || (a.candidate.candidateId < b.candidate.candidateId ? -1 : a.candidate.candidateId > b.candidate.candidateId ? 1 : 0);
 

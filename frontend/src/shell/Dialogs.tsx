@@ -111,7 +111,8 @@ function UploadDialog({ initial, onClose }: { initial: ImportTab; onClose: () =>
       if (!data) { setError('The file was not imported. Check the service message and try again.'); return; }
       if (tab === 'original') {
         ws.importOriginal(data);
-        dialogs.open('review');
+        if (ws.view === 'guide') onClose();
+        else dialogs.open('review');
       } else if (dataset) {
         setProtectedSet(data);
         setMapping(autoMap(dataset, data));
