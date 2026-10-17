@@ -153,7 +153,6 @@ export default function ResearchIntent() {
   const ws = useWorkspace(); const dialogs = useDialogs();
   const [selected, setSelected] = useState(() => ws.workloadDraft?.id ?? '');
   const [localError, setLocalError] = useState('');
-  const [editorVersion, setEditorVersion] = useState(0);
   const workload = ws.workload;
   const query = workload.find(item => item.id === selected) ?? workload[0];
   const dirty = ws.workloadDirty;
@@ -167,7 +166,6 @@ export default function ResearchIntent() {
   }, [query, storeDraft]);
   const discardDraft = useCallback(() => {
     ws.discardWorkloadDraft();
-    setEditorVersion(version => version + 1);
     setLocalError('');
   }, [ws]);
   const run = async () => {
@@ -200,7 +198,7 @@ export default function ResearchIntent() {
       <div className="intent-composer">
         <nav className="intent-question-list" aria-label="Research questions"><div className="intent-list-head"><span>Workload</span><span>{workload.length}</span></div>{workload.map((item, index) => <button type="button" className={query?.id === item.id ? 'selected' : ''} key={item.id} onClick={() => switchQuestion(item.id)} aria-current={query?.id === item.id ? 'true' : undefined}><span className="intent-question-number">{String(index + 1).padStart(2, '0')}</span><span><b>{queryTitle(item)}</b><small>Weight {num(item.weight)} · n ≥ {item.minCohort}{Object.keys(item.filter ?? {}).length ? ' · filtered' : ''}</small></span></button>)}{!workload.length ? <p>No questions yet. Add a question to define a measurable workload.</p> : null}</nav>
         <div className="intent-editing-column">{query ? <>
-          <QueryEditor key={`${query.id}-${editorVersion}-${JSON.stringify(query)}-${dirty ? 'dirty' : 'clean'}`} query={query} initialDraft={initialDraft} schema={ws.dataset.schema} onDraftChange={handleDraftChange} onDiscard={discardDraft} onSave={next => { ws.setWorkload(workload.map(item => item.id === next.id ? next : item)); setLocalError(''); }} />
+          <QueryEditor key={`${query.id}-${ws.workloadDraftVersion}-${JSON.stringify(query)}`} query={query} initialDraft={initialDraft} schema={ws.dataset.schema} onDraftChange={handleDraftChange} onDiscard={discardDraft} onSave={next => { ws.setWorkload(workload.map(item => item.id === next.id ? next : item)); setLocalError(''); }} />
           <div className="intent-question-actions"><div><button className="btn small" type="button" disabled={dirty || workload.indexOf(query) === 0} onClick={() => move(-1)} aria-label="Move question up"><ArrowUp size={14} /></button><button className="btn small" type="button" disabled={dirty || workload.indexOf(query) === workload.length - 1} onClick={() => move(1)} aria-label="Move question down"><ArrowDown size={14} /></button><button className="btn small" type="button" disabled={dirty || workload.length >= 20} onClick={() => append(query)}><Copy size={13} />Duplicate</button></div><div>{dirty ? <button type="button" className="btn small" onClick={discardDraft}><RotateCcw size={13} />Discard edits</button> : null}<button className="btn small danger" type="button" disabled={dirty} onClick={remove}><Trash2 size={13} />Remove question</button></div></div>
         </> : <Empty title="Begin with one research question" actions={<button className="btn primary" type="button" onClick={() => append()}><Plus size={14} />Add question</button>}>Choose a count, rate, mean, correlation or rate difference. Set the tolerance that would change your scientific conclusion.</Empty>}</div>
       </div>

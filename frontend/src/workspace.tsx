@@ -105,6 +105,7 @@ export interface Workspace {
   workload: ResearchQuery[];
   setWorkload: (workload: ResearchQuery[]) => void;
   workloadDirty: boolean;
+  workloadDraftVersion: number;
   workloadDraft: { id: string; draft: unknown } | null;
   setWorkloadDraft: (next: { id: string; draft: unknown; dirty: boolean } | null) => void;
   discardWorkloadDraft: () => void;
@@ -173,6 +174,7 @@ export function WorkspaceProvider({ children }: { children: ReactNode }) {
   const [steps, setStepsState] = useState<RecipeStep[]>([]);
   const [workload, setWorkloadState] = useState<ResearchQuery[]>([]);
   const [workloadDirty, setWorkloadDirty] = useState(false);
+  const [workloadDraftVersion, setWorkloadDraftVersion] = useState(0);
   const [workloadDraft, setWorkloadDraftState] = useState<{ id: string; draft: unknown } | null>(null);
   const [baseline, setBaseline] = useState<Candidate | null>(null);
   const [candidates, setCandidates] = useState<Candidate[]>([]);
@@ -378,6 +380,7 @@ export function WorkspaceProvider({ children }: { children: ReactNode }) {
   const discardWorkloadDraft = useCallback(() => {
     setWorkloadDirty(false);
     setWorkloadDraftState(null);
+    setWorkloadDraftVersion(version => version + 1);
   }, []);
   const setThreat = useCallback((next: Threat) => setThreatState(next), []);
 
@@ -758,7 +761,7 @@ export function WorkspaceProvider({ children }: { children: ReactNode }) {
     threat, setThreat, qi, sensitive,
     scenarioId, setScenarioId: setScenario, constraints, setConstraints,
     steps, setSteps, requestPreset, presetPrompt, resolvePreset, replacePrompt, requestReplace, resolveReplace,
-    workload, setWorkload, workloadDirty, workloadDraft, setWorkloadDraft, discardWorkloadDraft,
+    workload, setWorkload, workloadDirty, workloadDraftVersion, workloadDraft, setWorkloadDraft, discardWorkloadDraft,
     baseline, baselineUsable, candidates, active, select, meta, labelOf, findCandidate, stale, staleFor,
     search, compare, toggleCompare, registry, lab,
     busy, cancel, toasts, notify, dismissToast,
