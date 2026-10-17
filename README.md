@@ -1,107 +1,23 @@
-# PRISM
+# PRISM Archie hosting root
 
-[Open the fictional demo](https://prism-healthcare-taupe.vercel.app/) · [Pitch deck](https://prism-healthcare-taupe.vercel.app/pitch/) · [Download pitch PDF](https://prism-healthcare-taupe.vercel.app/pitch/PRISM-Pitch.pdf)
+This branch contains the reviewed, prebuilt React/Vite frontend and a minimal
+Next.js server adapter. It does not run Archie generation or replace the UI.
+Python compute remains at https://prism-healthcare-taupe.vercel.app and durable
+fictional configuration remains in Archie Core.
 
-PRISM is a local privacy engineering workbench for structured research datasets. It compares what a candidate row release reveals within its sample with what its transformations change in the research questions you care about.
+Use Node 24, run npm ci, then npm run build, then npm start. The platform may
+set PORT. Set PUBLIC_ARCHIE_ORIGIN to the actual public HTTPS origin with no
+trailing slash or path. This is the only adapter runtime environment variable;
+do not add Archie API keys or OAuth credentials. The platform must preserve
+the public Host header. A static-only CDN cannot execute the API proxy.
 
-Built for the **eMerge AI Hackathon, October 17, 2026**, Enterprise AI track: **AI safety, trust and governance**. Oncology is an independently generated fictional example; no sponsor or patient dataset is used.
+content/index.html and public/ are deliberately tracked on this deployment
+branch. Do not run npm run sync or package:root here: the original Vite source
+lives on main, where deploy/archie/scripts/package-root.mjs prepares this tree.
+Run npm test for focused proxy checks. After hosting is live, set
+PRISM_ADAPTER_URL to its actual HTTPS origin and run npm run smoke.
 
-## Background material and AI-tool disclosure
-
-This submission incorporates a supplied PRISM research architecture and Apache-2.0 starter kit. The adapted exact-linkage module, catalogue, benchmark fixtures and selected original documentation retain their attribution in [NOTICE](NOTICE), [the baseline reconciliation](docs/KIT_BASELINE.md) and [the original kit notices](docs/reference-kit/NOTICE). They are pre-existing material, not a claim of event-day authorship. The new application, integration and evaluation work is recorded in this repository.
-
-OpenAI Codex and parallel coding agents, Claude Sonnet5.5 through Claude Code and Devin, and OpenCode coding-agent tooling assisted implementation and review. Gemini4 Argon completed the requested frontend audit and improvement pass through OpenCode Go, using model `opencode-go/gemini-4-argon-contributor`. Current integration, independent-review and deployment status is recorded in [the delivery status](artifacts/DELIVERY_STATUS.json). These are development tools. The application runs deterministic Python privacy/utility calculations and an explicitly scoped statistical inference diagnostic; it does not call a generative AI model at runtime. Dependency names, versions and licenses are disclosed in [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md) and the lockfiles. The frontend distribution includes full runtime license texts at `/THIRD_PARTY_LICENSES.txt`.
-
-The demonstration is a deterministic, fictional 5,000-person oncology table. PRISM calculates sample uniqueness, exact-match QI class sizes, subset exposure, categorical sensitive-value inference and research-query differences. Its bounded search evaluates actual transformation recipes and marks their measured Pareto frontier. A frontier point or a passing constraint is **not release clearance**.
-
-## Run locally
-
-Use Python **3.11 or 3.12**, Node.js **20.19+ or 22.12+**, and npm. From this repository in PowerShell, the helper scripts install the locked environment, build the frontend and launch the app:
-
-```powershell
-.\setup.ps1
-.\start.ps1
-```
-
-`setup.ps1` discovers a compatible Python installation; use `-Python C:\path\to\python.exe` to select one explicitly. The equivalent manual setup is:
-
-```powershell
-py -3.11 -m venv .venv
-.\.venv\Scripts\python.exe -m pip install -e "backend[dev,adapters]"
-npm ci --prefix frontend
-npm run build --prefix frontend
-.\.venv\Scripts\prism.exe
-```
-
-Open [PRISM on this computer](http://127.0.0.1:8000). The Python command serves the built frontend and API on loopback only. Build the frontend before starting that process; restart it after rebuilding. The app has no paid API keys, model calls or runtime cloud service requirement. Package installation requires access to package registries.
-
-For the exact recorded Python dependency set, install `backend/requirements.lock.txt` before installing the editable project. The frontend dependency set is `frontend/package-lock.json`.
-
-```powershell
-.\.venv\Scripts\python.exe -m pip install -r backend/requirements.lock.txt
-.\.venv\Scripts\python.exe -m pip install --no-deps -e "backend[dev,adapters]"
-```
-
-For frontend development, keep the backend running and use `npm run dev --prefix frontend` in a second terminal. Open [the development frontend](http://127.0.0.1:5173); Vite proxies its API requests to loopback port 8000. Do not expose either service through a public tunnel or change the server bind for real data.
-
-## Hosted fictional demo
-
-The [public fictional demo](https://prism-healthcare-taupe.vercel.app/) uses Vercel project `prism-healthcare`. Vercel serves the React frontend and runs the real Python privacy/utility calculations. Archie Core Postgres stores durable fictional-demo configuration in one dedicated table, accessed through a server-only service role. This is an Archie-backed deployment; the frontend and Python compute run on Vercel. Actual deployed fixture calculations reproduce 75 then 20 correct matches; the [verification record](artifacts/verification.md) distinguishes API checks from frontend acceptance.
-
-The public adapter accepts only the two bundled fictional fixtures. CSV import and external-file audits remain available in the local workbench above. Each public visitor has an isolated session limited to 24 candidates per search, 40 candidates total, four search jobs, 64 KiB of configuration and 30 minutes of inactivity. Session clear removes that visitor's stored configuration. Candidate data is reconstructed from the fixtures across cold starts; source tables and protected-row previews are not stored in Archie. Abandoned expired configuration is inaccessible but remains until that visitor returns for lazy deletion.
-
-See [Archie + Vercel deployment](docs/ARCHIE_DEPLOYMENT.md) for the architecture, exact environment-variable names, deployment commands and fixture/API reproduction. The restricted Archie storage path has been checked live; that check does not establish public deployment availability or privacy/release clearance.
-
-## Try the complete workflow
-
-1. Load the synthetic oncology dataset, then review field roles and units. Direct identifiers, quasi-identifiers, sensitive attributes and research targets have different purposes. Imported generic weight has no inferred unit.
-2. Keep at least two analytical questions: response rate by mutation and stage, and mutation rate by stage. Set importance, error tolerance and minimum cohort size. Mean age by stage is another supplied query.
-3. Apply the baseline: remove declared direct identifiers, put age in five-year intervals, truncate ZIP to three digits and put weight in five-kg intervals. Birth dates and other retained attributes still deserve scrutiny. A ZIP prefix alone does not establish HIPAA Safe Harbor.
-4. Inspect the actual candidate and its distributions, correlations, research-query results and Knowledge Map. The metrics concern the declared fields and the finite released sample.
-5. Search 24 configurations. Compare several actual recipes, their failed constraints and their frontier status. A frontier candidate can still be infeasible; a small or constrained input can exhaust the available grammar before reaching the requested count.
-6. Export the evidence as HTML or JSON, the recipe as JSON, and the protected table as CSV. Direct-identifier columns block CSV export. Reports exclude table previews and private row alignment; aggregate labels, query definitions and results can still require review before sharing.
-7. Clear the local session when finished. This removes in-memory dataset, candidate and search references and rotates the session HMAC key. It does not delete files you imported or downloaded.
-
-[The demo script](docs/DEMO_SCRIPT.md) includes a short presentation route and reproducible PowerShell API examples, including an external two-file audit with reversed scientific correlation.
-
-## What runs
-
-| Capability | Implemented behavior |
-|---|---|
-| Intake | UTF-8 CSV, leading-zero ZIP preservation, strict headers/shape, type/role suggestions and schema review |
-| Transformations | Drop, mask, HMAC tokens, half-open bands, ZIP prefix, round, top/bottom code, rare categories, date generalization/shift, experimental noise/permutation, limited redaction, cell and capped row suppression |
-| Disclosure diagnostics | Exact sample uniqueness, minimum k, present-target guessing, conditional row-index entropy, bounded QI subset map, categorical l/homogeneity, categorical total-variation distance, in-sample inference and a separate within-table held-out diagnostic |
-| Research intent | Group rates/counts/means, Pearson correlation and two-cohort rate difference; weighted tolerance-normalized query loss, missing/undersized cohort and sign-flip failures |
-| Search | Deterministic memoized finite grammar; default 24 candidates, hard cap 80; separate objectives and recomputable nondominance; protected research-target roles |
-| External audit | Explicit original-to-protected column mapping; aggregate comparison by default; paired lineage only on an explicit owner-supplied claim |
-| Attack Lab | Executable fictional examples of aggregate differencing, cross-release combination, reversed correlation and exact-match auxiliary ambiguity |
-| Reports | Local JSON/HTML evidence, recipe JSON and protected CSV with identifier blocking and spreadsheet formula-cell escaping |
-| Optional integration | pyCANON categorical k/l/t cross-check, with installed-package smoke-test status reported separately from installation |
-
-The implemented release workflow is `row_release`. An imported file can be labeled synthetic for descriptive comparison, but Anonymeter attacks, trained synthetic generation, formal differential privacy, ARX/R bridges, production aggregate query services and controlled enclaves are unavailable. See the [method registry](docs/METHOD_REGISTRY.md) and the runtime `GET /v1/registry` result.
-
-Local API limits are 50 MB per CSV, 100,000 rows, 80 columns, eight datasets and 160 candidates per process session. Candidate previews show at most 30 rows. The explicit dataset-preview endpoint defaults to 30 and permits up to 100. The service is intended for one trusted local user, with no multi-user authentication or durable database.
-
-The original kit's 480-record benchmark is also available at `/v1/demo?fixture=kit`: the public-rule exact-linkage simulation reproduces 75/480 unique correct matches, and 20/480 after ZIP removal, with identical selected protected analytical answers. See [the reproduced baseline](docs/KIT_BASELINE.md). Those are modeled source-target matches, not population probabilities. Unknown external mechanisms and incompatible known-field transformations abstain. Protected CSV export requires authority, limitations and reviewed-candidate acknowledgments; owner audits remain confidential.
-
-## Check or regenerate
-
-```powershell
-.\.venv\Scripts\python.exe -m pytest backend
-npm run typecheck --prefix frontend
-npm run build --prefix frontend
-.\.venv\Scripts\python.exe examples/generate.py
-```
-
-Tests cover hand-calculated table metrics, homogeneous sensitive groups despite k≥5, equal marginals with reversed correlation, missing-value semantics, unit rejection/conversion, deterministic non-DP transforms, optimizer caps/frontier and HTTP boundary/export behavior. Run the commands for the current checkout; a passing unit suite alone does not establish browser acceptance, clinical validity or release safety.
-
-## Project map
-
-- `backend/app/`: FastAPI application and independent data, transform, risk, utility, optimizer, adapter and report engines.
-- `backend/tests/`: calculation, transform and API acceptance checks.
-- `frontend/`: React/TypeScript workspace with local API access and Vite build.
-- `examples/`: public synthetic oncology and small hand-checkable fixtures.
-- `docs/spec/`: preserved source architecture and handoff specification.
-- [Threat model](docs/THREAT_MODEL.md), [metric definitions](docs/METRIC_DEFINITIONS.md), [release limitations](docs/RELEASE_LIMITATIONS.md), [maintainer handoff](docs/AGENT_HANDOFF.md).
-
-New PRISM implementation code is [MIT licensed](LICENSE). The adapted linkage module, copied benchmark fixtures/catalog and preserved original kit retain Apache-2.0; see [NOTICE](NOTICE) and [the kit baseline](docs/KIT_BASELINE.md). Dependencies retain their own terms; [third-party notices](THIRD_PARTY_NOTICES.md) record package metadata and redistribution limitations. This prototype supplies no medical, legal or publication approval.
+The hosted demo is fictional-only. Uploads and external audits are disabled;
+24 candidates/search, 40 candidates/session, four jobs, 64 KiB configuration,
+and 30-minute inactivity limits remain. There is no formal privacy or clinical
+approval. An upstream outage returns 503; no fallback data is fabricated.

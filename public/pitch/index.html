@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="PRISM: See what survives the scrub. Purpose-aware privacy and utility review for enterprise research teams before internal or partner data sharing.">
+  <meta name="theme-color" content="#111317">
+  <title>PRISM — See what survives the scrub</title>
+  <link rel="stylesheet" href="deck.css">
+</head>
+<body>
+  <a class="skip" href="#deck">Skip presentation controls</a>
+  <nav class="controls" aria-label="Presentation controls">
+    <a class="wordmark" href="https://prism-healthcare-taupe.vercel.app/">PRISM<span> / PITCH</span></a>
+    <div class="nav-actions">
+      <button id="previous" type="button" aria-label="Previous slide">←</button>
+      <span id="position" aria-live="polite">01 / 07</span>
+      <button id="next" type="button" aria-label="Next slide">→</button>
+      <button id="overview" type="button" aria-pressed="false">Overview</button>
+      <a href="PRISM-Pitch.pdf" download>PDF ↓</a>
+      <a class="open-app" href="https://prism-healthcare-taupe.vercel.app/">Open demo ↗</a>
+    </div>
+  </nav>
+
+  <main id="deck" aria-label="PRISM pitch presentation">
+    <section class="slide dark cover active" id="slide-1" aria-labelledby="title-1" data-title="PRISM">
+      <div class="slide-top"><span>eMerge Americas hackathon</span><span>Enterprise AI</span></div>
+      <div class="cover-content">
+        <p class="brand">PRISM<span class="brand-dot">.</span></p>
+        <h1 id="title-1">See what survives<br> the scrub</h1>
+        <p class="cover-description">A privacy engineering workbench<br> for enterprise data-sharing teams.</p>
+      </div>
+      <footer><span>Fictional data. Measured tradeoffs. Human decisions.</span><span>01 / 07</span></footer>
+    </section>
+
+    <section class="slide" id="slide-2" aria-labelledby="title-2" data-title="The collaboration moment">
+      <div class="slide-top"><span>Internal and partner sharing</span><span>PRISM</span></div>
+      <h2 id="title-2">The names are gone.<br> The retained detail still matters.</h2>
+      <p class="intro">A research team wants to share a table with an internal or external collaborator.<br> Our fictional oncology demo shows how retained age, geography and weight can distinguish records.</p>
+      <div class="flow" aria-label="Source, candidate and research intent workflow">
+        <div class="flow-step"><span class="step-number">01</span><h3>Source table</h3><p>Review identifiers,<br> known attributes and units.</p></div>
+        <div class="flow-step"><span class="step-number">02</span><h3>Candidate release</h3><p>Remove identifiers.<br> Generalize retained detail.</p></div>
+        <div class="flow-step"><span class="step-number">03</span><h3>Study questions</h3><p>Measure exposure and<br> changes to selected answers.</p></div>
+      </div>
+      <p class="statement">PRISM ties disclosure and utility review to the team's declared purpose.</p>
+      <footer><span>Disclosure and research usefulness depend on the declared fields and questions.</span><span>02 / 07</span></footer>
+    </section>
+
+    <section class="slide" id="slide-3" aria-labelledby="title-3" data-title="Six connected views">
+      <div class="slide-top"><span>The workbench</span><span>PRISM</span></div>
+      <h2 id="title-3">Six connected views.<br> One candidate under review.</h2>
+      <div class="view-list">
+        <div><span class="step-number">01</span><h3>Workbench</h3><p>Inspect the source, transformed table and scientific comparisons.</p></div>
+        <div><span class="step-number">02</span><h3>Knowledge Map</h3><p>See which declared attribute combinations distinguish records.</p></div>
+        <div><span class="step-number">03</span><h3>Research Intent</h3><p>Choose study questions, tolerances and minimum cohort sizes.</p></div>
+        <div><span class="step-number">04</span><h3>Pareto Explorer</h3><p>Compare actual recipes across measured exposure and utility loss.</p></div>
+        <div><span class="step-number">05</span><h3>Attack Lab</h3><p>Explore fictional linkage, composition and correlation counterexamples.</p></div>
+        <div><span class="step-number">06</span><h3>Report</h3><p>Export evidence, the recipe and a reviewed protected CSV.</p></div>
+      </div>
+      <footer><span>Source and candidate remain distinct. Research intent defines the comparison.</span><span>03 / 07</span></footer>
+    </section>
+
+    <section class="slide result" id="slide-4" aria-labelledby="title-4" data-title="75 matches become 20">
+      <div class="slide-top"><span>Reproduced fictional benchmark · n = 480</span><span>PRISM</span></div>
+      <h2 id="title-4">55 fewer unique correct matches</h2>
+      <p class="intro">One change: remove ZIP from the protected candidate.</p>
+      <div class="result-grid">
+        <figure class="match-chart" aria-label="Unique correct source-target matches: 75 of 480 with ZIP prefix, 20 of 480 after ZIP removal">
+          <figcaption>Declared exact-match attack</figcaption>
+          <div class="bar-row"><div class="bar-label">ZIP prefix retained<span>75 <small>/ 480</small></span></div><div class="bar-track"><div class="bar baseline" style="width:93.75%"></div></div></div>
+          <div class="bar-row"><div class="bar-label">ZIP removed<span>20 <small>/ 480</small></span></div><div class="bar-track"><div class="bar protected" style="width:25%"></div></div></div>
+          <div class="chart-scale" aria-hidden="true"><span>0</span><span>40</span><span>80 matches</span></div>
+          <p class="chart-note">Known membership. Public deterministic QI rules.<br> Private owner correspondence scores matches after the attack.</p>
+        </figure>
+        <div class="research-proof">
+          <h3>Three protected answers stay identical<br> between these two recipes</h3>
+          <dl>
+            <div><dt>Six-month failure rate</dt><dd>36.25%</dd></div>
+            <div><dt>Liver-subgroup failure rate</dt><dd>45.03%</dd></div>
+            <div><dt>Age–weight correlation</dt><dd>0.6893</dd></div>
+          </dl>
+          <p>All three meet their declared tolerances against the source. Correlation uses interval midpoints.</p>
+        </div>
+      </div>
+      <footer><span>Baseline: age bands 5 years, ZIP prefix 3, weight bands 5 kg. Modeled source-target matches, not population risk probabilities. Selected answers do not establish full scientific equivalence.</span><span>04 / 07</span></footer>
+    </section>
+
+    <section class="slide dark search" id="slide-5" aria-labelledby="title-5" data-title="Actual recipes and measured tradeoffs">
+      <div class="slide-top"><span>Bounded search</span><span>PRISM</span></div>
+      <div class="search-layout">
+        <div><div class="big-number">24</div><p class="number-label">configurations requested<br> in the standard demo search</p></div>
+        <div class="search-copy"><h2 id="title-5">Actual recipes.<br> Measured tradeoffs.</h2><p>The deterministic Python engine applies transformations, recalculates disclosure and research metrics, then marks nondominated candidates.</p><p>Teams can inspect the recipe, selected answers and failed constraints for every candidate.</p></div>
+      </div>
+      <div class="search-flow" aria-label="Bounded search process"><span>Apply recipe</span><span>Measure both objectives</span><span>Compare the frontier</span></div>
+      <footer><span>Finite grammar. Hard cap 80. Small inputs may exhaust available recipes earlier. Frontier status does not imply feasibility or release clearance.</span><span>05 / 07</span></footer>
+    </section>
+
+    <section class="slide coverage" id="slide-6" aria-labelledby="title-6" data-title="Coverage with clear boundaries">
+      <div class="slide-top"><span>Technical scope</span><span>PRISM</span></div>
+      <h2 id="title-6">Coverage with clear boundaries</h2>
+      <div class="catalog-line"><p><strong>26</strong> threat families</p><p><strong>17</strong> catalogued protections</p><span>Registry entries disclose<br> implementation and applicability.</span></div>
+      <div class="coverage-columns">
+        <div><h3>Runs today</h3><p>Public-rule exact linkage, sample uniqueness, sensitive-value inference, research tasks, subgroup diagnostics and bounded recipe search.</p><p class="small">Optional pyCANON cross-checks cover categorical k/l/t diagnostics.</p></div>
+        <div><h3>Explicitly outside current coverage</h3><p>Calibrated fuzzy linkage, trained synthetic generation, general membership attacks, reconstruction and persistent differential privacy accounting.</p><p class="small">Unavailable analyses abstain. Catalog presence never means assessment success.</p></div>
+      </div>
+      <footer><span>React + TypeScript + Vite. Python + FastAPI + pandas + NumPy + SciPy. Archie Core: PostgreSQL + GraphQL. Vercel: frontend + Python compute. No generative AI model or GPU required.</span><span>06 / 07</span></footer>
+    </section>
+
+    <section class="slide closing" id="slide-7" aria-labelledby="title-7" data-title="A clearer research sharing decision">
+      <div class="slide-top"><span>Enterprise research sharing</span><span>PRISM</span></div>
+      <h2 id="title-7">A clearer review<br> before teams share data</h2>
+      <p class="closing-lead">See what remains identifying.<br> See what the selected study questions lose.<br> Carry evidence into internal or partner review.</p>
+      <div class="release-line"><div><h3>Public demo</h3><p>Fictional fixtures only.<br> Uploads blocked.</p></div><div><h3>Full local version</h3><p>Private CSVs on your computer.<br> Protected exports after review.</p></div></div>
+      <div class="closing-bottom"><p>Human review required. No automatic release clearance,<br> compliance certification or privacy guarantee.</p><a class="demo-link" href="https://prism-healthcare-taupe.vercel.app/">Open the fictional demo ↗</a><a class="print-demo" href="https://prism-healthcare-taupe.vercel.app/">prism-healthcare-taupe.vercel.app</a></div>
+      <footer><span>Built for eMerge AI Hackathon 2026 · PRISM: See what survives the scrub</span><span>07 / 07</span></footer>
+    </section>
+  </main>
+  <script src="deck.js"></script>
+</body>
+</html>
