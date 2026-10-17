@@ -42,7 +42,7 @@ function useAppMenus(): { id: string; label: string; items: MenuItem[] }[] {
   const uploadHint = deployment.uploadsAllowed ? undefined : deployment.uploadsNote;
   const exportItem = (id: string, label: string, format: 'html' | 'json' | 'recipe' | 'csv', hint: string): MenuItem => ({
     id, label, hint, icon: <Download size={15} />, disabled: !active || sessionBusy || ws.stale.length > 0 || !ws.reviewed || ws.sessionLost,
-    onSelect: () => { if (format === 'csv') ws.setView('report'); else if (active) void ws.exportCandidate(active.candidateId, format); },
+    onSelect: () => { if (active) void ws.exportCandidate(active.candidateId, format); },
   });
   return [
     {
