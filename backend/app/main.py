@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import copy
+import hashlib
 import json
 import secrets
 import threading
@@ -16,8 +17,8 @@ from fastapi.staticfiles import StaticFiles
 from starlette.middleware.cors import CORSMiddleware
 from starlette.formparsers import MultiPartParser
 
-from . import datasets, lab, linkage, optimizer, registry, reports, risk, transforms, utility
-from .models import AssessmentRequest, AuditRequest, CandidateRequest, ReportRequest, SchemaRequest, SearchRequest
+from . import datasets, lab, linkage, optimizer, registry, reports, risk, semantic_rules, semantics, transforms, utility
+from .models import AssessmentRequest, AuditRequest, CandidateRequest, ReportRequest, SchemaRequest, SearchRequest, SemanticRequest
 from .security import BoundedBodyMiddleware
 
 app = FastAPI(title="PRISM local workbench", version="0.1.0")
@@ -133,7 +134,14 @@ def default_workload(schema):
 
 
 def dataset_response(data):
-    return clean({"datasetId": data["id"], "name": data["name"], "rowCount": len(data["frame"]), "schema": data["schema"], "preview": data["frame"].head(30), "defaultSteps": data.get("defaultSteps", transforms.default_steps(data["schema"])), "defaultWorkload": data.get("defaultWorkload", default_workload(data["schema"])), "synthetic": data["synthetic"], "rowUnit": data["rowUnit"]})
+    return clean({"datasetId": data["id"], "name": data["name"], "rowCount": len(data["frame"]), "schema": data["schema"], "preview": data["frame"].head(30), "defaultSteps": data.get("defaultSteps", transforms.default_steps(data["schema"])), "defaultWorkload": data.get("defaultWorkload", default_workload(data["schema"])), "synthetic": data["synthetic"], "rowUnit": data["rowUnit"], "semantic": data.get("semantic")})
+
+
+def semantic_revision(result):
+    normalized = clean({k: v for k, v in result.items() if k != "revision"})
+    signature = {"version": normalized.get("version"), "fields": normalized.get("fields", [])}
+    normalized["revision"] = hashlib.sha256(json.dumps(signature, sort_keys=True, separators=(",", ":"), allow_nan=False).encode()).hexdigest()[:16]
+    return normalized
 
 
 def add_dataset(frame, name, synthetic=False, expected_epoch=None):
@@ -150,6 +158,7 @@ def add_dataset(frame, name, synthetic=False, expected_epoch=None):
         entity = next((c["name"] for c in data["schema"] if c["role"] == "direct_identifier" and c["name"].lower().endswith("id")), None)
         data["rowUnit"] = {"entityColumn": entity, "oneRowPerPersonConfirmed": synthetic,
                            "repeatedEntitiesDetected": bool(frame[entity].dropna().duplicated().any()) if entity else False}
+        data["semantic"] = semantic_revision(semantics.classify(frame, data["schema"]))
         DATASETS[identifier] = data
         return data
 
@@ -162,6 +171,8 @@ def threat_config(data, request):
         raise Problem("invalid_threat_columns", "Select distinct threat-model columns present in the original dataset.")
     workload = [q.model_dump() for q in request.workload] if request.workload is not None else data.get("defaultWorkload", default_workload(schema))
     direct = {c["name"] for c in schema if c["role"] == "direct_identifier"}
+    direct.update(field["column"] for field in (data.get("semantic") or {}).get("fields", [])
+                  if "direct_identifier" in field.get("privacyRoles", []))
     for query in workload:
         references = set(query.get("groupBy") or []) | set(query.get("filter") or {})
         if query.get("target"):
@@ -196,6 +207,10 @@ def make_candidate(data, frame, recipe, qi, sensitive, workload, lineage=None, n
     risk_result["removed_sensitive"] = [c for c in sensitive if c not in frame.columns]
     context = context or {"membershipKnown": True, **data["rowUnit"]}
     risk_result["threat_context"] = context
+    risk_result["semantic"] = semantic_rules.evaluate(frame, data.get("semantic"), data["schema"], qi, sensitive,
+        steps=recipe.get("steps", []), external=recipe.get("version") == "external", context=context)
+    risk_result["semantic"]["semanticRevision"] = (data.get("semantic") or {}).get("revision")
+    risk_result["semantic"]["classificationProvider"] = copy.deepcopy((data.get("semantic") or {}).get("provider"))
     if lineage is not None and recipe.get("version") != "external":
         linked = linkage.evaluate(data["frame"], frame, data["schema"], recipe["steps"], lineage, qi=qi,
                                   membership_known=context["membershipKnown"])
@@ -208,6 +223,17 @@ def make_candidate(data, frame, recipe, qi, sensitive, workload, lineage=None, n
                   "narrative": "Verified correct identity linkage is unassessed without trusted correspondence and a known public recipe.",
                   "assumptions": [], "caveats": ["Unknown external mechanisms cannot be inferred from similar rows."]}
     risk_result["findings"].append(linked)
+    if linked["status"] == "implemented":
+        semantic_linkage = next(f for f in risk_result["semantic"]["findings"] if f["attackId"] == "record_linkage")
+        semantic_linkage.update(status="implemented", severity="Moderate" if linked.get("numerator", 0) else "Mild",
+            columns=available_qi,
+            measured={"verifiedUniqueCorrectMatches": linked.get("numerator"), "releasedRows": linked.get("denominator"),
+                      "verifiedLinkageRate": linked.get("metricValue")},
+            explanation="A known-public-recipe exact-matching experiment used the source table as auxiliary information and trusted row correspondence. It counts verified unique correct matches; no independent public-record database was used.",
+            attackerNeeds="Known source membership, exact original QI values, the public recipe and the tested finite auxiliary table.",
+            limitations=["This finite-source benchmark is not an estimate of population identification risk."] + linked.get("caveats", []))
+        risk_result["semantic"]["coverage"]["tested"] += 1
+        risk_result["semantic"]["coverage"]["needsAssessment"] -= 1
     risk_result["metrics"]["verified_unique_correct_matches"] = linked.get("numerator") if linked["status"] == "implemented" else None
     risk_result["metrics"]["verified_linkage_rate"] = linked.get("metricValue") if linked["status"] == "implemented" else None
     if not context["membershipKnown"]:
@@ -257,8 +283,8 @@ def health():
 
 @app.get("/v1/demo")
 def demo(request: Request, fixture: str = "architecture"):
-    if fixture not in {"architecture", "kit"}:
-        raise Problem("unknown_fixture", "Choose architecture or kit demo data.")
+    if fixture not in {"architecture", "kit", "semantic"}:
+        raise Problem("unknown_fixture", "Choose architecture, kit or semantic demo data.")
     for item in list(DATASETS.values()):
         if item.get("demo") == fixture:
             return dataset_response(item)
@@ -267,6 +293,12 @@ def demo(request: Request, fixture: str = "architecture"):
         data = add_dataset(bundle["frame"], bundle["name"], True, expected_epoch=request.state.session_epoch)
         for key in ("schema", "defaultSteps", "defaultWorkload"):
             data[key] = bundle[key]
+    elif fixture == "semantic":
+        bundle = datasets.semantic_fixture()
+        data = add_dataset(bundle["frame"], bundle["name"], True, expected_epoch=request.state.session_epoch)
+        for key in ("schema", "defaultSteps", "defaultWorkload"):
+            data[key] = bundle[key]
+        data["semantic"] = semantic_revision(semantics.classify(data["frame"], data["schema"]))
     else:
         data = add_dataset(datasets.synthetic_oncology(), "Synthetic oncology", True, expected_epoch=request.state.session_epoch)
     data["demo"] = fixture
@@ -275,15 +307,19 @@ def demo(request: Request, fixture: str = "architecture"):
 
 @app.post("/v1/datasets/import")
 async def import_dataset(request: Request, file: UploadFile = File(...)):
-    if not (file.filename or "").lower().endswith(".csv"):
-        raise Problem("unsupported_file", "Import a UTF-8 CSV. Other formats and hidden-sheet scanning are not supported.")
+    if not (file.filename or "").lower().endswith((".csv", ".json", ".xlsx")):
+        raise Problem("unsupported_file", "Import a UTF-8 CSV, JSON record array or XLSX first worksheet.")
     content = bytearray()
     while chunk := await file.read(1024 * 1024):
         content.extend(chunk)
         if len(content) > MAX_BYTES:
             raise Problem("file_too_large", "Maximum upload size is 50 MB.", 413)
     await file.close()
-    frame = datasets.read_csv_bytes(bytes(content))
+    from .structured_intake import read_table_bytes, TableIntakeError
+    try:
+        frame = read_table_bytes(bytes(content), file.filename or "data.csv")
+    except TableIntakeError as exc:
+        raise Problem("invalid_table", str(exc), 422) from exc
     # File basename is display-only; no client path is ever opened.
     name = (file.filename or "Imported CSV").replace("\\", "/").split("/")[-1]
     return dataset_response(add_dataset(frame, name, expected_epoch=request.state.session_epoch))
@@ -312,6 +348,35 @@ def update_schema(dataset_id: str, body: SchemaRequest):
     entity = data["rowUnit"]["entityColumn"]
     data["rowUnit"]["repeatedEntitiesDetected"] = bool(data["frame"][entity].dropna().duplicated().any()) if entity else False
     return dataset_response(data)
+
+
+@app.get("/v1/semantics/ontology")
+def semantic_ontology():
+    return {**semantics.ontology(), "attackRules": semantic_rules.registry()}
+
+
+@app.post("/v1/datasets/{dataset_id}/semantics")
+def classify_semantics(dataset_id: str, body: SemanticRequest):
+    data = get_dataset(dataset_id)
+    if any(column not in data["frame"].columns for column in body.overrides):
+        raise Problem("unknown_semantic_column", "Corrections must refer to columns in the current dataset.", 422)
+    overrides = {**data.get("_semanticOverrides", {}), **body.overrides}
+    generated = semantics.classify(data["frame"], data["schema"], allow_remote=body.allowRemote, overrides=overrides)
+    previous = data.get("semantic")
+    if previous and not body.allowRemote:
+        # An offline correction must not erase previous Jev decisions or their
+        # provenance for the untouched fields.
+        revised = {field["column"]: field for field in generated["fields"]}
+        generated["fields"] = [revised[field["column"]] if field["column"] in body.overrides else copy.deepcopy(field)
+                               for field in previous["fields"]]
+        generated["provider"] = copy.deepcopy(previous.get("provider", generated.get("provider")))
+    result = semantic_revision(generated)
+    with LOCK:
+        if data["_epoch"] != SESSION_EPOCH:
+            raise Problem("session_ended", "The local session ended while interpretation was running. Reload to continue.", 409)
+        data["semantic"] = result
+        data["_semanticOverrides"] = overrides
+    return result
 
 
 @app.post("/v1/candidates")
@@ -425,6 +490,8 @@ def export(body: ReportRequest):
         direct = [c["name"] for c in candidate["schema"] if c["role"] == "direct_identifier" and c["name"] in candidate["columns"]]
         # Also scan unexpected external columns by profiler, independently of original schema.
         direct += [c["name"] for c in datasets.profile(candidate["_frame"]) if c["role"] == "direct_identifier"]
+        direct += [field["column"] for field in candidate["risk"].get("semantic", {}).get("lineage", [])
+                   if field["column"] in candidate["columns"] and "direct_identifier" in field.get("privacyRoles", [])]
         if direct:
             raise Problem("direct_identifiers_blocked", "Protected CSV export is blocked while direct-identifier columns remain. Drop them and reassess.", 409)
         text, media, suffix = reports.protected_csv(candidate["_frame"]), "text/csv", "csv"

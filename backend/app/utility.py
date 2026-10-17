@@ -10,6 +10,18 @@ import numpy as np
 import pandas as pd
 
 _BAND = re.compile(r"^\[\s*(-?\d+(?:\.\d+)?)\s*,\s*(-?\d+(?:\.\d+)?)\s*\)$")
+_CENTERED = re.compile(r"^CI\[(-?\d+),(-?\d+)\]$")
+
+
+def _center(value):
+    """This public display transform discloses the original integer midpoint."""
+    match = _CENTERED.fullmatch(value) if isinstance(value, str) else None
+    if match:
+        low, high = map(int, match.groups())
+        if high <= low or (low + high) % 2:
+            raise ValueError("Invalid centered integer interval")
+        return (low + high) // 2
+    return value
 
 
 def _scalar(value: Any):
@@ -27,6 +39,7 @@ def _numeric(series: pd.Series) -> tuple[pd.Series, bool]:
     approximate = False
     values = []
     for value in series:
+        value = _center(value)
         if isinstance(value, str) and (match := _BAND.fullmatch(value)):
             low, high = map(float, match.groups())
             values.append((low + high) / 2)
@@ -75,6 +88,7 @@ def _predicate(series: pd.Series, operator: str, threshold) -> tuple[pd.Series, 
         threshold = float(threshold)
     definite, possible = [], []
     for value in series:
+        value = _center(value)
         match = _BAND.fullmatch(value) if isinstance(value, str) else None
         if match and operator in {"eq", "ne"} and isinstance(threshold, str):
             try:

@@ -19,7 +19,7 @@ import pandas as pd
 
 from . import datasets, transforms
 
-PUBLIC_METHODS = {"drop", "mask", "band", "zip_prefix", "round", "top_bottom", "date_generalize"}
+PUBLIC_METHODS = {"drop", "mask", "band", "centered_interval", "zip_prefix", "round", "top_bottom", "date_generalize"}
 MAX_ROWS = 100_000
 MAX_KNOWN = 20
 SOURCE = "reference-kit/PRISM/backend/prism/privacy.py"

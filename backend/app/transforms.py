@@ -22,7 +22,7 @@ _ROLES = {"direct_identifier", "quasi_identifier", "sensitive", "research_target
 _DTYPES = {"integer", "float", "category", "date", "text", "boolean"}
 _PARAMS = {
     "drop": set(), "mask": {"value"}, "pseudonymize": {"namespace"},
-    "band": {"width", "origin", "convertFrom"}, "zip_prefix": {"length"},
+    "band": {"width", "origin", "convertFrom"}, "centered_interval": {"radius"}, "zip_prefix": {"length"},
     "round": {"decimals"}, "top_bottom": {"min", "max"},
     "rare_group": {"min_count", "label"}, "date_generalize": {"precision"},
     "date_shift": {"days"}, "noise": {"scale", "distribution"},
@@ -234,7 +234,7 @@ def apply(frame: pd.DataFrame, schema: list[dict], steps: list[dict], seed: int 
                         return hmac.new(key, message, hashlib.sha256).hexdigest()
                     output[column] = values.map(token)
                     warnings.append("Pseudonyms remain linkable within the same key/namespace and are not anonymous identifiers.")
-                elif method in {"band", "round", "top_bottom", "noise"}:
+                elif method in {"band", "centered_interval", "round", "top_bottom", "noise"}:
                     numeric = _numeric(values)
                     if specs[column]["dtype"] not in {"integer", "float"}:
                         raise ValueError("Numeric method is incompatible with the reviewed schema type.")
@@ -269,6 +269,12 @@ def apply(frame: pd.DataFrame, schema: list[dict], steps: list[dict], seed: int 
                                 output.attrs.setdefault("unit_conversions", {})[column] = {
                                     "from": "lb", "to": "kg", "factor": 0.45359237, "verified": True,
                                 }
+                    elif method == "centered_interval":
+                        radius = _integer(params.get("radius", 1), "Interval radius", 1, 1_000_000)
+                        if specs[column]["dtype"] != "integer" or (numeric.dropna() % 1 != 0).any() or (numeric.dropna().abs() > 1e12).any():
+                            raise ValueError("Centered intervals require whole-number values within ±1 trillion.")
+                        output[column] = numeric.map(lambda value: np.nan if pd.isna(value) else f"CI[{int(value) - radius},{int(value) + radius}]")
+                        warnings.append("Centered intervals are closed [x−r,x+r]. Their midpoint reveals x exactly; they preserve sample distinguishability and are not a privacy reduction. Use fixed nonoverlapping bands to reduce precision.")
                     elif method == "round":
                         decimals = _integer(params.get("decimals"), "Decimals", -10, 10)
                         output[column] = numeric.round(decimals)
@@ -313,12 +319,15 @@ def apply(frame: pd.DataFrame, schema: list[dict], steps: list[dict], seed: int 
                     dates = _dates(values)
                     if method == "date_generalize":
                         precision = params.get("precision")
-                        if not isinstance(precision, str) or precision not in {"year", "quarter", "month", "day"}:
-                            raise ValueError("Date precision must be year, quarter, month or day.")
+                        if not isinstance(precision, str) or precision not in {"year", "quarter", "month", "week", "day", "hour"}:
+                            raise ValueError("Date precision must be year, quarter, month, week, day or hour.")
                         if precision == "quarter":
                             result = dates.dt.year.astype("Int64").astype(str) + "-Q" + dates.dt.quarter.astype("Int64").astype(str)
+                        elif precision == "week":
+                            calendar = dates.dt.isocalendar()
+                            result = calendar.year.astype("Int64").astype(str) + "-W" + calendar.week.astype("Int64").astype(str).str.zfill(2)
                         else:
-                            result = dates.dt.strftime({"year": "%Y", "month": "%Y-%m", "day": "%Y-%m-%d"}[precision])
+                            result = dates.dt.strftime({"year": "%Y", "month": "%Y-%m", "day": "%Y-%m-%d", "hour": "%Y-%m-%dT%H:00Z"}[precision])
                         output[column] = result.where(dates.notna(), np.nan)
                     else:
                         days = _integer(params.get("days"), "Date shift range", 0, 36_500)

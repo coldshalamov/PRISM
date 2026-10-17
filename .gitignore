@@ -14,6 +14,7 @@ dist/
 backend/app/static/
 backend/build/
 frontend/tools/out/
+pitch/renders/
 frontend/WORKER_BRIEF.md
 *.tsbuildinfo
 artifacts/*

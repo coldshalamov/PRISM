@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import csv
 import io
+import ipaddress
 import re
 
 import numpy as np
@@ -60,6 +61,56 @@ def synthetic_oncology(n: int = 5000, seed: int = 42) -> pd.DataFrame:
     })
     frame.attrs.update({"synthetic": True, "units": {"age": "years", "weight": "kg"}, "seed": seed})
     return frame
+
+
+def semantic_fixture(n: int = 480, seed: int = 73) -> dict:
+    """A fictional, deliberately ambiguous event/facility oncology workbench.
+
+    Labels are research shorthand, not evidence of clinical source records.
+    Five records share a designed appointment context; exact ages/heights make
+    their combinations distinguishable until concrete coarsening is applied.
+    """
+    rng = np.random.default_rng(seed)
+    groups = np.arange(n) // 5
+    offsets = np.arange(n) % 5
+    ages = 40 + (groups % 8) * 5 + offsets
+    stages = np.array(["C50", "C18", "C34", "C61"])[groups % 4]
+    outcome = rng.random(n) < (.8 - .12 * (groups % 4) - .002 * (ages - 40))
+    dates = pd.Timestamp("2026-01-01") + pd.to_timedelta(groups % 96, unit="D")
+    frame = pd.DataFrame({
+        "PAT_ID": [f"FICTION-{i + 1:05d}" for i in range(n)],
+        "DOS": dates.strftime("%Y-%m-%d"),
+        "HOSP_SITE": np.array(["North fictional centre", "South fictional centre", "East fictional centre", "West fictional centre"])[groups % 4],
+        "DX_CODE": stages,
+        "AGE": ages,
+        "ZIP": [f"{[331, 606, 981, 100][int(g % 4)]}{int(g % 96):02d}" for g in groups],
+        "HT_CM": (150 + (groups % 20) + offsets * .4).astype(float),
+        "TX_RESP": outcome,
+        "NOTES": [f"Fictional protocol note; appointment {date}. synthetic-{i}@example.invalid" if i % 12 == 0
+                  else "Fictional protocol note; no real person." for i, date in enumerate(dates.strftime("%Y-%m-%d"))],
+    })
+    frame.attrs.update(synthetic=True, units={"AGE": "years", "HT_CM": "cm"}, seed=seed)
+    schema = profile(frame)
+    role_map = {"PAT_ID": "direct_identifier", "DOS": "quasi_identifier", "HOSP_SITE": "quasi_identifier",
+                "DX_CODE": "sensitive", "AGE": "quasi_identifier", "ZIP": "quasi_identifier",
+                "HT_CM": "quasi_identifier", "TX_RESP": "research_target", "NOTES": "sensitive"}
+    for spec in schema:
+        spec["role"] = role_map[spec["name"]]
+        spec["sensitivityReason"] = "Declared fictional demonstration schema; semantic interpretation is separately reviewable."
+    return {"frame": frame, "name": "Semantic oncology · fictional appointments", "schema": schema,
+            "defaultSteps": [
+                {"method": "drop", "columns": ["PAT_ID", "NOTES"], "params": {}},
+                {"method": "band", "columns": ["AGE"], "params": {"width": 10, "origin": 0}},
+                {"method": "zip_prefix", "columns": ["ZIP"], "params": {"length": 3}},
+                {"method": "date_generalize", "columns": ["DOS"], "params": {"precision": "month"}},
+                {"method": "round", "columns": ["HT_CM"], "params": {"decimals": 0}},
+            ],
+            "defaultWorkload": [
+                {"id": "response-by-diagnosis", "type": "group_rate", "groupBy": ["DX_CODE"], "target": "TX_RESP",
+                 "positiveValue": True, "weight": 3, "tolerance": .05, "minCohort": 5},
+                {"id": "height-by-diagnosis", "type": "group_mean", "groupBy": ["DX_CODE"], "target": "HT_CM",
+                 "weight": 1, "tolerance": 2, "minCohort": 5},
+            ]}
 
 
 def _normalized_name(name: str) -> str:
@@ -123,6 +174,22 @@ def profile(frame: pd.DataFrame) -> list[dict]:
         direct = _identifier_name(column)
         if len(values) and values.astype(str).str.fullmatch(r"[^\s@]+@[^\s@]+\.[^\s@]+").mean() >= 0.5:
             direct = True
+        if len(values):
+            sample = values.astype(str).head(512)
+            # These baseline format checks are independent of semantic/model
+            # labels and cannot be disabled by a user correction.
+            structured = (sample.str.fullmatch(r"[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}")
+                          | sample.str.fullmatch(r"(?:[a-fA-F0-9]{2}[:-]){5}[a-fA-F0-9]{2}"))
+            def is_ip(value):
+                if "." not in value and ":" not in value:
+                    return False
+                try:
+                    ipaddress.ip_address(value)
+                    return True
+                except ValueError:
+                    return False
+            if structured.mean() >= .8 or sample.map(is_ip).mean() >= .8:
+                direct = True
         if direct:
             role, reason = "direct_identifier", "Column name or structured format suggests a direct identifier; review required."
         elif _is_zip(column) or normalized in {"age", "birth_date", "date_of_birth", "dob", "eye_color", "weight"} or normalized.startswith("weight_"):

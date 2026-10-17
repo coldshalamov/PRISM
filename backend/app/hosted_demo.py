@@ -40,6 +40,8 @@ ROUTES = (
     ("GET", re.compile(r"/v1/demo")),
     ("GET", re.compile(r"/v1/datasets/[A-Za-z0-9_-]+/preview")),
     ("PATCH", re.compile(r"/v1/datasets/[A-Za-z0-9_-]+/schema")),
+    ("POST", re.compile(r"/v1/datasets/[A-Za-z0-9_-]+/semantics")),
+    ("GET", re.compile(r"/v1/semantics/ontology")),
     ("POST", re.compile(r"/v1/candidates")),
     ("POST", re.compile(r"/v1/assessments")),
     ("POST", re.compile(r"/v1/search")),

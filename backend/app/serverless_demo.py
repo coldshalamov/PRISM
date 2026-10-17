@@ -27,7 +27,7 @@ from starlette.responses import JSONResponse, Response
 from . import lab, registry
 from .archie_store import ArchieStore, StoreConflict, StoreUnavailable
 from .hosted_demo import BODY_LIMIT, COOKIE, ROUTES, SECURITY_HEADERS, _authority
-from .models import AssessmentRequest, CandidateRequest, ReportRequest, SchemaRequest, SearchRequest
+from .models import AssessmentRequest, CandidateRequest, ReportRequest, SchemaRequest, SearchRequest, SemanticRequest
 
 TTL = 1800
 MAX_CANDIDATES = 40
@@ -82,6 +82,15 @@ class ServerlessDemo:
             raise DemoProblem("session_capacity", "This demo session reached its configuration budget. Clear it before continuing.", 409)
         return text
 
+    @staticmethod
+    def _save_semantic(state, result):
+        # The public classification revision intentionally excludes provider
+        # receipts. Storage keys include them so a later cache receipt cannot
+        # mutate the provenance of an already frozen candidate snapshot.
+        key = hashlib.sha256(json.dumps(result, sort_keys=True, separators=(",", ":"), allow_nan=False).encode()).hexdigest()[:24]
+        state["semanticResults"][key] = copy.deepcopy(result)
+        return key
+
     def _identity(self, headers):
         cookies = SimpleCookie()
         try:
@@ -95,7 +104,7 @@ class ServerlessDemo:
     def _new(self):
         token = secrets.token_urlsafe(32)
         visitor = hashlib.sha256(token.encode()).hexdigest()
-        state = {"version": 1, "datasets": {}, "snapshots": {}, "contexts": {}, "candidates": {}, "jobs": {}}
+        state = {"version": 1, "datasets": {}, "snapshots": {}, "contexts": {}, "candidates": {}, "jobs": {}, "semanticResults": {}, "remoteSemanticAttempts": 0}
         record = self.store.create(visitor, self._dump(state), self.clock() + TTL)
         return token, record, state
 
@@ -132,7 +141,7 @@ class ServerlessDemo:
         return module
 
     @staticmethod
-    def _dataset(module, identifier, spec):
+    def _dataset(module, identifier, spec, state=None):
         request = Request({"type": "http", "state": {"session_epoch": 0}})
         result = module.demo(request, spec["fixture"])
         data = module.DATASETS.pop(result["datasetId"])
@@ -140,12 +149,15 @@ class ServerlessDemo:
         module.DATASETS[identifier] = data
         if spec.get("schema"):
             module.update_schema(identifier, SchemaRequest.model_validate(spec["schema"]))
+        if state is not None and spec.get("semantic"):
+            data["semantic"] = copy.deepcopy(state.get("semanticResults", {}).get(spec["semantic"], data["semantic"]))
+        data["_semanticOverrides"] = copy.deepcopy(spec.get("semanticOverrides", {}))
         return data
 
     def _candidate(self, module, identifier, spec, state):
         # Snapshot schema/threat/workload per candidate so later review edits do
         # not change an earlier result or its export after a cold start.
-        self._dataset(module, spec["datasetId"], state["snapshots"][spec["dataset"]])
+        self._dataset(module, spec["datasetId"], state["snapshots"][spec["dataset"]], state)
         context = state["contexts"][spec["context"]]
         body = {**context, "datasetId": spec["datasetId"], "steps": spec["recipe"]["steps"],
                 "seed": spec["recipe"].get("seed", 42)}
@@ -185,24 +197,46 @@ class ServerlessDemo:
             return JSONResponse({"cleared": True}), ""
         module = self._engine(token)
         payload = json.loads(body) if body else {}
+        state.setdefault("semanticResults", {})
+        state.setdefault("remoteSemanticAttempts", 0)
         if path == "/v1/demo":
             fixture = parse_qs(query).get("fixture", ["architecture"])[0]
-            if fixture not in {"architecture", "kit"}:
-                raise DemoProblem("unknown_fixture", "Choose architecture or kit demo data.")
+            if fixture not in {"architecture", "kit", "semantic"}:
+                raise DemoProblem("unknown_fixture", "Choose architecture, kit or semantic demo data.")
             existing = next(((k, v) for k, v in state["datasets"].items() if v["fixture"] == fixture), None)
             identifier, spec = existing or (secrets.token_urlsafe(18), {"fixture": fixture})
-            data = self._dataset(module, identifier, spec)
+            data = self._dataset(module, identifier, spec, state)
+            semantic = data.get("semantic")
+            if semantic:
+                spec["semantic"] = self._save_semantic(state, semantic)
             if not existing:
                 state["datasets"][identifier] = spec
             result = module.dataset_response(data)
         elif path.startswith("/v1/datasets/"):
             identifier, action = path.split("/")[3:5]
             spec = self._find(state["datasets"], identifier, "dataset")
-            self._dataset(module, identifier, spec)
+            self._dataset(module, identifier, spec, state)
             if action == "schema":
                 validated = SchemaRequest.model_validate(payload)
                 result = module.update_schema(identifier, validated)
                 spec["schema"] = validated.model_dump(by_alias=True, exclude_unset=True)
+            elif action == "semantics":
+                validated = SemanticRequest.model_validate(payload)
+                if validated.allowRemote:
+                    if state["remoteSemanticAttempts"] >= 2:
+                        raise DemoProblem("semantic_budget", "This visitor's two remote interpretation attempts are used. Deterministic classification and corrections remain available.", 429)
+                    # Reserve the bounded attempt durably before sending any
+                    # approved schema metadata. CAS prevents concurrent calls
+                    # from spending an unrecorded slot.
+                    state["remoteSemanticAttempts"] += 1
+                    reserved = self._dump(state)
+                    self.store.save(record, reserved, self.clock() + TTL)
+                    record = self.store.get(record.visitor)
+                    if record is None or record.text != reserved:
+                        raise StoreConflict()
+                result = module.classify_semantics(identifier, validated)
+                spec["semantic"] = self._save_semantic(state, result)
+                spec["semanticOverrides"] = module.DATASETS[identifier].get("_semanticOverrides", {})
             else:
                 limit = int(parse_qs(query).get("limit", ["30"])[0])
                 result = module.preview(identifier, limit)
@@ -216,12 +250,22 @@ class ServerlessDemo:
                 request = AssessmentRequest.model_validate(payload)
                 old = self._find(state["candidates"], request.candidateId, "candidate")
                 self._candidate(module, request.candidateId, old, state)
+                current_ds = self._find(state["datasets"], old["datasetId"], "dataset")
+                self._dataset(module, old["datasetId"], current_ds, state)
                 result = module.assess(request)
-                spec = self._spec(result, state["snapshots"][old["dataset"]], state)
+                # Reassessment is explicit: use current semantic corrections
+                # while preserving the candidate's reviewed schema/recipe.
+                assessed_ds = copy.deepcopy(state["snapshots"][old["dataset"]])
+                for key in ("semantic", "semanticOverrides"):
+                    if key in current_ds:
+                        assessed_ds[key] = copy.deepcopy(current_ds[key])
+                    else:
+                        assessed_ds.pop(key, None)
+                spec = self._spec(result, assessed_ds, state)
             else:
                 request = (SearchRequest if path == "/v1/search" else CandidateRequest).model_validate(payload)
                 ds = self._find(state["datasets"], request.datasetId, "dataset")
-                self._dataset(module, request.datasetId, ds)
+                self._dataset(module, request.datasetId, ds, state)
                 if path == "/v1/search":
                     if len(state["jobs"]) >= MAX_JOBS:
                         raise DemoProblem("session_capacity", "Clear this demo session before starting more searches.", 409)
@@ -247,6 +291,11 @@ class ServerlessDemo:
             result = self._candidate(module, identifier, spec, state)
             if path == "/v1/reports/export":
                 result = module.export(ReportRequest.model_validate(payload))
+        # Keep old interpretations only while a frozen candidate references
+        # them. An unused rules-only classification need not consume budget
+        # after an explicit correction or approved remote interpretation.
+        referenced = {item.get("semantic") for item in list(state["datasets"].values()) + list(state["snapshots"].values())}
+        state["semanticResults"] = {k: v for k, v in state["semanticResults"].items() if k in referenced}
         self.store.save(record, self._dump(state), self.clock() + TTL)
         return result if isinstance(result, Response) else JSONResponse(module.clean(result)), token
 
@@ -323,6 +372,9 @@ class ServerlessDemo:
                 return await self._send(scope, receive, send, JSONResponse(registry.get_registry()), cors_origin=cors_origin)
             if path == "/v1/lab" and method == "GET":
                 return await self._send(scope, receive, send, JSONResponse(await run_in_threadpool(lab.experiments)), cors_origin=cors_origin)
+            if path == "/v1/semantics/ontology" and method == "GET":
+                from . import semantics, semantic_rules
+                return await self._send(scope, receive, send, JSONResponse({**semantics.ontology(), "attackRules": semantic_rules.registry()}), cors_origin=cors_origin)
             if not handshake and not any(method == verb and pattern.fullmatch(path) for verb, pattern in ROUTES):
                 raise DemoProblem("fictional_only", "This route is not available in the fictional-only demo.", 403)
             length = headers.get("content-length")

@@ -61,6 +61,11 @@ class SchemaRequest(StrictModel):
     oneRowPerPersonConfirmed: bool | None = None
 
 
+class SemanticRequest(StrictModel):
+    allowRemote: bool = False
+    overrides: dict[str, str | dict[str, Any]] = Field(default_factory=dict, max_length=80)
+
+
 class SearchConstraints(StrictModel):
     minK: int = Field(default=1, ge=1, le=100000)
     maxSuppression: float = Field(default=0.1, ge=0, le=1)
@@ -125,6 +130,7 @@ class DatasetSummary(StrictModel):
     defaultWorkload: list[ResearchQuery]
     synthetic: bool
     rowUnit: dict[str, Any]
+    semantic: dict[str, Any] | None = None
 
 
 class CandidateSummary(StrictModel):

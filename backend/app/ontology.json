@@ -1,0 +1,2016 @@
+{
+  "version": "prism-semantic-1.0",
+  "description": "Extensible metadata vocabulary. Classes and privacy roles are hypotheses, never privacy test results.",
+  "families": [
+    {
+      "id": "identity",
+      "label": "Identity",
+      "groups": [
+        {
+          "id": "identity.names",
+          "label": "names",
+          "parent": "identity"
+        },
+        {
+          "id": "identity.identifiers",
+          "label": "identifiers",
+          "parent": "identity"
+        },
+        {
+          "id": "identity.contact",
+          "label": "contact",
+          "parent": "identity"
+        },
+        {
+          "id": "identity.biometrics",
+          "label": "biometrics",
+          "parent": "identity"
+        }
+      ]
+    },
+    {
+      "id": "geography",
+      "label": "Geography",
+      "groups": [
+        {
+          "id": "geography.addresses",
+          "label": "addresses",
+          "parent": "geography"
+        },
+        {
+          "id": "geography.administrative_areas",
+          "label": "administrative areas",
+          "parent": "geography"
+        },
+        {
+          "id": "geography.postal",
+          "label": "postal",
+          "parent": "geography"
+        },
+        {
+          "id": "geography.coordinates",
+          "label": "coordinates",
+          "parent": "geography"
+        },
+        {
+          "id": "geography.sites",
+          "label": "sites",
+          "parent": "geography"
+        },
+        {
+          "id": "geography.trajectories",
+          "label": "trajectories",
+          "parent": "geography"
+        },
+        {
+          "id": "geography.anatomy",
+          "label": "anatomy",
+          "parent": "geography"
+        }
+      ]
+    },
+    {
+      "id": "time",
+      "label": "Time",
+      "groups": [
+        {
+          "id": "time.life_events",
+          "label": "life events",
+          "parent": "time"
+        },
+        {
+          "id": "time.elapsed",
+          "label": "elapsed",
+          "parent": "time"
+        },
+        {
+          "id": "time.clinical_events",
+          "label": "clinical events",
+          "parent": "time"
+        },
+        {
+          "id": "time.administrative_events",
+          "label": "administrative events",
+          "parent": "time"
+        },
+        {
+          "id": "time.sequences",
+          "label": "sequences",
+          "parent": "time"
+        }
+      ]
+    },
+    {
+      "id": "demographics",
+      "label": "Demographics and social information",
+      "groups": [
+        {
+          "id": "demographics.population",
+          "label": "population",
+          "parent": "demographics"
+        },
+        {
+          "id": "demographics.employment",
+          "label": "employment",
+          "parent": "demographics"
+        },
+        {
+          "id": "demographics.social",
+          "label": "social",
+          "parent": "demographics"
+        }
+      ]
+    },
+    {
+      "id": "physical",
+      "label": "Physical and biometric information",
+      "groups": [
+        {
+          "id": "physical.measurements",
+          "label": "measurements",
+          "parent": "physical"
+        },
+        {
+          "id": "physical.appearance",
+          "label": "appearance",
+          "parent": "physical"
+        },
+        {
+          "id": "physical.health",
+          "label": "health",
+          "parent": "physical"
+        },
+        {
+          "id": "physical.biometrics",
+          "label": "biometrics",
+          "parent": "physical"
+        }
+      ]
+    },
+    {
+      "id": "medicine",
+      "label": "Medicine and healthcare",
+      "groups": [
+        {
+          "id": "medicine.diagnoses",
+          "label": "diagnoses",
+          "parent": "medicine"
+        },
+        {
+          "id": "medicine.history",
+          "label": "history",
+          "parent": "medicine"
+        },
+        {
+          "id": "medicine.interventions",
+          "label": "interventions",
+          "parent": "medicine"
+        },
+        {
+          "id": "medicine.observations",
+          "label": "observations",
+          "parent": "medicine"
+        },
+        {
+          "id": "medicine.outcomes",
+          "label": "outcomes",
+          "parent": "medicine"
+        },
+        {
+          "id": "medicine.narratives",
+          "label": "narratives",
+          "parent": "medicine"
+        },
+        {
+          "id": "medicine.sensitive",
+          "label": "sensitive",
+          "parent": "medicine"
+        }
+      ]
+    },
+    {
+      "id": "genetics",
+      "label": "Genetics and biological research",
+      "groups": [
+        {
+          "id": "genetics.sequences",
+          "label": "sequences",
+          "parent": "genetics"
+        },
+        {
+          "id": "genetics.variants",
+          "label": "variants",
+          "parent": "genetics"
+        },
+        {
+          "id": "genetics.assays",
+          "label": "assays",
+          "parent": "genetics"
+        },
+        {
+          "id": "genetics.identifiers",
+          "label": "identifiers",
+          "parent": "genetics"
+        },
+        {
+          "id": "genetics.familial",
+          "label": "familial",
+          "parent": "genetics"
+        }
+      ]
+    },
+    {
+      "id": "finance",
+      "label": "Financial and transactional",
+      "groups": [
+        {
+          "id": "finance.accounts",
+          "label": "accounts",
+          "parent": "finance"
+        },
+        {
+          "id": "finance.personal_finance",
+          "label": "personal finance",
+          "parent": "finance"
+        },
+        {
+          "id": "finance.transactions",
+          "label": "transactions",
+          "parent": "finance"
+        }
+      ]
+    },
+    {
+      "id": "behavior",
+      "label": "Behavior and mobility",
+      "groups": [
+        {
+          "id": "behavior.mobility",
+          "label": "mobility",
+          "parent": "behavior"
+        },
+        {
+          "id": "behavior.digital",
+          "label": "digital",
+          "parent": "behavior"
+        },
+        {
+          "id": "behavior.habits",
+          "label": "habits",
+          "parent": "behavior"
+        }
+      ]
+    },
+    {
+      "id": "relationships",
+      "label": "Relationships",
+      "groups": [
+        {
+          "id": "relationships.family",
+          "label": "family",
+          "parent": "relationships"
+        },
+        {
+          "id": "relationships.professional",
+          "label": "professional",
+          "parent": "relationships"
+        },
+        {
+          "id": "relationships.care",
+          "label": "care",
+          "parent": "relationships"
+        },
+        {
+          "id": "relationships.social",
+          "label": "social",
+          "parent": "relationships"
+        }
+      ]
+    },
+    {
+      "id": "technical",
+      "label": "Technical and document metadata",
+      "groups": [
+        {
+          "id": "technical.network",
+          "label": "network",
+          "parent": "technical"
+        },
+        {
+          "id": "technical.identifiers",
+          "label": "identifiers",
+          "parent": "technical"
+        },
+        {
+          "id": "technical.documents",
+          "label": "documents",
+          "parent": "technical"
+        }
+      ]
+    },
+    {
+      "id": "free_text",
+      "label": "Free-text and unstructured content",
+      "groups": [
+        {
+          "id": "free_text.narratives",
+          "label": "narratives",
+          "parent": "free_text"
+        },
+        {
+          "id": "free_text.embedded",
+          "label": "embedded",
+          "parent": "free_text"
+        }
+      ]
+    },
+    {
+      "id": "unknown",
+      "label": "Unknown and mixed content",
+      "groups": [
+        {
+          "id": "unknown.unresolved",
+          "label": "unresolved",
+          "parent": "unknown"
+        }
+      ]
+    }
+  ],
+  "types": [
+    {
+      "id": "legal_name",
+      "label": "Legal name",
+      "family": "identity",
+      "parent": "identity.names",
+      "aliases": [
+        "name",
+        "full_name",
+        "first_name",
+        "last_name",
+        "legal_name"
+      ]
+    },
+    {
+      "id": "preferred_name",
+      "label": "Alias or preferred name",
+      "family": "identity",
+      "parent": "identity.names",
+      "aliases": [
+        "alias",
+        "preferred_name",
+        "nickname"
+      ]
+    },
+    {
+      "id": "government_identifier",
+      "label": "Government-issued identifier",
+      "family": "identity",
+      "parent": "identity.identifiers",
+      "aliases": [
+        "ssn",
+        "social_security_number",
+        "passport_number",
+        "national_id",
+        "government_id"
+      ]
+    },
+    {
+      "id": "patient_identifier",
+      "label": "Patient or medical-record identifier",
+      "family": "identity",
+      "parent": "identity.identifiers",
+      "aliases": [
+        "pat_id",
+        "patient_id",
+        "mrn",
+        "medical_record_number",
+        "patient_number"
+      ]
+    },
+    {
+      "id": "customer_identifier",
+      "label": "Customer identifier",
+      "family": "identity",
+      "parent": "identity.identifiers",
+      "aliases": [
+        "customer_id",
+        "client_id"
+      ]
+    },
+    {
+      "id": "employee_identifier",
+      "label": "Employee identifier",
+      "family": "identity",
+      "parent": "identity.identifiers",
+      "aliases": [
+        "employee_id",
+        "staff_id"
+      ]
+    },
+    {
+      "id": "account_identifier",
+      "label": "Account identifier",
+      "family": "identity",
+      "parent": "identity.identifiers",
+      "aliases": [
+        "account_id",
+        "account_number"
+      ]
+    },
+    {
+      "id": "username",
+      "label": "Username or handle",
+      "family": "identity",
+      "parent": "identity.contact",
+      "aliases": [
+        "username",
+        "handle",
+        "user_name"
+      ]
+    },
+    {
+      "id": "email_address",
+      "label": "Email address",
+      "family": "identity",
+      "parent": "identity.contact",
+      "aliases": [
+        "email",
+        "email_address",
+        "e_mail"
+      ]
+    },
+    {
+      "id": "telephone_number",
+      "label": "Telephone number",
+      "family": "identity",
+      "parent": "identity.contact",
+      "aliases": [
+        "phone",
+        "telephone",
+        "phone_number",
+        "mobile_number"
+      ]
+    },
+    {
+      "id": "persistent_pseudonym",
+      "label": "Persistent pseudonym",
+      "family": "identity",
+      "parent": "identity.identifiers",
+      "aliases": [
+        "pseudonym",
+        "subject_token",
+        "persistent_pseudonym"
+      ]
+    },
+    {
+      "id": "hashed_identifier",
+      "label": "Hashed identifier",
+      "family": "identity",
+      "parent": "identity.identifiers",
+      "aliases": [
+        "hashed_id",
+        "patient_hash",
+        "hashed_identifier"
+      ]
+    },
+    {
+      "id": "biometric_identifier",
+      "label": "Biometric identifier",
+      "family": "identity",
+      "parent": "identity.biometrics",
+      "aliases": [
+        "fingerprint_id",
+        "biometric_id",
+        "iris_id"
+      ]
+    },
+    {
+      "id": "other_unique_identifier",
+      "label": "Other unique identifier",
+      "family": "identity",
+      "parent": "identity.identifiers",
+      "aliases": [
+        "id",
+        "record_id",
+        "subject_id",
+        "participant_id",
+        "uuid"
+      ]
+    },
+    {
+      "id": "residential_address",
+      "label": "Residential address",
+      "family": "geography",
+      "parent": "geography.addresses",
+      "aliases": [
+        "address",
+        "residential_address",
+        "home_address"
+      ]
+    },
+    {
+      "id": "mailing_address",
+      "label": "Mailing address",
+      "family": "geography",
+      "parent": "geography.addresses",
+      "aliases": [
+        "mailing_address",
+        "postal_address"
+      ]
+    },
+    {
+      "id": "street",
+      "label": "Street",
+      "family": "geography",
+      "parent": "geography.addresses",
+      "aliases": [
+        "street",
+        "street_address"
+      ]
+    },
+    {
+      "id": "city",
+      "label": "City",
+      "family": "geography",
+      "parent": "geography.administrative_areas",
+      "aliases": [
+        "city",
+        "town",
+        "municipality"
+      ]
+    },
+    {
+      "id": "state_province",
+      "label": "State or province",
+      "family": "geography",
+      "parent": "geography.administrative_areas",
+      "aliases": [
+        "state",
+        "province",
+        "state_code"
+      ]
+    },
+    {
+      "id": "country",
+      "label": "Country",
+      "family": "geography",
+      "parent": "geography.administrative_areas",
+      "aliases": [
+        "country",
+        "country_code"
+      ]
+    },
+    {
+      "id": "postal_code",
+      "label": "Full postal code",
+      "family": "geography",
+      "parent": "geography.postal",
+      "aliases": [
+        "zip",
+        "zipcode",
+        "zip_code",
+        "postal_code",
+        "postcode"
+      ]
+    },
+    {
+      "id": "postal_prefix",
+      "label": "Partial postal code",
+      "family": "geography",
+      "parent": "geography.postal",
+      "aliases": [
+        "zip3",
+        "zip_prefix",
+        "postal_prefix",
+        "postcode_prefix"
+      ]
+    },
+    {
+      "id": "gps_coordinates",
+      "label": "GPS coordinates",
+      "family": "geography",
+      "parent": "geography.coordinates",
+      "aliases": [
+        "gps",
+        "gps_coordinates",
+        "latitude",
+        "longitude",
+        "lat_lon"
+      ]
+    },
+    {
+      "id": "workplace_location",
+      "label": "Workplace location",
+      "family": "geography",
+      "parent": "geography.sites",
+      "aliases": [
+        "workplace_location",
+        "office_location"
+      ]
+    },
+    {
+      "id": "healthcare_facility",
+      "label": "Healthcare facility",
+      "family": "geography",
+      "parent": "geography.sites",
+      "aliases": [
+        "hosp_site",
+        "hospital",
+        "hospital_site",
+        "healthcare_facility",
+        "clinic",
+        "clinic_site"
+      ]
+    },
+    {
+      "id": "educational_facility",
+      "label": "Educational facility",
+      "family": "geography",
+      "parent": "geography.sites",
+      "aliases": [
+        "school",
+        "school_site",
+        "university",
+        "educational_facility"
+      ]
+    },
+    {
+      "id": "recruitment_site",
+      "label": "Recruitment site",
+      "family": "geography",
+      "parent": "geography.sites",
+      "aliases": [
+        "recruitment_site",
+        "study_site",
+        "recruiting_site"
+      ]
+    },
+    {
+      "id": "geographic_trajectory",
+      "label": "Repeated geographic trajectory",
+      "family": "geography",
+      "parent": "geography.trajectories",
+      "aliases": [
+        "geographic_trajectory",
+        "trajectory",
+        "gps_sequence"
+      ]
+    },
+    {
+      "id": "anatomical_location",
+      "label": "Anatomical location (not physical geography)",
+      "family": "geography",
+      "parent": "geography.anatomy",
+      "aliases": [
+        "anatomical_location",
+        "body_site",
+        "tumor_site",
+        "lesion_location"
+      ]
+    },
+    {
+      "id": "date_of_birth",
+      "label": "Date of birth",
+      "family": "time",
+      "parent": "time.life_events",
+      "aliases": [
+        "dob",
+        "birth_date",
+        "date_of_birth"
+      ]
+    },
+    {
+      "id": "age",
+      "label": "Age",
+      "family": "time",
+      "parent": "time.elapsed",
+      "aliases": [
+        "age",
+        "age_years"
+      ]
+    },
+    {
+      "id": "date_of_death",
+      "label": "Date of death",
+      "family": "time",
+      "parent": "time.life_events",
+      "aliases": [
+        "date_of_death",
+        "death_date",
+        "dod"
+      ]
+    },
+    {
+      "id": "admission_date",
+      "label": "Admission date",
+      "family": "time",
+      "parent": "time.clinical_events",
+      "aliases": [
+        "admission_date",
+        "admit_date"
+      ]
+    },
+    {
+      "id": "discharge_date",
+      "label": "Discharge date",
+      "family": "time",
+      "parent": "time.clinical_events",
+      "aliases": [
+        "discharge_date"
+      ]
+    },
+    {
+      "id": "encounter_date",
+      "label": "Encounter date",
+      "family": "time",
+      "parent": "time.clinical_events",
+      "aliases": [
+        "encounter_date",
+        "visit_date",
+        "service_date",
+        "date_of_service"
+      ]
+    },
+    {
+      "id": "treatment_date",
+      "label": "Treatment date",
+      "family": "time",
+      "parent": "time.clinical_events",
+      "aliases": [
+        "treatment_date",
+        "therapy_date"
+      ]
+    },
+    {
+      "id": "appointment_time",
+      "label": "Appointment time",
+      "family": "time",
+      "parent": "time.clinical_events",
+      "aliases": [
+        "appointment_time",
+        "visit_time",
+        "appt_time"
+      ]
+    },
+    {
+      "id": "transaction_timestamp",
+      "label": "Transaction timestamp",
+      "family": "time",
+      "parent": "time.administrative_events",
+      "aliases": [
+        "transaction_timestamp",
+        "transaction_time"
+      ]
+    },
+    {
+      "id": "relative_elapsed_time",
+      "label": "Relative elapsed time",
+      "family": "time",
+      "parent": "time.elapsed",
+      "aliases": [
+        "elapsed_time",
+        "days_since_baseline",
+        "relative_time",
+        "days_since_diagnosis"
+      ]
+    },
+    {
+      "id": "duration",
+      "label": "Duration",
+      "family": "time",
+      "parent": "time.elapsed",
+      "aliases": [
+        "duration",
+        "duration_days",
+        "followup_days"
+      ]
+    },
+    {
+      "id": "event_sequence",
+      "label": "Repeated event sequence",
+      "family": "time",
+      "parent": "time.sequences",
+      "aliases": [
+        "event_sequence",
+        "event_order",
+        "sequence_number"
+      ]
+    },
+    {
+      "id": "observation_window",
+      "label": "Observation window",
+      "family": "time",
+      "parent": "time.sequences",
+      "aliases": [
+        "observation_window",
+        "followup_window"
+      ]
+    },
+    {
+      "id": "administrative_timestamp",
+      "label": "Administrative timestamp",
+      "family": "time",
+      "parent": "time.administrative_events",
+      "aliases": [
+        "created_at",
+        "updated_at",
+        "timestamp",
+        "imported_at"
+      ]
+    },
+    {
+      "id": "age_group",
+      "label": "Age or age group",
+      "family": "demographics",
+      "parent": "demographics.population",
+      "aliases": [
+        "age_group",
+        "age_band",
+        "age_category"
+      ]
+    },
+    {
+      "id": "sex_gender",
+      "label": "Sex or gender attribute",
+      "family": "demographics",
+      "parent": "demographics.population",
+      "aliases": [
+        "sex",
+        "gender",
+        "sex_at_birth"
+      ]
+    },
+    {
+      "id": "occupation",
+      "label": "Occupation",
+      "family": "demographics",
+      "parent": "demographics.employment",
+      "aliases": [
+        "occupation",
+        "job_title",
+        "profession"
+      ]
+    },
+    {
+      "id": "employer",
+      "label": "Employer",
+      "family": "demographics",
+      "parent": "demographics.employment",
+      "aliases": [
+        "employer",
+        "employer_name"
+      ]
+    },
+    {
+      "id": "education_level",
+      "label": "Education level",
+      "family": "demographics",
+      "parent": "demographics.social",
+      "aliases": [
+        "education",
+        "education_level",
+        "highest_degree"
+      ]
+    },
+    {
+      "id": "household_structure",
+      "label": "Household structure",
+      "family": "demographics",
+      "parent": "demographics.social",
+      "aliases": [
+        "household_structure",
+        "household_size"
+      ]
+    },
+    {
+      "id": "marital_status",
+      "label": "Marital status",
+      "family": "demographics",
+      "parent": "demographics.social",
+      "aliases": [
+        "marital_status"
+      ]
+    },
+    {
+      "id": "nationality",
+      "label": "Nationality",
+      "family": "demographics",
+      "parent": "demographics.population",
+      "aliases": [
+        "nationality",
+        "citizenship"
+      ]
+    },
+    {
+      "id": "language",
+      "label": "Language",
+      "family": "demographics",
+      "parent": "demographics.population",
+      "aliases": [
+        "language",
+        "primary_language"
+      ]
+    },
+    {
+      "id": "socioeconomic_category",
+      "label": "Socioeconomic category",
+      "family": "demographics",
+      "parent": "demographics.social",
+      "aliases": [
+        "socioeconomic_status",
+        "ses",
+        "deprivation_index"
+      ]
+    },
+    {
+      "id": "population_characteristic",
+      "label": "Other population characteristic",
+      "family": "demographics",
+      "parent": "demographics.population",
+      "aliases": [
+        "race",
+        "ethnicity",
+        "population_group"
+      ]
+    },
+    {
+      "id": "height",
+      "label": "Height",
+      "family": "physical",
+      "parent": "physical.measurements",
+      "aliases": [
+        "height",
+        "height_cm",
+        "ht_cm",
+        "height_m"
+      ]
+    },
+    {
+      "id": "weight",
+      "label": "Weight",
+      "family": "physical",
+      "parent": "physical.measurements",
+      "aliases": [
+        "weight",
+        "weight_kg",
+        "weight_lb",
+        "weight_lbs",
+        "wt_kg"
+      ]
+    },
+    {
+      "id": "eye_color",
+      "label": "Eye color",
+      "family": "physical",
+      "parent": "physical.appearance",
+      "aliases": [
+        "eye_color",
+        "eye_colour"
+      ]
+    },
+    {
+      "id": "hair_characteristics",
+      "label": "Hair characteristics",
+      "family": "physical",
+      "parent": "physical.appearance",
+      "aliases": [
+        "hair_color",
+        "hair_colour",
+        "hair_type"
+      ]
+    },
+    {
+      "id": "body_measurements",
+      "label": "Body measurements",
+      "family": "physical",
+      "parent": "physical.measurements",
+      "aliases": [
+        "waist_cm",
+        "body_measurements",
+        "bmi",
+        "hip_cm"
+      ]
+    },
+    {
+      "id": "physical_disability",
+      "label": "Physical disability information",
+      "family": "physical",
+      "parent": "physical.health",
+      "aliases": [
+        "physical_disability",
+        "mobility_disability"
+      ]
+    },
+    {
+      "id": "biometric_template",
+      "label": "Biometric template",
+      "family": "physical",
+      "parent": "physical.biometrics",
+      "aliases": [
+        "biometric_template",
+        "fingerprint_template",
+        "face_embedding"
+      ]
+    },
+    {
+      "id": "distinguishing_physical_characteristic",
+      "label": "Distinguishing physical characteristic",
+      "family": "physical",
+      "parent": "physical.appearance",
+      "aliases": [
+        "scar",
+        "tattoo",
+        "birthmark",
+        "distinguishing_mark"
+      ]
+    },
+    {
+      "id": "physiological_measurement",
+      "label": "Physiological measurement",
+      "family": "physical",
+      "parent": "physical.measurements",
+      "aliases": [
+        "heart_rate",
+        "blood_pressure",
+        "systolic",
+        "diastolic",
+        "spo2",
+        "temperature"
+      ]
+    },
+    {
+      "id": "diagnosis",
+      "label": "Diagnosis",
+      "family": "medicine",
+      "parent": "medicine.diagnoses",
+      "aliases": [
+        "diagnosis",
+        "disease",
+        "condition"
+      ]
+    },
+    {
+      "id": "diagnosis_code",
+      "label": "Diagnosis code",
+      "family": "medicine",
+      "parent": "medicine.diagnoses",
+      "aliases": [
+        "dx_code",
+        "diagnosis_code",
+        "icd",
+        "icd10",
+        "icd9",
+        "icd_code"
+      ]
+    },
+    {
+      "id": "medical_history",
+      "label": "Medical history",
+      "family": "medicine",
+      "parent": "medicine.history",
+      "aliases": [
+        "medical_history",
+        "history",
+        "comorbidities"
+      ]
+    },
+    {
+      "id": "procedure",
+      "label": "Procedure",
+      "family": "medicine",
+      "parent": "medicine.interventions",
+      "aliases": [
+        "procedure",
+        "procedure_code",
+        "surgery"
+      ]
+    },
+    {
+      "id": "prescription",
+      "label": "Prescription",
+      "family": "medicine",
+      "parent": "medicine.interventions",
+      "aliases": [
+        "prescription",
+        "prescribed_drug"
+      ]
+    },
+    {
+      "id": "drug_exposure",
+      "label": "Drug exposure",
+      "family": "medicine",
+      "parent": "medicine.interventions",
+      "aliases": [
+        "drug",
+        "drug_exposure",
+        "dose",
+        "dosage"
+      ]
+    },
+    {
+      "id": "treatment_regimen",
+      "label": "Treatment regimen",
+      "family": "medicine",
+      "parent": "medicine.interventions",
+      "aliases": [
+        "treatment",
+        "treatment_regimen",
+        "therapy"
+      ]
+    },
+    {
+      "id": "laboratory_result",
+      "label": "Laboratory result",
+      "family": "medicine",
+      "parent": "medicine.observations",
+      "aliases": [
+        "lab_result",
+        "lab_value",
+        "laboratory_result",
+        "hemoglobin",
+        "creatinine"
+      ]
+    },
+    {
+      "id": "disease_stage",
+      "label": "Disease stage",
+      "family": "medicine",
+      "parent": "medicine.diagnoses",
+      "aliases": [
+        "disease_stage",
+        "cancer_stage",
+        "tumor_stage"
+      ]
+    },
+    {
+      "id": "treatment_outcome",
+      "label": "Treatment outcome",
+      "family": "medicine",
+      "parent": "medicine.outcomes",
+      "aliases": [
+        "tx_resp",
+        "response",
+        "outcome",
+        "treatment_response",
+        "failure_6m"
+      ]
+    },
+    {
+      "id": "prognostic_measurement",
+      "label": "Prognostic measurement",
+      "family": "medicine",
+      "parent": "medicine.outcomes",
+      "aliases": [
+        "prognosis",
+        "prognostic_score",
+        "survival_probability"
+      ]
+    },
+    {
+      "id": "healthcare_utilization",
+      "label": "Healthcare utilization",
+      "family": "medicine",
+      "parent": "medicine.history",
+      "aliases": [
+        "healthcare_utilization",
+        "visit_count",
+        "hospitalizations"
+      ]
+    },
+    {
+      "id": "clinical_note",
+      "label": "Clinical note",
+      "family": "medicine",
+      "parent": "medicine.narratives",
+      "aliases": [
+        "clinical_note",
+        "clinical_notes",
+        "progress_note"
+      ]
+    },
+    {
+      "id": "rare_disease",
+      "label": "Rare disease",
+      "family": "medicine",
+      "parent": "medicine.diagnoses",
+      "aliases": [
+        "rare_disease",
+        "orphan_disease"
+      ]
+    },
+    {
+      "id": "particularly_sensitive_medical",
+      "label": "Reproductive or particularly sensitive medical information",
+      "family": "medicine",
+      "parent": "medicine.sensitive",
+      "aliases": [
+        "pregnancy",
+        "reproductive_history",
+        "hiv_status",
+        "sexual_health"
+      ]
+    },
+    {
+      "id": "genomic_sequence",
+      "label": "Genomic sequence",
+      "family": "genetics",
+      "parent": "genetics.sequences",
+      "aliases": [
+        "genome",
+        "genomic_sequence",
+        "dna_sequence",
+        "rna_sequence"
+      ]
+    },
+    {
+      "id": "genetic_variant",
+      "label": "Genetic variant",
+      "family": "genetics",
+      "parent": "genetics.variants",
+      "aliases": [
+        "variant",
+        "genetic_variant",
+        "snp",
+        "rsid"
+      ]
+    },
+    {
+      "id": "mutation_status",
+      "label": "Mutation status",
+      "family": "genetics",
+      "parent": "genetics.variants",
+      "aliases": [
+        "mutation",
+        "mutation_status",
+        "kras",
+        "braf",
+        "egfr",
+        "tp53"
+      ]
+    },
+    {
+      "id": "gene_expression",
+      "label": "Gene-expression measurement",
+      "family": "genetics",
+      "parent": "genetics.assays",
+      "aliases": [
+        "gene_expression",
+        "rna_expression"
+      ]
+    },
+    {
+      "id": "specimen_identifier",
+      "label": "Biological specimen identifier",
+      "family": "genetics",
+      "parent": "genetics.identifiers",
+      "aliases": [
+        "specimen_id",
+        "sample_id",
+        "biospecimen_id"
+      ]
+    },
+    {
+      "id": "familial_marker",
+      "label": "Familial marker",
+      "family": "genetics",
+      "parent": "genetics.familial",
+      "aliases": [
+        "familial_marker",
+        "family_marker"
+      ]
+    },
+    {
+      "id": "hereditary_condition",
+      "label": "Hereditary condition",
+      "family": "genetics",
+      "parent": "genetics.familial",
+      "aliases": [
+        "hereditary_condition",
+        "inherited_condition"
+      ]
+    },
+    {
+      "id": "genetic_ancestry",
+      "label": "Genetic ancestry",
+      "family": "genetics",
+      "parent": "genetics.familial",
+      "aliases": [
+        "genetic_ancestry",
+        "ancestry_pc"
+      ]
+    },
+    {
+      "id": "molecular_assay",
+      "label": "Protein or molecular assay result",
+      "family": "genetics",
+      "parent": "genetics.assays",
+      "aliases": [
+        "protein_assay",
+        "molecular_assay",
+        "proteomics"
+      ]
+    },
+    {
+      "id": "bank_account",
+      "label": "Bank account",
+      "family": "finance",
+      "parent": "finance.accounts",
+      "aliases": [
+        "bank_account",
+        "iban",
+        "bank_account_number"
+      ]
+    },
+    {
+      "id": "payment_card",
+      "label": "Payment-card information",
+      "family": "finance",
+      "parent": "finance.accounts",
+      "aliases": [
+        "credit_card",
+        "card_number",
+        "payment_card",
+        "pan"
+      ]
+    },
+    {
+      "id": "income",
+      "label": "Income",
+      "family": "finance",
+      "parent": "finance.personal_finance",
+      "aliases": [
+        "income",
+        "annual_income",
+        "salary"
+      ]
+    },
+    {
+      "id": "balance",
+      "label": "Balance",
+      "family": "finance",
+      "parent": "finance.personal_finance",
+      "aliases": [
+        "balance",
+        "account_balance"
+      ]
+    },
+    {
+      "id": "credit_information",
+      "label": "Credit information",
+      "family": "finance",
+      "parent": "finance.personal_finance",
+      "aliases": [
+        "credit_score",
+        "credit_rating",
+        "credit_information"
+      ]
+    },
+    {
+      "id": "purchase_record",
+      "label": "Purchase record",
+      "family": "finance",
+      "parent": "finance.transactions",
+      "aliases": [
+        "purchase_record",
+        "purchase_id"
+      ]
+    },
+    {
+      "id": "transaction_amount",
+      "label": "Transaction amount",
+      "family": "finance",
+      "parent": "finance.transactions",
+      "aliases": [
+        "transaction_amount",
+        "amount",
+        "payment_amount"
+      ]
+    },
+    {
+      "id": "transaction_counterparty",
+      "label": "Transaction counterparty",
+      "family": "finance",
+      "parent": "finance.transactions",
+      "aliases": [
+        "counterparty",
+        "transaction_counterparty",
+        "merchant"
+      ]
+    },
+    {
+      "id": "financial_transaction_timestamp",
+      "label": "Financial transaction timestamp",
+      "family": "finance",
+      "parent": "finance.transactions",
+      "aliases": [
+        "payment_timestamp",
+        "financial_transaction_timestamp"
+      ]
+    },
+    {
+      "id": "financial_institution_identifier",
+      "label": "Financial institution identifier",
+      "family": "finance",
+      "parent": "finance.accounts",
+      "aliases": [
+        "bank_id",
+        "routing_number",
+        "bic",
+        "swift_code"
+      ]
+    },
+    {
+      "id": "movement_trace",
+      "label": "Movement trace",
+      "family": "behavior",
+      "parent": "behavior.mobility",
+      "aliases": [
+        "movement_trace",
+        "mobility_trace"
+      ]
+    },
+    {
+      "id": "location_history",
+      "label": "Location history",
+      "family": "behavior",
+      "parent": "behavior.mobility",
+      "aliases": [
+        "location_history",
+        "location_sequence"
+      ]
+    },
+    {
+      "id": "device_activity",
+      "label": "Device activity",
+      "family": "behavior",
+      "parent": "behavior.digital",
+      "aliases": [
+        "device_activity",
+        "screen_time"
+      ]
+    },
+    {
+      "id": "website_activity",
+      "label": "Website activity",
+      "family": "behavior",
+      "parent": "behavior.digital",
+      "aliases": [
+        "browsing_history",
+        "website_activity",
+        "page_views"
+      ]
+    },
+    {
+      "id": "purchase_history",
+      "label": "Purchase history",
+      "family": "behavior",
+      "parent": "behavior.habits",
+      "aliases": [
+        "purchase_history",
+        "shopping_history"
+      ]
+    },
+    {
+      "id": "communication_pattern",
+      "label": "Communication pattern",
+      "family": "behavior",
+      "parent": "behavior.digital",
+      "aliases": [
+        "communication_pattern",
+        "call_history",
+        "message_count"
+      ]
+    },
+    {
+      "id": "sleep_activity_record",
+      "label": "Sleep/activity record",
+      "family": "behavior",
+      "parent": "behavior.habits",
+      "aliases": [
+        "sleep",
+        "sleep_hours",
+        "activity_record",
+        "steps"
+      ]
+    },
+    {
+      "id": "behavioral_sequence",
+      "label": "Repeated behavioral sequence",
+      "family": "behavior",
+      "parent": "behavior.habits",
+      "aliases": [
+        "behavior_sequence",
+        "behavioural_sequence",
+        "behavioral_sequence"
+      ]
+    },
+    {
+      "id": "application_usage",
+      "label": "Application usage",
+      "family": "behavior",
+      "parent": "behavior.digital",
+      "aliases": [
+        "app_usage",
+        "application_usage"
+      ]
+    },
+    {
+      "id": "personal_routine",
+      "label": "Personal routine",
+      "family": "behavior",
+      "parent": "behavior.habits",
+      "aliases": [
+        "personal_routine",
+        "daily_routine"
+      ]
+    },
+    {
+      "id": "parent_child",
+      "label": "Parent-child relationship",
+      "family": "relationships",
+      "parent": "relationships.family",
+      "aliases": [
+        "parent_id",
+        "child_id",
+        "parent_child"
+      ]
+    },
+    {
+      "id": "household_membership",
+      "label": "Household membership",
+      "family": "relationships",
+      "parent": "relationships.family",
+      "aliases": [
+        "household_id",
+        "household_membership"
+      ]
+    },
+    {
+      "id": "family_relationship",
+      "label": "Family relationship",
+      "family": "relationships",
+      "parent": "relationships.family",
+      "aliases": [
+        "family_id",
+        "family_relationship",
+        "kinship"
+      ]
+    },
+    {
+      "id": "employer_employee",
+      "label": "Employer-employee relationship",
+      "family": "relationships",
+      "parent": "relationships.professional",
+      "aliases": [
+        "employer_employee",
+        "manager_id"
+      ]
+    },
+    {
+      "id": "patient_provider",
+      "label": "Patient-provider relationship",
+      "family": "relationships",
+      "parent": "relationships.care",
+      "aliases": [
+        "provider_id",
+        "physician_id",
+        "patient_provider"
+      ]
+    },
+    {
+      "id": "caregiver_relationship",
+      "label": "Caregiver relationship",
+      "family": "relationships",
+      "parent": "relationships.care",
+      "aliases": [
+        "caregiver_id",
+        "caregiver_relationship"
+      ]
+    },
+    {
+      "id": "social_association",
+      "label": "Social association",
+      "family": "relationships",
+      "parent": "relationships.social",
+      "aliases": [
+        "social_association",
+        "friend_id",
+        "social_link"
+      ]
+    },
+    {
+      "id": "organizational_membership",
+      "label": "Organizational membership",
+      "family": "relationships",
+      "parent": "relationships.professional",
+      "aliases": [
+        "organization_id",
+        "membership_id",
+        "organizational_membership"
+      ]
+    },
+    {
+      "id": "shared_account_device",
+      "label": "Shared account or device",
+      "family": "relationships",
+      "parent": "relationships.social",
+      "aliases": [
+        "shared_account",
+        "shared_device",
+        "shared_account_device"
+      ]
+    },
+    {
+      "id": "referral_relationship",
+      "label": "Referral relationship",
+      "family": "relationships",
+      "parent": "relationships.care",
+      "aliases": [
+        "referral_id",
+        "referrer_id",
+        "referral_relationship"
+      ]
+    },
+    {
+      "id": "ip_address",
+      "label": "IP address",
+      "family": "technical",
+      "parent": "technical.network",
+      "aliases": [
+        "ip",
+        "ip_address",
+        "client_ip",
+        "remote_ip"
+      ]
+    },
+    {
+      "id": "mac_address",
+      "label": "MAC address",
+      "family": "technical",
+      "parent": "technical.network",
+      "aliases": [
+        "mac",
+        "mac_address"
+      ]
+    },
+    {
+      "id": "device_identifier",
+      "label": "Device identifier",
+      "family": "technical",
+      "parent": "technical.identifiers",
+      "aliases": [
+        "device_id",
+        "device_identifier",
+        "imei"
+      ]
+    },
+    {
+      "id": "advertising_identifier",
+      "label": "Advertising identifier",
+      "family": "technical",
+      "parent": "technical.identifiers",
+      "aliases": [
+        "advertising_id",
+        "ad_id",
+        "idfa",
+        "aaid"
+      ]
+    },
+    {
+      "id": "session_identifier",
+      "label": "Session identifier",
+      "family": "technical",
+      "parent": "technical.identifiers",
+      "aliases": [
+        "session_id",
+        "session_identifier"
+      ]
+    },
+    {
+      "id": "url",
+      "label": "URL",
+      "family": "technical",
+      "parent": "technical.documents",
+      "aliases": [
+        "url",
+        "website",
+        "web_address"
+      ]
+    },
+    {
+      "id": "file_path",
+      "label": "File path",
+      "family": "technical",
+      "parent": "technical.documents",
+      "aliases": [
+        "path",
+        "file_path",
+        "filename"
+      ]
+    },
+    {
+      "id": "author_metadata",
+      "label": "Author metadata",
+      "family": "technical",
+      "parent": "technical.documents",
+      "aliases": [
+        "author",
+        "author_name",
+        "document_author"
+      ]
+    },
+    {
+      "id": "document_creation_date",
+      "label": "Document creation date",
+      "family": "technical",
+      "parent": "technical.documents",
+      "aliases": [
+        "document_created_at",
+        "document_creation_date"
+      ]
+    },
+    {
+      "id": "embedded_metadata",
+      "label": "EXIF or embedded metadata",
+      "family": "technical",
+      "parent": "technical.documents",
+      "aliases": [
+        "exif",
+        "embedded_metadata",
+        "exif_data"
+      ]
+    },
+    {
+      "id": "tracking_token",
+      "label": "Persistent tracking token",
+      "family": "technical",
+      "parent": "technical.identifiers",
+      "aliases": [
+        "tracking_token",
+        "tracking_id",
+        "cookie_id"
+      ]
+    },
+    {
+      "id": "cryptographic_hash",
+      "label": "Cryptographic hash",
+      "family": "technical",
+      "parent": "technical.identifiers",
+      "aliases": [
+        "hash",
+        "sha256",
+        "md5",
+        "checksum"
+      ]
+    },
+    {
+      "id": "network_application_identifier",
+      "label": "Network or application identifier",
+      "family": "technical",
+      "parent": "technical.network",
+      "aliases": [
+        "network_id",
+        "application_id",
+        "app_id"
+      ]
+    },
+    {
+      "id": "narrative_clinical_notes",
+      "label": "Narrative clinical notes",
+      "family": "free_text",
+      "parent": "free_text.narratives",
+      "aliases": [
+        "narrative_clinical_notes",
+        "clinical_narrative"
+      ]
+    },
+    {
+      "id": "survey_free_response",
+      "label": "Survey free response",
+      "family": "free_text",
+      "parent": "free_text.narratives",
+      "aliases": [
+        "free_response",
+        "survey_comment",
+        "survey_response"
+      ]
+    },
+    {
+      "id": "personal_description",
+      "label": "Personal descriptions",
+      "family": "free_text",
+      "parent": "free_text.narratives",
+      "aliases": [
+        "personal_description",
+        "biography",
+        "bio"
+      ]
+    },
+    {
+      "id": "quoted_conversation",
+      "label": "Quoted conversation",
+      "family": "free_text",
+      "parent": "free_text.narratives",
+      "aliases": [
+        "conversation",
+        "transcript",
+        "quoted_conversation"
+      ]
+    },
+    {
+      "id": "embedded_contact_information",
+      "label": "Contact information embedded in text",
+      "family": "free_text",
+      "parent": "free_text.embedded",
+      "aliases": [
+        "embedded_contact",
+        "contact_text"
+      ]
+    },
+    {
+      "id": "embedded_identifiers",
+      "label": "Embedded identifiers",
+      "family": "free_text",
+      "parent": "free_text.embedded",
+      "aliases": [
+        "embedded_identifiers"
+      ]
+    },
+    {
+      "id": "narrative_sensitive_events",
+      "label": "Sensitive events described narratively",
+      "family": "free_text",
+      "parent": "free_text.narratives",
+      "aliases": [
+        "sensitive_event_narrative",
+        "incident_description"
+      ]
+    },
+    {
+      "id": "identifying_natural_language",
+      "label": "Other potentially identifying natural-language content",
+      "family": "free_text",
+      "parent": "free_text.narratives",
+      "aliases": [
+        "notes",
+        "note",
+        "comments",
+        "description",
+        "text"
+      ]
+    },
+    {
+      "id": "ambiguous",
+      "label": "Ambiguous semantic type",
+      "family": "unknown",
+      "parent": "unknown.unresolved",
+      "aliases": []
+    },
+    {
+      "id": "multiple_interpretations",
+      "label": "Multiple plausible interpretations",
+      "family": "unknown",
+      "parent": "unknown.unresolved",
+      "aliases": []
+    },
+    {
+      "id": "unclassified_text",
+      "label": "Unclassified text",
+      "family": "unknown",
+      "parent": "unknown.unresolved",
+      "aliases": []
+    },
+    {
+      "id": "mixed_value",
+      "label": "Mixed-value column",
+      "family": "unknown",
+      "parent": "unknown.unresolved",
+      "aliases": []
+    },
+    {
+      "id": "derived_unknown_source",
+      "label": "Derived value with unknown source",
+      "family": "unknown",
+      "parent": "unknown.unresolved",
+      "aliases": [
+        "derived_value"
+      ]
+    },
+    {
+      "id": "unsupported",
+      "label": "Unsupported content",
+      "family": "unknown",
+      "parent": "unknown.unresolved",
+      "aliases": []
+    },
+    {
+      "id": "unknown",
+      "label": "Unknown data meaning",
+      "family": "unknown",
+      "parent": "unknown.unresolved",
+      "aliases": []
+    }
+  ],
+  "propertyEnums": {
+    "subjectType": [
+      "patient",
+      "person",
+      "household",
+      "provider",
+      "organization",
+      "device",
+      "event",
+      "other",
+      "unknown"
+    ],
+    "personalDataAssociation": [
+      "direct",
+      "indirect",
+      "absent",
+      "unknown"
+    ],
+    "stability": [
+      "persistent",
+      "relatively_stable",
+      "transient",
+      "unknown"
+    ],
+    "granularity": [
+      "exact",
+      "generalized",
+      "rounded",
+      "bucketed",
+      "aggregated",
+      "suppressed"
+    ],
+    "representation": [
+      "numeric",
+      "categorical",
+      "string",
+      "timestamp",
+      "geospatial",
+      "sequence",
+      "narrative",
+      "mixed"
+    ],
+    "temporalRelationship": [
+      "observation",
+      "event",
+      "interval",
+      "sequence",
+      "unrelated"
+    ],
+    "geographicRelationship": [
+      "residence",
+      "workplace",
+      "facility",
+      "event_location",
+      "anatomical",
+      "unknown"
+    ],
+    "potentialSensitivity": [
+      "ordinary",
+      "contextual",
+      "sensitive",
+      "unknown"
+    ],
+    "externalMatchability": [
+      "plausible",
+      "evidence_supported",
+      "not_established"
+    ],
+    "researchRole": [
+      "explanatory_variable",
+      "outcome",
+      "grouping_variable",
+      "linkage_key",
+      "nuisance_variable",
+      "unknown"
+    ],
+    "recordRelationship": [
+      "same_subject",
+      "repeated_measure",
+      "same_event",
+      "different_subject",
+      "unknown"
+    ],
+    "userConfirmation": [
+      "unreviewed",
+      "confirmed",
+      "corrected"
+    ]
+  },
+  "privacyRoles": [
+    "direct_identifier",
+    "quasi_identifier",
+    "sensitive",
+    "research_target",
+    "other"
+  ],
+  "reviewStates": [
+    "needs_review",
+    "suggested",
+    "confirmed",
+    "corrected"
+  ]
+}
