@@ -1,6 +1,6 @@
 # PRISM
 
-[Open the fictional demo](https://prism-healthcare-taupe.vercel.app/) · [Pitch deck](https://prism-healthcare-taupe.vercel.app/pitch/) · [Download pitch PDF](https://prism-healthcare-taupe.vercel.app/pitch/PRISM-Pitch.pdf)
+[Open the fictional demo](https://41d0bdfd-0065-4b0b-a973-efbe1c1a9c5e.archie.site/) · [Pitch deck](https://prism-healthcare-taupe.vercel.app/pitch/) · [Download pitch PDF](https://prism-healthcare-taupe.vercel.app/pitch/PRISM-Pitch.pdf)
 
 PRISM is a local privacy engineering workbench for structured research datasets. It compares what a candidate row release reveals within its sample with what its transformations change in the research questions you care about.
 
@@ -46,11 +46,11 @@ For frontend development, keep the backend running and use `npm run dev --prefix
 
 ## Hosted fictional demo
 
-The [public fictional demo](https://prism-healthcare-taupe.vercel.app/) uses Vercel project `prism-healthcare`. Vercel serves the React frontend and runs the real Python privacy/utility calculations. Archie Core Postgres stores durable fictional-demo configuration in one dedicated table, accessed through a server-only service role. This is an Archie-backed deployment; the frontend and Python compute run on Vercel. Actual deployed fixture calculations reproduce 75 then 20 correct matches; the [verification record](artifacts/verification.md) distinguishes API checks from frontend acceptance.
+The [public fictional demo](https://41d0bdfd-0065-4b0b-a973-efbe1c1a9c5e.archie.site/) opens the reviewed React interface at its published Archie origin. Archie serves the public HTML entry; immutable JavaScript, CSS and font assets and the real Python privacy/utility calculations run on Vercel project `prism-healthcare`. Archie Core PostgreSQL/GraphQL stores durable fictional-demo configuration in one dedicated table, accessed through a server-only service role. This is a split Archie/Vercel deployment. The pitch deck and PDF remain on Vercel; Archie does not serve the pitch path. Actual deployed fixture calculations reproduce 75 then 20 correct matches; the [verification record](artifacts/verification.md) distinguishes API checks from frontend acceptance.
 
 The public adapter accepts only the two bundled fictional fixtures. CSV import and external-file audits remain available in the local workbench above. Each public visitor has an isolated session limited to 24 candidates per search, 40 candidates total, four search jobs, 64 KiB of configuration and 30 minutes of inactivity. Session clear removes that visitor's stored configuration. Candidate data is reconstructed from the fixtures across cold starts; source tables and protected-row previews are not stored in Archie. Abandoned expired configuration is inaccessible but remains until that visitor returns for lazy deletion.
 
-See [Archie + Vercel deployment](docs/ARCHIE_DEPLOYMENT.md) for the architecture, exact environment-variable names, deployment commands and fixture/API reproduction. The restricted Archie storage path has been checked live; that check does not establish public deployment availability or privacy/release clearance.
+See [Archie + Vercel deployment](docs/ARCHIE_DEPLOYMENT.md) for the architecture, exact environment-variable names, deployment commands and fixture/API reproduction. The verification record records current live checks; measured tradeoffs do not establish privacy or release clearance.
 
 ## Try the complete workflow
 

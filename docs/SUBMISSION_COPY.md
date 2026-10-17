@@ -12,19 +12,19 @@
 
 **Project description:**
 
-Built for eMerge AI Hackathon 2026, PRISM supports the Enterprise AI theme of safety, trust and governance. Enterprise research teams compare source tables with transformed candidates before internal or partner sharing, measuring disclosure and changes to selected study questions. In a reproduced fictional oncology benchmark of 480 records, removing ZIP reduced unique correct matches from 75 to 20 under a declared exact-match attack. Three selected protected answers stayed identical between those recipes. Six views connect research intent, exposure analysis, bounded recipe search and evidence exports. The Python engine is deterministic, with no generative model at runtime. Archie Core provides PostgreSQL/GraphQL. Vercel runs the frontend and Python compute. The public demo blocks uploads and provides no release clearance. See the README's 'Background material and AI-tool disclosure' section for background IP, third-party software and development AI tools.
+Built for eMerge AI Hackathon 2026, PRISM supports the Enterprise AI theme of safety, trust and governance. Enterprise research teams compare source tables with transformed candidates before internal or partner sharing, measuring disclosure and changes to selected study questions. In a reproduced fictional oncology benchmark of 480 records, removing ZIP reduced unique correct matches from 75 to 20 under a declared exact-match attack. Three selected protected answers stayed identical between those recipes. Six views connect research intent, exposure analysis, bounded recipe search and evidence exports. The Python engine is deterministic, with no generative model at runtime. Archie hosts the UI entry and durable fictional state; Vercel serves UI assets and Python compute. The public demo blocks uploads and provides no release clearance. See the README's 'Background material and AI-tool disclosure' section for background IP, third-party software and development AI tools.
 
-**Technologies:** React, TypeScript, Vite, Python, FastAPI, pandas, NumPy, SciPy. Archie Core provides PostgreSQL and GraphQL. Vercel hosts the frontend and Python compute. Optional pyCANON cross-checks. The runtime uses a deterministic scientific engine with no generative AI model or GPU requirement. Coding agents assisted development. The full Python engine can also run locally for private CSVs.
+**Technologies:** React, TypeScript, Vite, Python, FastAPI, pandas, NumPy, SciPy. Archie hosts the public HTML entry; Archie Core provides PostgreSQL and GraphQL for durable fictional state. Vercel serves immutable JavaScript, CSS and font assets and runs Python compute. Optional pyCANON cross-checks. The runtime uses a deterministic scientific engine with no generative AI model or GPU requirement. Coding agents assisted development. The full Python engine can also run locally for private CSVs.
 
 **PitchDeckURL:** https://prism-healthcare-taupe.vercel.app/pitch/
 
 **Portable PDF:** https://prism-healthcare-taupe.vercel.app/pitch/PRISM-Pitch.pdf
 
-**DemoURL:** https://prism-healthcare-taupe.vercel.app/
+**DemoURL:** https://41d0bdfd-0065-4b0b-a973-efbe1c1a9c5e.archie.site/
 
 **PublicRepo:** https://github.com/coldshalamov/PRISM
 
-The canonical demo uses real Archie Core services with Vercel frontend and Python compute. It serves fictional fixtures and blocks uploads. The repository README contains local setup instructions and scope. The Enterprise AI entry addresses purpose-aware privacy and utility review for enterprise research and data-sharing teams, including regulated research teams. Oncology is a fictional demonstration, not a claim to a sponsored healthcare challenge. The existing URL slug does not determine the track. Do not submit the entry until the user explicitly asks.
+The canonical demo opens the reviewed UI at the published Archie origin. Archie serves its HTML entry and Archie Core stores durable fictional state; immutable UI assets and Python compute run on Vercel. This is a split deployment. The pitch and PDF remain at the Vercel URLs above; Archie does not serve the pitch path. The demo serves fictional fixtures and blocks uploads. The repository README contains local setup instructions and scope. The Enterprise AI entry addresses purpose-aware privacy and utility review for enterprise research and data-sharing teams, including regulated research teams. Oncology is a fictional demonstration, not a claim to a sponsored healthcare challenge. The existing URL slug does not determine the track. Do not submit the entry until the user explicitly asks.
 
 ## Two-minute speaker flow
 
@@ -50,7 +50,7 @@ The canonical demo uses real Archie Core services with Vercel frontend and Pytho
 
 **1:31–1:45 · Slide 6**
 
-“The registry states coverage for 26 threat families and 17 protections. Unsupported analyses abstain. Archie Core supplies PostgreSQL and GraphQL. Vercel runs the frontend and Python compute. No generative model is required.”
+“The registry states coverage for 26 threat families and 17 protections. Unsupported analyses abstain. Archie hosts the public entry and durable fictional state. Vercel serves UI assets and Python compute. No generative model is required.”
 
 **1:45–2:00 · Slide 7**
 
