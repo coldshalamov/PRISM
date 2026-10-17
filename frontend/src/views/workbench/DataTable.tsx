@@ -51,7 +51,7 @@ export function DataTable({ side, columns, rows, compareTo, aligned, hoverRow, o
                     <span className="th-name">{column.name}</span>
                     <span className="th-meta">
                       <RoleIcon role={column.spec?.role} size={12} />
-                      <span>{column.removed ? 'removed in candidate' : column.note ?? column.spec?.dtype ?? ''}{column.spec?.unit ? ` · ${column.spec.unit}` : ''}</span>
+                      <span>{column.removed ? 'removed' : column.note ?? column.spec?.dtype ?? ''}{column.spec?.unit ? ` · ${column.spec.unit}` : ''}</span>
                     </span>
                   </button>
                 </th>

@@ -29,6 +29,12 @@ export function Hero({ recipeEdited }: { recipeEdited: boolean }) {
     after: metric('sample_unique')?.to ?? null,
     loss: metric('loss')?.to ?? null,
   };
+  /* An unavailable figure keeps its stated reason in plain sight, exactly as the ledger table words it. */
+  const reasons = [
+    values.after === null && active ? `Rows unique on known fields: ${metric('sample_unique')?.naText ?? 'not measured'}` : null,
+    values.loss === null && active ? `Research-query loss: ${metric('loss')?.naText ?? 'unavailable'}` : null,
+    values.before === null && active ? 'Unprotected baseline unavailable, so nothing can be compared with it' : null,
+  ].filter((reason): reason is string => reason !== null);
 
   return (
     <section className="hero dot-field" aria-label="Measured summary">
@@ -36,7 +42,7 @@ export function Hero({ recipeEdited }: { recipeEdited: boolean }) {
       <Journey recipeEdited={recipeEdited} />
       {active ? (
         <div className="hero-body">
-          <Refraction values={values} label={ws.labelOf(active.candidateId)} external={isAudit(active)} />
+          <Refraction values={values} label={ws.labelOf(active.candidateId)} external={isAudit(active)} reasons={reasons} />
           <MeasureTiles measures={measures} />
         </div>
       ) : null}

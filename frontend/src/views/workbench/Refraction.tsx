@@ -1,8 +1,11 @@
 import { num, pct } from '../../format';
+import { NumberTicker } from '../../ui/NumberTicker';
+import { Term } from '../../ui/Tip';
 
 /* The product's own mark, drawn from the evaluated snapshot. A beam enters a prism and leaves as three rays, exactly as in the logo:
    violet is what the recipe removed, orange is what stays exposed, grey is what the research questions lost.
-   Every width is a measured fraction of 100%. A value that was not measured is a dashed hairline and a dash, never a zero-width ray. */
+   Every width is a measured fraction of 100%. A measured zero is a hollow terminal mark; a value that was not measured is a dashed
+   hairline, a dash and, below the figure, the reason it is unavailable. */
 
 export interface RefractionValues {
   /** Sample uniqueness of the unprotected baseline (the beam that enters). */
@@ -18,6 +21,7 @@ const MIN = 3;
 const unit = (value: number | null) => (value === null || !Number.isFinite(value) ? null : Math.min(1, Math.max(0, value)));
 /** Visible but never exaggerated: a real, tiny value is drawn at a hairline minimum and labelled with its exact figure. */
 const weight = (value: number | null) => (value === null ? 0 : value === 0 ? 0 : Math.max(MIN, value * MAX));
+const points = (fraction: number) => (fraction === 0 ? '0 pts' : fraction * 100 < 0.05 ? '<0.1 pts' : `${num(fraction * 100, 1)} pts`);
 
 const PRISM = 'M190 14 L138 114 L242 114 Z';
 /* Exit points on the prism's right face and the far end of each ray. */
@@ -27,7 +31,9 @@ const RAYS = [
   { id: 'lost', from: [229, 90], to: [396, 108], className: 'ray-lost' },
 ] as const;
 
-export function Refraction({ values, idle = false, label, external = false }: { values: RefractionValues; idle?: boolean; label?: string; external?: boolean }) {
+export function Refraction({ values, idle = false, label, external = false, reasons = [] }: {
+  values: RefractionValues; idle?: boolean; label?: string; external?: boolean; reasons?: string[];
+}) {
   const before = unit(values.before);
   const after = unit(values.after);
   const loss = unit(values.loss);
@@ -36,15 +42,12 @@ export function Refraction({ values, idle = false, label, external = false }: { 
   const widths = { removed: worse ? 0 : weight(removed), exposed: weight(after), lost: weight(loss) } as const;
   /* A value is either measured (including a measured zero, and "not reduced") or not measured. Only the second is dashed. */
   const measured = { removed: removed !== null, exposed: after !== null, lost: loss !== null } as const;
-
-  const removedText = removed === null ? '—' : worse ? 'Not reduced' : removed === 0 ? '0 pts' : `${removed * 100 < 0.05 ? '<0.1' : num(removed * 100, 1)} pts`;
-  /* The ray is clamped to 100% for drawing only; the label keeps the measured figure. */
-  const lossText = typeof values.loss === 'number' && Number.isFinite(values.loss) ? num(values.loss, 3) : '—';
+  const state = (id: 'removed' | 'exposed' | 'lost') => (idle || !measured[id] ? ' unknown' : widths[id] === 0 ? ' none' : '');
 
   return (
     <figure className={`refraction${idle ? ' is-idle' : ''}`}>
       <div className="refraction-in">
-        <b className="tnum">{idle || before === null ? '—' : pct(before)}</b>
+        <b className="tnum">{idle || before === null ? '—' : <NumberTicker value={before} format={pct} />}</b>
         <span>{idle ? 'Source' : 'Unprotected'}</span>
       </div>
 
@@ -81,18 +84,31 @@ export function Refraction({ values, idle = false, label, external = false }: { 
           return (
             <line
               key={ray.id} className={`ray ${ray.className}${known ? '' : ' unknown'}`} x1={ray.from[0]} y1={ray.from[1]} x2={ray.to[0]} y2={ray.to[1]}
-              strokeWidth={known && width > 0 ? width : 2} strokeLinecap="round" pathLength={1} style={{ ['--i' as string]: index }}
+              strokeWidth={known ? width : 2} strokeLinecap="round" pathLength={1} style={{ ['--i' as string]: index }}
             />
           );
         })}
       </svg>
 
       <ul className="refraction-out">
-        <li className={`ro-removed${measured.removed && !idle ? (widths.removed === 0 ? ' none' : '') : ' unknown'}`}><i aria-hidden="true" /><b className="tnum">{idle ? '—' : removedText}</b><span>{external ? 'Lower by' : 'Removed'}</span></li>
-        <li className={`ro-exposed${measured.exposed && !idle ? (widths.exposed === 0 ? ' none' : '') : ' unknown'}`}><i aria-hidden="true" /><b className="tnum">{idle || after === null ? '—' : pct(after)}</b><span>Still unique</span></li>
-        <li className={`ro-lost${measured.lost && !idle ? (widths.lost === 0 ? ' none' : '') : ' unknown'}`}><i aria-hidden="true" /><b className="tnum">{idle ? '—' : lossText}</b><span>Research loss</span></li>
+        <li className={`ro-removed${state('removed')}`}>
+          <i aria-hidden="true" />
+          <b className="tnum">{idle || removed === null ? '—' : worse ? 'Not reduced' : <NumberTicker value={removed} format={points} />}</b>
+          <span>{external ? 'Lower by' : 'Removed'}</span>
+        </li>
+        <li className={`ro-exposed${state('exposed')}`}>
+          <i aria-hidden="true" />
+          <b className="tnum">{idle || after === null ? '—' : <NumberTicker value={after} format={pct} />}</b>
+          <span>Still unique</span>{!idle ? <Term id="sample_unique" label="sample uniqueness" /> : null}
+        </li>
+        <li className={`ro-lost${state('lost')}`}>
+          <i aria-hidden="true" />
+          <b className="tnum">{idle || values.loss === null ? '—' : <NumberTicker value={values.loss} format={value => num(value, 3)} />}</b>
+          <span>Research loss</span>{!idle ? <Term id="loss" label="research-query loss" /> : null}
+        </li>
       </ul>
 
+      {reasons.length ? <figcaption className="refraction-reasons">{reasons.map(reason => <span key={reason}>{reason}</span>)}</figcaption> : null}
     </figure>
   );
 }

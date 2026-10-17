@@ -161,7 +161,15 @@ export function RecipeInspector() {
               </select>
               <p className="muted small">{scenario.context}</p>
               {scenario.evaluated ? (
-                <p className="limits">k ≥ {scenario.limits.minK} · unique ≤ {pct(scenario.limits.maxUnique, 0)} · suppressed ≤ {pct(scenario.limits.maxSuppression, 0)} · loss ≤ {num(scenario.limits.maxLoss, 2)}<small>Editable planning defaults for search; not standards.</small></p>
+                <div className="limits">
+                  <ul className="limit-chips" aria-label="Planning limits">
+                    <li><span title="Smallest allowed group">k ≥ {scenario.limits.minK}</span></li>
+                    <li><span title="Largest allowed share of unique rows">unique ≤ {pct(scenario.limits.maxUnique, 0)}</span></li>
+                    <li><span title="Largest allowed share of suppressed rows">suppressed ≤ {pct(scenario.limits.maxSuppression, 0)}</span></li>
+                    <li><span title="Largest allowed research-query loss">loss ≤ {num(scenario.limits.maxLoss, 2)}</span></li>
+                  </ul>
+                  <small>Editable planning defaults for search; not standards.</small>
+                </div>
               ) : <Notice tone="warn">This view compares tables of individual records. Aggregate-only tables are not supported here; Attack Lab has an aggregate-data example.</Notice>}
             </section>
 

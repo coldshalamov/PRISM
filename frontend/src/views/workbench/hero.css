@@ -1,13 +1,13 @@
-/* Workbench hero: workflow position, the refraction of the evaluated snapshot, and its measured tiles.
+/* Workbench hero: workflow position, the refraction of the evaluated snapshot, and the measures the diagram does not show.
    Violet = protected, orange = exposure, graphite = original, grey = lost. There is no green. */
-.hero { container-type: inline-size; position: relative; display: grid; gap: 14px; padding: 14px 20px 14px; flex: none; background: var(--surface); border-radius: var(--r-4); box-shadow: var(--shadow-ring), 0 1px 2px rgba(22, 26, 70, 0.04); }
+.hero { container-type: inline-size; position: relative; display: grid; gap: 12px; padding: 12px 20px 14px; flex: none; background: var(--surface); border-radius: var(--r-4); box-shadow: var(--shadow-ring), 0 1px 2px rgba(22, 26, 70, 0.04); }
 .hero > * { min-width: 0; }
 
 /* ---------- journey ---------- */
 .journey ol { display: flex; gap: 4px; margin-inline: -8px; }
 .journey-step { position: relative; flex: 1; min-width: 0; }
 .journey-step + .journey-step::before { content: ''; position: absolute; left: -2px; top: 50%; width: 7px; height: 7px; border-top: 2px solid var(--line-strong); border-right: 2px solid var(--line-strong); transform: translate(-50%, -50%) rotate(45deg); }
-.journey-btn { display: flex; align-items: center; gap: 10px; width: 100%; padding: 8px 12px; border: 0; border-radius: var(--r-3); background: transparent; text-align: left; color: inherit; }
+.journey-btn { display: flex; align-items: center; gap: 10px; width: 100%; padding: 6px 12px; border: 0; border-radius: var(--r-3); background: transparent; text-align: left; color: inherit; }
 button.journey-btn:hover:not(:disabled) { background: var(--surface-2); }
 button.journey-btn:disabled { cursor: default; opacity: 0.6; }
 .journey-icon { display: grid; place-items: center; flex: none; width: 32px; height: 32px; border-radius: 50%; background: var(--surface-3); color: var(--ink-3); transition: background .2s, color .2s; }
@@ -23,14 +23,14 @@ button.journey-btn:disabled { cursor: default; opacity: 0.6; }
 .journey-step.s-na .journey-text { opacity: 0.75; }
 .journey-step.s-todo:not(.is-current) .journey-text b { color: var(--ink-3); }
 
-/* ---------- body: refraction + tiles ---------- */
-.hero-body { display: grid; gap: 14px; align-items: center; }
+/* ---------- body: refraction + strip ---------- */
+.hero-body { display: grid; gap: 12px; align-items: center; }
 .hero-body.idle { grid-template-columns: minmax(0, 1fr); }
 
-.refraction { margin: 0; display: grid; grid-template-columns: auto minmax(150px, 400px) auto; grid-template-rows: auto auto; justify-content: center; align-items: stretch; column-gap: 10px; row-gap: 2px; }
+.refraction { margin: 0; display: grid; grid-template-columns: auto minmax(150px, 380px) auto; grid-template-rows: auto auto; justify-content: center; align-items: stretch; column-gap: 12px; row-gap: 4px; }
 .refraction-in { align-self: center; display: grid; justify-items: end; line-height: 1.15; }
-.refraction-in b { font-family: var(--font-display); font-size: 22px; font-weight: 650; color: var(--original); }
-.refraction-in span { font-size: 12px; color: var(--ink-3); }
+.refraction-in b { font-family: var(--font-display); font-size: 26px; font-weight: 650; letter-spacing: -0.02em; color: var(--original); }
+.refraction-in > span { font-size: 12.5px; color: var(--ink-3); }
 .refraction-svg { width: 100%; height: auto; aspect-ratio: 400 / 130; display: block; overflow: visible; }
 .refraction .prism { stroke: var(--ink-3); stroke-width: 1.5; }
 .refraction .ray { stroke: var(--original); fill: none; }
@@ -41,16 +41,18 @@ button.journey-btn:disabled { cursor: default; opacity: 0.6; }
 .refraction.is-idle .ray { stroke-width: 2; }
 .refraction .ray-zero { fill: var(--surface); stroke-width: 2; }
 .refraction .ray-zero.ray-removed { stroke: var(--accent); } .refraction .ray-zero.ray-exposed { stroke: var(--risk); } .refraction .ray-zero.ray-lost { stroke: #8a92a6; }
-.refraction-out li.none i { background: var(--surface); }
-.ro-removed.none i { box-shadow: inset 0 0 0 2px var(--accent); } .ro-exposed.none i { box-shadow: inset 0 0 0 2px var(--risk); } .ro-lost.none i { box-shadow: inset 0 0 0 2px #8a92a6; }
 .refraction-out { display: grid; grid-template-rows: repeat(3, 1fr); }
 .refraction-out li { display: flex; align-items: center; gap: 8px; min-width: 0; white-space: nowrap; }
-.refraction-out i { width: 10px; height: 10px; border-radius: 50%; flex: none; }
-.refraction-out b { font-family: var(--font-display); font-size: 16px; font-weight: 650; }
-.refraction-out span { font-size: 12.5px; color: var(--ink-3); }
+.refraction-out i { width: 11px; height: 11px; border-radius: 50%; flex: none; }
+.refraction-out b { font-family: var(--font-display); font-size: 22px; font-weight: 650; letter-spacing: -0.015em; line-height: 1; }
+.refraction-out li > span { font-size: 13px; color: var(--ink-3); }
+.refraction-out .term { margin-left: -4px; }
 .ro-removed i { background: var(--accent); } .ro-exposed i { background: var(--risk); } .ro-lost i { background: #8a92a6; }
+.refraction-out li.none i { background: var(--surface); }
+.ro-removed.none i { box-shadow: inset 0 0 0 2px var(--accent); } .ro-exposed.none i { box-shadow: inset 0 0 0 2px var(--risk); } .ro-lost.none i { box-shadow: inset 0 0 0 2px #8a92a6; }
 .refraction-out li.unknown i { background: transparent; box-shadow: inset 0 0 0 1.5px var(--line-strong); }
-.refraction-out li.unknown b { color: var(--uncovered); font-weight: 500; }
+.refraction-out li.unknown b { color: var(--uncovered); font-weight: 500; font-size: 18px; }
+.refraction-reasons { grid-column: 1 / -1; justify-self: center; display: grid; gap: 2px; text-align: center; font-size: 12.5px; color: var(--uncovered); font-style: italic; }
 
 /* draw-in: the rays are drawn once per snapshot shown, never on a loop */
 @media (prefers-reduced-motion: no-preference) {
@@ -60,29 +62,21 @@ button.journey-btn:disabled { cursor: default; opacity: 0.6; }
 }
 @keyframes draw { to { stroke-dashoffset: 0; } }
 
-/* ---------- tiles: one large, the rest small ---------- */
-.tiles { display: grid; grid-template-columns: 1.25fr 1fr 1fr; grid-auto-rows: minmax(68px, auto); gap: 10px; }
-.tiles .large { grid-row: span 2; }
-.tile-card { display: flex; flex-direction: column; justify-content: space-between; gap: 6px; padding: 10px 14px; border-radius: var(--r-3); background: var(--surface-2); box-shadow: inset 0 0 0 1px var(--line); min-width: 0; }
-.tile-card.large { padding: 14px 18px; background: linear-gradient(160deg, var(--accent-wash), rgba(242, 96, 42, 0.07)), var(--surface-2); }
-.tile-top { display: flex; align-items: center; gap: 8px; min-width: 0; }
-.tile-glyph { display: grid; place-items: center; flex: none; width: 28px; height: 28px; border-radius: var(--r-2); background: var(--surface); color: var(--ink-3); box-shadow: var(--shadow-ring); }
-.tile-card.large .tile-glyph { color: var(--risk-ink); }
-.tile-label { font-size: 12.5px; font-weight: 550; color: var(--ink-2); line-height: 1.2; min-width: 0; }
-.tile-value { font-family: var(--font-display); font-size: 24px; font-weight: 650; letter-spacing: -0.02em; line-height: 1.1; min-width: 0; }
-.tile-card.large .tile-value { font-size: 42px; color: var(--ink); }
-.tile-value .na { font-family: var(--font-ui); font-size: 13px; letter-spacing: 0; font-weight: 500; line-height: 1.3; display: block; }
-.tile-foot { display: flex; align-items: center; flex-wrap: wrap; gap: 4px 8px; min-height: 22px; }
-.tile-sub { font-size: 12px; color: var(--ink-3); }
+/* ---------- strip: four measures in one quiet band ---------- */
+.strip { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 1px; background: var(--line); border-radius: var(--r-3); overflow: hidden; box-shadow: 0 0 0 1px var(--line); }
+.strip-cell { display: flex; flex-direction: column; gap: 4px; padding: 10px 14px; background: var(--surface-2); min-width: 0; }
+.strip-top { display: flex; align-items: center; gap: 8px; min-width: 0; }
+.strip-glyph { display: grid; place-items: center; flex: none; width: 26px; height: 26px; border-radius: var(--r-2); background: var(--surface); color: var(--ink-3); box-shadow: var(--shadow-ring); }
+.strip-label { font-size: 12.5px; font-weight: 550; color: var(--ink-2); line-height: 1.2; min-width: 0; flex: 1; }
+.strip-top .term { margin: 0 -4px 0 0; align-self: flex-start; flex: none; }
+.strip-value { font-family: var(--font-display); font-size: 24px; font-weight: 650; letter-spacing: -0.02em; line-height: 1.1; min-width: 0; }
+.strip-value .na { font-family: var(--font-ui); font-size: 13px; letter-spacing: 0; font-weight: 500; line-height: 1.3; display: block; }
+.strip-foot { display: flex; align-items: center; flex-wrap: wrap; gap: 4px 8px; min-height: 22px; }
+.strip-sub { font-size: 12px; color: var(--ink-3); }
+.strip-cell.na-cell { background: var(--surface); }
 .delta-chip { display: inline-flex; align-items: center; gap: 4px; padding: 1px 8px; border-radius: var(--r-pill); font-size: 12px; font-weight: 650; background: var(--surface-3); color: var(--ink-3); }
 .delta-chip.better { background: var(--accent-soft); color: var(--accent-ink); }
 .delta-chip.worse { background: var(--risk-wash); color: var(--risk-ink); }
-.tile-aside { display: flex; align-items: center; gap: 6px; font-size: 12.5px; color: var(--ink-3); }
-.tile-bar { display: grid; gap: 3px; margin-top: 2px; }
-.tile-bar i { display: block; height: 6px; border-radius: var(--r-pill); min-width: 3px; transition: width .5s var(--ease-out); }
-.tile-bar .orig { background: var(--original-soft); }
-.tile-bar .prot { background: linear-gradient(90deg, #8a72ff, var(--accent)); }
-.tile-card.na-tile { box-shadow: inset 0 0 0 1.5px var(--line-strong); background: var(--surface); }
 
 /* ---------- idle: before the first candidate ---------- */
 .hero-idle { display: grid; justify-items: center; text-align: center; gap: 8px; padding-bottom: 4px; }
@@ -93,36 +87,59 @@ button.journey-btn:disabled { cursor: default; opacity: 0.6; }
 .hero-why summary { cursor: pointer; width: fit-content; margin: 0 auto; }
 .hero-why p { margin-top: 6px; max-width: none; }
 
-/* the snapshot picker lives in the hero's footer, flush with the card */
-.hero .sem-pref, .hero .sem-pref.unready { background: transparent; border: 0; border-radius: 0; padding: 12px 0 0; margin-top: 2px; box-shadow: 0 -1px 0 var(--line); grid-template-columns: minmax(0, 1fr); grid-template-areas: 'head' 'slider' 'read' 'order'; gap: 6px; }
-.hero .sem-pref-id code { display: none; }
-.hero .sem-pref-metrics { display: none; }
-.hero .sem-pref-head h2 { font-size: 14.5px; }
+/* ---------- caveats the collapsed ledger would otherwise hide ---------- */
+.hero-flags { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; }
+.flag-chip { display: inline-flex; align-items: center; gap: 6px; padding: 3px 12px; border: 0; border-radius: var(--r-pill); background: var(--risk-soft); color: var(--risk-ink); font-size: 12.5px; font-weight: 650; box-shadow: inset 0 0 0 1px rgba(242, 96, 42, 0.22); }
+.flag-chip:hover { background: var(--risk-wash); }
+.flag-chip.soft { background: var(--surface-3); color: var(--ink-2); box-shadow: none; }
+.flag-chip.soft:hover { background: var(--line); }
+.hero-note { color: var(--ink-3); font-size: 12.5px; flex: 1 1 280px; }
 
-@container (max-width: 760px) {
-  .journey ol { overflow-x: auto; scrollbar-width: none; }
-  .journey-step { flex: 1 0 auto; min-width: 120px; }
-  .journey-btn { padding: 8px 8px; gap: 8px; }
-  .journey-icon { width: 28px; height: 28px; }
-  .journey-text b { font-size: 14px; }
-  .tiles { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  .tiles .large { grid-row: auto; grid-column: 1 / -1; }
-  .refraction { grid-template-columns: auto minmax(120px, 1fr) auto; column-gap: 6px; }
-  .refraction-in b { font-size: 18px; }
+/* ---------- the snapshot picker: one row in the hero's footer ---------- */
+.hero .sem-pref, .hero .sem-pref.unready {
+  background: transparent; border: 0; border-radius: 0; padding: 12px 0 0; margin-top: 0; box-shadow: 0 -1px 0 var(--line);
+  grid-template-columns: auto minmax(0, 1fr); grid-template-areas: 'head slider' 'read order'; column-gap: 24px; row-gap: 2px; align-items: center;
 }
-@container (min-width: 960px) {
-  .hero-body:not(.idle) { grid-template-columns: minmax(380px, 0.9fr) minmax(0, 1.1fr); gap: 24px; }
-  .hero-body:not(.idle) .refraction { grid-template-columns: auto minmax(120px, 1fr) auto; }
-}
+.hero .sem-pref.unready { grid-template-areas: 'head slider' 'read read'; }
+/* the off-scale sentence is long: give it the full width instead of squeezing the slider */
+.hero .sem-pref:has(.sem-pref-read > p:not([class])) { grid-template-areas: 'head slider' 'read read' 'order order'; }
+.hero .sem-pref:has(.sem-pref-read > p:not([class])) .sem-order { justify-self: start; }
+.hero .sem-pref-metrics, .hero .sem-pref-count, .hero .sem-pref-id { display: none; }
+.hero .sem-pref-head h2 { font-size: 14.5px; }
+.hero .sem-pref-read { gap: 2px; }
+.hero .sem-pref-read p { font-size: 12.5px; }
+.hero .sem-order { justify-self: end; }
+.hero .sem-order > div { max-width: 72ch; }
 
 /* numbers that describe an earlier snapshot are dimmed exactly like the panes and the ledger */
 .is-stale .hero-body { opacity: 0.6; transition: opacity 0.3s; }
 .is-pending .hero-body { opacity: 0.5; transition: opacity 0.3s; }
 
-/* caveats the collapsed ledger would otherwise hide */
-.hero-flags { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; }
-.flag-chip { display: inline-flex; align-items: center; gap: 6px; padding: 4px 12px; border: 0; border-radius: var(--r-pill); background: var(--risk-soft); color: var(--risk-ink); font-size: 12.5px; font-weight: 650; box-shadow: inset 0 0 0 1px rgba(242, 96, 42, 0.22); }
-.flag-chip:hover { background: var(--risk-wash); }
-.flag-chip.soft { background: var(--surface-3); color: var(--ink-2); box-shadow: none; }
-.flag-chip.soft:hover { background: var(--line); }
-.hero-note { color: var(--ink-3); font-size: 12.5px; flex: 1 1 280px; }
+@container (max-width: 640px) {
+  .journey ol { overflow-x: auto; scrollbar-width: none; }
+  .journey-step { flex: 1 0 auto; min-width: 120px; }
+  .journey-btn { padding: 6px 8px; gap: 8px; }
+  .journey-icon { width: 28px; height: 28px; }
+  .journey-text b { font-size: 14px; }
+  .hero .sem-pref, .hero .sem-pref.unready { grid-template-columns: minmax(0, 1fr); grid-template-areas: 'head' 'slider' 'read' 'order'; }
+  .hero .sem-order { justify-self: start; }
+  .strip { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .refraction { grid-template-columns: auto minmax(120px, 1fr) auto; column-gap: 8px; }
+  .refraction-in b { font-size: 20px; }
+  .refraction-out b { font-size: 19px; }
+}
+@container (min-width: 960px) {
+  .hero-body:not(.idle) { grid-template-columns: minmax(380px, 1fr) minmax(0, 1fr); gap: 24px; }
+  .hero-body:not(.idle) .refraction { grid-template-columns: auto minmax(120px, 1fr) auto; justify-content: stretch; }
+  .hero-body:not(.idle) .strip { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+/* a short laptop screen: keep the data visible by trimming the hero, not by hiding a caveat */
+@media (max-height: 820px) and (min-width: 980px) {
+  .hero { gap: 8px; padding-block: 10px 12px; }
+  .journey-text small { display: none; }
+  .journey-btn { padding-block: 4px; }
+  .refraction { grid-template-columns: auto minmax(150px, 290px) auto; }
+  .strip-cell { padding: 8px 12px; gap: 2px; }
+  .strip-value { font-size: 21px; }
+}
