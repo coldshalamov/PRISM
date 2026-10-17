@@ -1,6 +1,6 @@
 # PRISM submission copy
 
-## Ready-to-paste fields
+## Reference fields
 
 **Project name:** PRISM
 
@@ -12,9 +12,11 @@
 
 **Project description:**
 
-Built for eMerge AI Hackathon 2026, PRISM is a desktop-style privacy workbench you can try on Archie. Upload CSV, JSON or XLSX, compare source and protected tables, adjust protections and inspect real Python measurements. Optional Jev 1.14 typed decisions interpret schema metadata using 145 semantic types; record cells stay out of model requests. Findings explain exposure, assumptions and changes to selected research questions. A fictional 480-record benchmark reduced verified unique correct matches from 75 to 20 after ZIP removal, while three selected protected answers stayed identical. A separate appointment example reduced combination-unique rows from 480 to 96. Audit an externally protected file, explore evaluated alternatives and export data, recipes and evidence. Archie hosts the entry and session tables; Vercel serves assets and compute. No automatic release clearance. Background material and AI-tool use are disclosed in the README.
+Built for eMerge AI Hackathon 2026 (Enterprise AI track), PRISM helps teams check data before sharing it with colleagues, partners, or AI tools. Removing names can leave clues: age, location, and dates can still single out records. PRISM lets you upload CSV, JSON, or XLSX tables (up to 3 MiB), spot distinguishing fields, test protection recipes, and check whether your key answers still hold.
 
-**Technologies:** React, TypeScript, Vite, Python, FastAPI, pandas, NumPy, SciPy, OpenRouter, Typesafe Jev 1.14, Archie Core, PostgreSQL, GraphQL, Vercel, openpyxl. Optional pyCANON cross-checks. Jev uses OpenRouter's typed Decisions API for explicitly approved minimized schema metadata. Scientific tests and transformations remain deterministic. Archie hosts the public HTML entry and session tables and recipes; Vercel serves immutable UI assets and Python compute. The full engine also runs locally for CSV, JSON and XLSX tables. Coding agents assisted development; runtime Jev is a separate optional capability.
+Optional AI (OpenRouter Jev) interprets column headers, but row data never goes to the model. Python computes the actual results. In a 480-row benchmark, removing ZIP cut simulated correct matches from 75 to 20; three selected answers stayed the same between recipes. In a separate table, rows with a unique combination fell from 480 to 96. Compare tested options, audit externally protected files, and download protected CSVs directly. Hosted on Archie and Vercel. PRISM shows what it tested; you decide whether to share. README discloses AI tools and background material.
+
+**Technologies:** React, TypeScript, Vite, Python, FastAPI, pandas, NumPy, SciPy, OpenRouter (Jev), Archie Core, PostgreSQL, Vercel
 
 **PitchDeckURL:** https://prism-healthcare-taupe.vercel.app/pitch/
 
@@ -24,80 +26,63 @@ Built for eMerge AI Hackathon 2026, PRISM is a desktop-style privacy workbench y
 
 **PublicRepo:** https://github.com/coldshalamov/PRISM
 
-The canonical demo opens the reviewed UI at the published Archie origin. Archie serves its HTML entry and Archie Core stores session tables and recipes; immutable UI assets and Python compute run on Vercel. This is a split deployment. The pitch and PDF remain at the Vercel URLs above; Archie does not serve the pitch path. The hosted app accepts CSV, JSON and XLSX uploads and includes labeled fictional examples. The repository README contains local setup instructions and scope. The Enterprise AI entry addresses purpose-aware privacy and utility review for enterprise research and data-sharing teams, including regulated research teams. Oncology is a fictional demonstration, not a claim to a sponsored healthcare challenge. The existing URL slug does not determine the track. Do not submit the entry until the user explicitly asks.
+The canonical demo opens on Archie, which manages entry and session state, while Vercel serves UI assets and Python compute. The app accepts real CSV, JSON, and XLSX uploads up to 3 MiB (up to 8 datasets per session) and can audit externally protected files. Pitch slides and PDF are hosted on Vercel. Fictional examples illustrate general enterprise data-sharing workflows; oncology data is a demonstration, not a clinical validation claim.
 
 ## Two-minute speaker flow
 
-**0:00–0:12 · Slide 1**
+**0:00–0:12 · Slide 1: Cover**
 
-“PRISM helps enterprise research teams see what survives the scrub. Before internal or partner sharing, teams need to understand what remains identifying and what their selected questions lose.”
+“PRISM helps teams see what survives the scrub before sharing data with colleagues, external partners, or AI tools.”
 
-**0:12–0:30 · Slide 2**
+**0:12–0:30 · Slide 2: The sharing problem**
 
-“Our fictional oncology table illustrates this workflow. Removing names leaves combinations of age, geography and weight. PRISM compares the source, the transformed candidate and the team's declared research purpose.”
+“Removing names and IDs can leave clues. Combinations of age, location, and dates can still single out records. PRISM lets you clean the file, spot what still distinguishes records, and check whether your important answers still hold.”
 
-**0:30–0:47 · Slide 3**
+**0:30–0:50 · Slide 3: How it works**
 
-“Local rules recognize fields first. With permission, Jev interprets ambiguous schema metadata through typed decisions. The researcher can correct the meaning. Independent deterministic tests measure the current candidate; the model never invents a privacy score.”
+“Optional AI reads column headers to infer field types, but row data never touches any model. Python code computes the measurements on Vercel in the hosted app, or on your computer when run locally. You review the columns, test exposure, check your calculations, and download the protected file.”
 
-**0:47–1:14 · Slide 4**
+**0:50–1:15 · Slide 4: Fictional benchmark results**
 
-“In the reproduced fictional benchmark, the declared exact-match attack finds 75 unique correct matches out of 480. Removing ZIP lowers that to 20. Three selected protected answers stay identical between those recipes and meet their source tolerances. These are simulated source-target matches, not population risk estimates. Other scientific properties can change.”
+“In our simulated 480-row benchmark, removing ZIP dropped unique exact matches from 75 to 20. Crucially, three key answers stayed identical between the recipes: 6-month failure rate at 36.25%, liver subgroup at 45.03%, and age-weight correlation at 0.6893. Those three answers stayed useful; other analyses may change.”
 
-**1:14–1:31 · Slide 5**
+**1:15–1:32 · Slide 5: Recipe search**
 
-“The deterministic engine applies actual recipes and measures disclosure and utility. Request 24 configurations, inspect the frontier and read failed constraints. A frontier point can still fail the requirements.”
+“Instead of guessing, PRISM tests up to 24 protection recipes automatically. It plots privacy against utility so you can spot which options miss your accuracy limits and choose the best tradeoff.”
 
-**1:31–1:45 · Slide 6**
+**1:32–1:48 · Slide 6: Technical foundation**
 
-“The semantic registry contains 145 types and 25 attack categories, with unsupported tests clearly unassessed. In a separate fictional appointment fixture, combination-unique rows fall from 480 to 96 while its selected response query stays identical. That is sample distinguishability, not an identity probability.”
+“The catalog covers 145 column meanings and 25 exposure patterns. Missing tests are shown clearly. In a separate fictional appointment table, unique combinations dropped from 480 to 96 and the selected response calculation stayed the same.”
 
-**1:45–2:00 · Slide 7**
+**1:48–2:00 · Slide 7: Ready to share**
 
-“Archie hosts the public entry and durable state; Vercel serves assets and compute. The hosted app supports real uploads and external-file comparison. Private tables use the local workflow, with only approved metadata going to Jev. Evidence supports human review, without automatic release clearance.”
+“PRISM shows what it tested; you decide whether to share. You can upload your own spreadsheets up to 3 MiB on Archie today and download protected CSVs directly, without an account.”
 
 ## Short live demo route
 
-1. Open the fictional semantic appointment fixture and inspect the normalized field meanings, alternatives and local evidence. The initial pass requires no provider.
-2. If demonstrating Jev, approve the visible metadata-only request, inspect the served model and accept abstention where metadata is insufficient. Correct a field from the controlled vocabulary and re-evaluate.
-3. Show the original/protected workbench and the measured date, facility and demographic combination. This separate fixture changes from 480 to 96 unique rows; its selected diagnosis-response query has zero error.
-4. Open the original 480-row kit benchmark and show its two-recipe 75-to-20 verified exact-match comparison. Keep these fixtures and metric definitions distinct.
-5. Open the Knowledge Map, run bounded search, select an evaluated candidate and read failed constraints. Show an Attack Lab counterexample, then export evidence and the recipe. Protected CSV export requires authority and limitations acknowledgments and blocks recognized direct identifiers.
-
-If presenting only two minutes, use the deck and one preloaded workbench view. The kit benchmark, semantic appointment fixture and bounded search are different demonstrations. Do not imply that the 24-recipe search produced either named before/after comparison. Jev may abstain; the independent measurements still run.
+1. **Open app & load data:** Launch on Archie and view the appointment table fixture, or upload a CSV/XLSX file (up to 3 MiB).
+2. **Review columns:** Check what PRISM thinks each column means. Optional AI infers ambiguous labels; you can confirm or override them directly.
+3. **Inspect measured exposure:** See how combination-unique rows fall from 480 to 96 under default protection while key query answers remain unchanged.
+4. **Compare benchmark recipes:** Show the 480-row benchmark where removing ZIP drops simulated matches from 75 to 20 while preserving three target calculations identically.
+5. **Explore tradeoffs & export:** Run recipe exploration to test up to 24 configurations, verify constraints, and download the protected CSV directly.
 
 ## Screenshot captions
 
-Use actual captured screens from the deployed fictional demo. The pitch uses an authored data chart instead of simulated app screenshots.
+- **Workbench:** Original and protected tables side-by-side with active transformation controls and live metric deltas.
+- **Knowledge Map:** Exposure breakdown highlighting combinations of columns that single out individual rows.
+- **Research Intent:** Key business or research questions with tolerances showing whether protected values remain accurate.
+- **Recipe Explorer:** Tested protection options plotted to compare privacy gains against data loss.
+- **Audit Report:** A report of the checks, settings, results and changes for the selected version.
+- **Semantic Fields:** Column meanings, how PRISM chose them, and optional AI suggestions you can correct.
 
-- **Workbench:** “Source and transformed candidate, with declared roles and transformation settings.”
-- **Knowledge Map:** “Measured exposure for declared combinations of retained attributes in the finite sample.”
-- **Research Intent:** “Selected scientific questions with explicit tolerances and cohort requirements.”
-- **Pareto Explorer:** “Actual evaluated recipes, measured tradeoffs and constraint failures.”
-- **Report:** “An evidence export records the candidate, assumptions and uncovered analyses.”
-- **Semantic fields:** “Local evidence and optional Jev decisions become reviewable field meanings; corrections retain provenance.”
+## Claim boundaries (internal notes)
 
-## Claim boundaries
+- **75 to 20 matches:** Simulated exact-match lookup on a 480-row fictional benchmark with known membership. Measures sample-level linkage under declared rules, not general population re-identification probabilities.
+- **Three identical answers:** 36.25% failure, 45.03% liver subgroup, and 0.6893 correlation are identical *between the two compared protected recipes* and meet source tolerances. Does not imply all possible analyses remain identical.
+- **480 to 96 unique rows:** Separate appointment fixture measuring rows unique on date/facility/demographic combinations. Distinct metric from the 75-to-20 benchmark.
+- **145 types & 25 attack categories:** Catalog totals in the registry. 25 categories include documented gap states that abstain when prerequisites are unmet, not 25 fully executed attacks.
+- **24 search configurations:** Standard search explores up to 24 recipe configurations and flags those failing declared constraints.
+- **No automatic privacy guarantee:** PRISM shows what it tested; human decision-makers decide whether to share. No claim of legal immunity or HIPAA certification.
+- **Architecture & hosting:** Archie manages entry and session state; Vercel serves assets and Python compute. Local calculations work without a model; optional Jev interpretation requires a connection.
 
-- The 75/480 and 20/480 values are verified unique correct matches in the supplied fictional benchmark under known membership, correct known QI and replayable public rules. Owner lineage scores correctness only after matching. They are not general re-identification probabilities.
-- “Three answers stay identical” compares the **protected outputs of two recipes**. It does not claim that all source values or every study result remain unchanged. The protected age–weight correlation is approximately 0.6893 versus source 0.6952 and uses interval midpoints.
-- The 26/17 counts describe the registry catalogue. They do not mean 26 implemented attacks or 17 protections passed an assessment.
-- The semantic ontology has 145 leaf types across 13 families. The semantic attack catalog has 25 categories with explicit prerequisites and coverage states. These counts do not claim 145 trained detectors or 25 executed attacks.
-- The separate 480-to-96 result counts rows unique on a released date/facility/demographic combination in the fictional semantic appointment fixture. It is not the 75-to-20 verified-linkage benchmark. Its selected diagnosis-response query has zero error under the tested recipe; no claim of universal utility preservation follows.
-- Jev 1.14 supplies optional metadata interpretation through OpenRouter Decisions. Approved inputs contain labels, types, units, structural format names and neighboring labels, without record cells. Its probabilities concern field meaning; ambiguous and unsupported interpretations remain reviewable. Core scans are independent.
-- A nondominated candidate can fail user constraints. Search uses a finite grammar and can finish before the requested count on constrained inputs.
-- Unavailable results and unsupported methods do not count as zero risk. pyCANON is an optional categorical diagnostic cross-check, not privacy certification.
-- Public hosting supports CSV, JSON and XLSX uploads and external-file comparison. Local intake supports CSV, JSON record arrays and one visible XLSX worksheet, with explicit rejection of unsupported workbook constructs. Optional remote semantics still requires approved minimized metadata.
-- Enterprise AI is the selected track. Runtime Jev interprets metadata; deterministic code computes privacy and utility evidence. Coding-agent use during development is separately disclosed.
-- The fictional oncology example demonstrates a general enterprise research-sharing workflow. It does not establish fit to a specific sponsored healthcare challenge or clinical validation.
-- No claim of HIPAA compliance, clinical validation, automatic release clearance or guaranteed patient protection. No claim that a numbered hackathon challenge is implemented without checking its actual requirements.
-
-## Internal sources
-
-- `README.md`: actual workflow, runtime and limits.
-- `docs/KIT_BASELINE.md` and `examples/kit_benchmark/reproduction.json`: reproduced 480-row benchmark and the two recipes' protected task results.
-- `docs/KIT_EVALUATION.md`: 26 threat families, 17 catalogued protections, semantic comparisons, threshold abstention and subgroup boundaries.
-- `IMPLEMENTATION_CONTRACT.md`: six views, frozen candidates, actual bounded search and export acknowledgments.
-- `docs/SEMANTIC_ENGINE.md`, `backend/app/semantic_rules.py` and `backend/tests/test_semantic_pipeline.py`: ontology, typed provider contract, real semantic fixture measurements, correction persistence and evidence binding.
-
-The submission description focuses on enterprise research-sharing review and does not claim clinical effectiveness or population privacy statistics.
+This document is reference copy. The user’s existing hackathon submission and all deployed URLs are left unchanged by this copy pass.

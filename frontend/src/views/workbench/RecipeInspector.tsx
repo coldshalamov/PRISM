@@ -101,7 +101,7 @@ function CandidateTab() {
           <dd>{active.alignment === 'verified' ? 'Verified: row differences are shown' : 'Unknown: only aggregate differences are shown'}</dd>
         </div>
         <div><dt>Seed</dt><dd>{active.recipe.seed ?? '—'} (non-DP, same snapshot every render)</dd></div>
-        <div><dt>Exact linkage</dt><dd>{link.state === 'measured' ? `${num(link.numerator, 0)} of ${num(link.denominator, 0)} verified unique correct matches` : link.state === 'absent' ? 'Not returned by this service' : 'Not applicable or not assessed; this is not zero risk'}</dd></div>
+        <div><dt>Confirmed test matches</dt><dd>{link.state === 'measured' ? `${num(link.numerator, 0)} of ${num(link.denominator, 0)} unique correct matches in the test lookup` : link.state === 'absent' ? 'Not returned by this service' : link.state === 'not_assessed' ? 'Not assessed for this version' : 'Not applicable to this version'}</dd></div>
       </dl>
       <h4 className="inspector-sub">Frozen attacker assumptions</h4>
       <p className="threat-sentence small">{threatSentence({ known: frozen.known, secret: frozen.secret, membershipKnown: frozen.membershipKnown, unit: frozen.unit, publicRule: !isAudit(active) })}</p>
@@ -162,7 +162,7 @@ export function RecipeInspector() {
               <p className="muted small">{scenario.context}</p>
               {scenario.evaluated ? (
                 <p className="limits">k ≥ {scenario.limits.minK} · unique ≤ {pct(scenario.limits.maxUnique, 0)} · suppressed ≤ {pct(scenario.limits.maxSuppression, 0)} · loss ≤ {num(scenario.limits.maxLoss, 2)}<small>Editable planning defaults for search; not standards.</small></p>
-              ) : <Notice tone="warn">PRISM evaluates row releases. Aggregate-only evaluation is not implemented; use the Attack Lab to see why it is not automatically private.</Notice>}
+              ) : <Notice tone="warn">This view compares tables of individual records. Aggregate-only tables are not supported here; Attack Lab has an aggregate-data example.</Notice>}
             </section>
 
             {!reviewed ? (

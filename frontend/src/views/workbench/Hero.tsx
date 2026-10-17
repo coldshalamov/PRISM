@@ -48,7 +48,7 @@ export function Hero({ recipeEdited }: { recipeEdited: boolean }) {
           {active.risk.limitations?.length ? (
             <button type="button" className="flag-chip soft" onClick={() => ws.setPrefs({ ledger: true })}><Info size={14} aria-hidden="true" />{plural(active.risk.limitations.length, 'stated limitation')}</button>
           ) : null}
-          <span className="hero-note">Unique rows and verified linkage answer different questions. Figures are descriptive, not anonymity or legal compliance.</span>
+          <span className="hero-note">Unique rows stand out in this table. Confirmed matches link them back to the source.</span>
         </div>
       ) : null}
       {!active ? (

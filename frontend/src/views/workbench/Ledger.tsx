@@ -227,7 +227,7 @@ export function Ledger({ onShowSubgroups }: { onShowSubgroups: () => void }) {
           ]}
         />
         {pending ? <span className="ledger-stale">{active ? 'Evaluating… previous snapshot' : 'Evaluating…'}</span> : stale.length ? <span className="ledger-stale">Stale · {stale.map(reason => STALE_LABEL[reason]).join(', ')} changed</span> : null}
-        <span className="ledger-gate"><ShieldAlert size={14} aria-hidden="true" />Not cleared for release · sample measurements</span>
+        <span className="ledger-gate"><ShieldAlert size={14} aria-hidden="true" />Measurements from this table</span>
         <button type="button" className="icon-btn" aria-label={open ? 'Collapse ledger' : 'Expand ledger'} aria-expanded={open} onClick={() => setPrefs({ ledger: !open })}>
           {open ? <ChevronDown size={17} /> : <ChevronUp size={17} />}
         </button>

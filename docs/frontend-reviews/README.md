@@ -1,3 +1,9 @@
+# Current merged frontend reviews
+
+The 0.1.1 frontend retains cloud PR #1 design and adds real hosted intake. Final application source is `8edb1e1`, published as `r20261017h`. Successive focused independent reviews are [1](v3-final-1.md), [2](v3-final-2.md), and [3](v3-final-3.md). Review 3 is being completed. Actual public upload-to-export acceptance is separately recorded in [verification](../../artifacts/verification.md). These scoped approvals do not establish global optimality or substitute for the working route.
+
+## Historical 0.1.0 review sequence
+
 # Final frontend review record
 
 The final semantic-extension approval sequence is **semantic review 1 → semantic review 2 → semantic review 3**. All three independently returned **APPROVED** against frozen application source `9f40ec12e0178d4eabe4c9bc2663ceb0938c861d`. The corresponding immutable Archie entry is `r20261017e`; compiling the deployment entry does not change the reviewed source.

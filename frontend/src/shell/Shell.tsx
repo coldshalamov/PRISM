@@ -15,7 +15,6 @@ import { SlotContext } from '../ui/Slots';
 import { useWorkspace } from '../workspace';
 import { isAudit } from '../analysis';
 import { Logo } from '../ui/Logo';
-import { DeploymentBanner } from './DeploymentBanner';
 import { Brand, Library, NAV, Rail, SessionFooter } from './Sidebar';
 import { ImportDialog, ClearDialog, PrivacyDialog, ShortcutsDialog, PresetDialog, ReplaceDialog } from './Dialogs';
 import { SchemaReview } from './SchemaReview';
@@ -236,7 +235,6 @@ export default function Shell() {
   const [dialog, setDialog] = useState<DialogId | null>(null);
   const [drawer, setDrawer] = useState(false);
   const [sheet, setSheet] = useState(false);
-  const [noticeDismissed, setNoticeDismissed] = useState(false);
   const [toolbar, setToolbar] = useState<HTMLElement | null>(null);
   const [inspector, setInspector] = useState<HTMLElement | null>(null);
   const main = useRef<HTMLElement | null>(null);
@@ -365,7 +363,6 @@ export default function Shell() {
           <div className="toolbar" ref={setToolbar} role="toolbar" aria-label="View tools" />
 
           <main id="main" className="canvas" tabIndex={-1} ref={main}>
-            {!noticeDismissed ? <DeploymentBanner onDismiss={() => setNoticeDismissed(true)} /> : null}
             <SessionBanner />
             {bootError && !dataset ? (
               <div className="boot-error" role="alert">

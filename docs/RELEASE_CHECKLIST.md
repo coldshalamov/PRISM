@@ -1,5 +1,21 @@
 # PRISM release checklist
 
+## Current 0.1.1 release checkpoint
+
+The source below the historical record has changed. PR [#1](https://github.com/coldshalamov/PRISM/pull/1) is merged, with its typography, ink frame, refraction summary and shared components retained. Merge conflicts preserve real hosted imports, external-file audits, direct CSV download and canceled-request guards. The current source/assets checkpoint is `8edb1e1`, immutable revision `r20261017h`.
+
+- Integrated backend: **179 tests passed**. Frontend production build and both focused regression tools passed.
+- Real Archie Core integration: CSV, JSON and XLSX uploads, cold replay of candidate/report identity, external-file audit and visitor-owned uploaded-file cleanup passed. The semantic example produced 96 combination-unique rows out of 480; the separately uploaded protected file measured zero under its declared fields.
+- Hosted intake: CSV, JSON and XLSX, up to 3 MiB, 100,000 rows and 80 columns; eight datasets per session. No account or export acknowledgment checklist. Local intake allows 50 MB.
+- Deployment: Archie HTML entry and Archie Core uploaded bytes/session state; Vercel immutable frontend assets and Python computation. Archie GitHub sync is unavailable; the exact tracked entry is saved and published through its code editor.
+- Package: version 0.1.1 wheel built and independently installed. Actual three-format intake, 25 semantic categories, 96-row result, external audit and direct CSV passed. Final source ZIP and release publication follow final documentation.
+- Public browser acceptance and final review records are recorded in [verification.md](../artifacts/verification.md). Do not infer them from a successful build alone.
+- Submission page now visibly reports **Project Submitted** with an **Update Submission** button and the user's latest description. The agent has never clicked Submit or Update. Leave the existing submitted entry untouched; revised copy is retained in the repository for the user.
+
+## Historical 0.1.0 record
+
+Everything below describes the previous fictional-only release, not current upload capability or current review approvals.
+
 Application source is frozen at `9f40ec1`; immutable Archie release `r20261017e` is tracked at `7759f22`. The owner directly accepted the public `e` workflow and observed the refreshed hackathon draft's **Draft saved!** confirmation. [Delivery status](../artifacts/DELIVERY_STATUS.json) and [verification evidence](../artifacts/verification.md) record the final source-ZIP/publication handoff.
 
 | Item | Current state / required completion |

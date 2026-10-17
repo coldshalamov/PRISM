@@ -1,19 +1,20 @@
-# PRISM 0.1.0
+# PRISM 0.1.1
 
-PRISM compares source tables with transformed candidates before enterprise research sharing. The six-view workbench connects field meaning, deterministic disclosure measurements, selected research questions, bounded recipe search and reproducible evidence.
+PRISM is a desktop privacy preflight workbench: compare an original table with a protected candidate, understand measured exposure, and check what happens to selected research questions before sharing.
 
-- Review 145 semantic types across 13 families, with optional Jev 1.14 interpretation of approved schema metadata through OpenRouter Decisions. Record cells are excluded from model requests. Human corrections retain provenance.
-- Compare the original and protected table, preview compatible edits immediately, then explicitly evaluate the complete dataset. Frozen evidence becomes stale when its inputs change.
-- Explore 24 semantic attack categories with measured, unsupported and inapplicable states; inspect the contributing fields, attacker prerequisites and utility costs.
-- Select actual evaluated alternatives, inspect the measured frontier and export evidence, a recipe or an acknowledged protected CSV.
-- Run private CSV, JSON and XLSX intake locally. The public demo uses fictional fixtures and blocks uploads.
+- Import CSV, JSON and single-sheet XLSX files in the hosted Archie workbench, or run locally. Hosted intake supports 3 MiB per file, 100,000 rows and 80 columns; local intake supports 50 MiB. Uploaded table bytes and session configuration are stored in Archie Core; deterministic Python calculations run through Vercel.
+- Review 145 semantic types across 13 families. Optional Jev 1.14 interpretation uses schema metadata through OpenRouter Decisions; record cells are excluded. Corrections retain provenance and frozen candidates retain their own interpretation.
+- Inspect 25 semantic evidence categories, including output-visible recovery of exact midpoints from explicitly encoded centered intervals. Shared fixed bins are distinct, and unknown external protection mechanisms remain unknown.
+- Compare source and candidate, preview compatible field edits immediately, evaluate actual data, inspect bounded recipe alternatives and read failed constraints. The refreshed frontend keeps the working tool and its evidence in one workspace.
+- Audit an independently protected table without assuming its row order matches the original. Download a protected CSV directly, or export the owner audit and recipe. Direct identifiers and stale/mismatched UI evidence remain explicit blocks; no authority checklist or fabricated human approval is required.
+- Clear session deletes its uploaded files and stored configuration after the service confirms cleanup. Hosted sessions become inaccessible after 30 minutes of inactivity; expired records are removed lazily when that session is revisited. Reloading starts a new browser visitor session.
 
-The public application entry and durable fictional state are hosted on Archie. Immutable frontend assets and Python compute are served by Vercel. This is a split deployment; automatic Archie GitHub synchronization is unavailable. The tracked static entry supports manual publication without replacing the reviewed application with a generated approximation.
+Archie hosts the application entry and durable session data. Vercel serves immutable frontend assets and Python compute. This is a split deployment, with the real app published through the tracked static entry rather than an old generated approximation. The public pitch and portable PDF remain available from the Vercel pitch URL.
 
-The integrated backend suite passed 157 tests. The final wheel was installed into an isolated target and exercised independently, including current UI assets, pitch, ontology, fixture calculations, provenance and structured intake. Sonnet 5.5 built the frontend extension, Gemini 4 Argon completed an improvement pass, and three successive scoped independent frontend reviews approved the frozen source. See the repository's verification record for the separate hosted browser acceptance.
+The release wheel was installed into a separate target and executed with Python isolation enabled. The actual installed app served current UI assets and the seven-page pitch, imported all three table formats, exposed 25 semantic categories, reproduced the 480-to-96 sample-uniqueness example, downloaded CSV without acknowledgment flags, and reproduced an unpaired external audit. A separate check used actual Archie Core storage to verify uploaded-file persistence, exact cold replay, report bindings and deletion of all four owned upload records. The controller records complete suite and public-browser acceptance separately.
 
-The wheel includes the local application and built frontend. The source ZIP includes source, documentation, fictional fixtures, deployment adapters and the same tested wheel. Use `setup.ps1` and `start.ps1` for the documented source workflow; Python dependencies are required for the wheel. Checksums accompany the release assets.
+The wheel includes the local application and built frontend. The source ZIP includes source, documentation, fictional examples, deployment adapters and this same tested wheel. Use `setup.ps1` and `start.ps1` for the source workflow; the wheel requires its documented Python dependencies. External checksums accompany the release assets.
 
-This prototype provides evidence for human review. Sample uniqueness and simulated verified matches are distinct metrics; neither is a population identification probability. Unsupported analyses remain unassessed. Candidate constraints and review approvals do not provide release clearance or compliance certification.
+Measurements support human judgment. Sample uniqueness and simulated verified matches are different quantities, and neither establishes population identification probability. Unsupported analyses remain unassessed; this proof of concept does not certify compliance or authorize publication.
 
-The hackathon entry is prepared as an **Enterprise AI draft**. Submission remains the user's action.
+The hackathon entry remains an **Enterprise AI draft** until the user chooses to submit it.

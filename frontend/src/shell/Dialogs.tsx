@@ -138,7 +138,7 @@ function UploadDialog({ initial, onClose }: { initial: ImportTab; onClose: () =>
     });
     if (candidate) {
       ws.setView('workbench');
-      ws.notify(`External audit complete (${candidate.alignment === 'verified' ? 'verified pairing' : 'unknown pairing'}). Measurements are aggregate and not a release clearance.`);
+      ws.notify(`External audit complete (${candidate.alignment === 'verified' ? 'verified pairing' : 'unknown pairing'}). Results are ready to compare.`);
       onClose();
     }
   }

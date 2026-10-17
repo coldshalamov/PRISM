@@ -171,7 +171,7 @@ function FindingCard({ finding, open, onToggle, selectedColumn, onSelectColumn }
                     >{column}</button>
                   ))}
                 </span>
-              ) : <span className="muted">{finding.status === 'unsupported' ? 'Additional evidence is required for this assessment.' : finding.status === 'not_applicable' ? 'The required fields are absent from this representation.' : 'No contributing columns were detected.'}</span>}
+              ) : <span className="muted">{finding.status === 'unsupported' ? 'This test needs more information.' : finding.status === 'not_applicable' ? 'The columns needed for this test are not in the table.' : 'No contributing columns were detected.'}</span>}
             </dd>
           </div>
           <div><dt>How could it be exploited?</dt><dd>{brief(finding.explanation, 800)}</dd></div>
@@ -197,7 +197,7 @@ function FindingCard({ finding, open, onToggle, selectedColumn, onSelectColumn }
             <dt>What mitigations exist, and what do they cost?</dt>
             <dd className="sem-mitigation">
               <div><b>Mitigations</b><Bullets items={strings(finding.mitigations)} /></div>
-              <div><b>Utility risks</b><Bullets items={strings(finding.utilityRisks)} /></div>
+              <div><b>What might change in your analysis</b><Bullets items={strings(finding.utilityRisks)} /></div>
               <div><b>Limits</b><Bullets items={strings(finding.limitations)} empty="None reported" /></div>
               {strings(finding.sourceIds).length ? <div><b>Sources</b><span className="sem-sources">{strings(finding.sourceIds).join(' · ')}</span></div> : null}
             </dd>
@@ -452,7 +452,7 @@ export function SemanticPanel({ selectedColumn, onSelectColumn, onSelectColumns 
                       </tbody>
                     </table>
                   </div>
-                  <p className="sem-note">The source data is unchanged. Semantic meanings do not alter values or statistical roles. Privacy findings distinguish measured exposure from hypotheses requiring additional assessment. Model probabilities describe interpretations, not privacy risk.</p>
+                  <p className="sem-note">Correcting a column meaning leaves its values unchanged. Rerun the checks to update findings. AI confidence describes the suggested meaning, not the chance of identifying someone.</p>
                   {ontologyError ? <p className="sem-note risk-text">{ontologyError}</p> : null}
                 </>
               )
@@ -472,10 +472,10 @@ export function SemanticPanel({ selectedColumn, onSelectColumn, onSelectColumns 
                       </Notice>
                     ) : null}
                     {!candidateSemantic ? (
-                      <p className="sem-empty">No semantic findings were returned for {label}. Their absence is not a pass and not zero risk.</p>
+                      <p className="sem-empty">No semantic findings were returned for {label}. Results are unavailable for this version.</p>
                     ) : (
                       <>
-                        <p className="sem-note">Measured entries report deterministic tests under stated assumptions. Needs Assessment records a coverage gap; Not applicable means the required representation is absent. A semantic match alone does not establish a successful attack or clear a release. Field corrections require a new evaluation and never rewrite frozen findings.</p>
+                        <p className="sem-note">Measured entries show completed tests. Needs Assessment means more information is required; Not applicable means the test does not fit this table. Correct a field and re-evaluate to update the results.</p>
                         {findings.length ? (
                           <ul className="sem-finding-list">
                             {findings.map((finding, index) => {
@@ -688,7 +688,7 @@ export function ProtectionPreference() {
                 <summary><AlertTriangle size={13} aria-hidden="true" />Hard-check conflict · {failed.length ? `${failed.length} of ${current.candidate.constraints.length} not met` : 'reported by the service'}</summary>
                 {failed.length ? <ul>{failed.map(check => <li key={check.id}><b>{spaced(check.id.replace('query:', 'Question: ').replaceAll('-', ' '))}</b> {clip(check.reason, 200)}</li>)}</ul> : <p>The service marked this snapshot infeasible without listing a failed check.</p>}
               </details>
-            ) : <p className="muted sem-pref-checks">{current.checks === 'met' ? 'Returned hard checks met. Planning limits, not a release clearance.' : 'Hard checks were not evaluated for this snapshot.'}</p>}
+            ) : <p className="muted sem-pref-checks">{current.checks === 'met' ? 'The returned checks met their saved limits.' : 'Hard checks were not evaluated for this snapshot.'}</p>}
           </>
         ) : (
           <p>
@@ -702,7 +702,7 @@ export function ProtectionPreference() {
         <div>
           <p>Each position is one real evaluated snapshot of this dataset: created candidates, search results and the unprotected baseline. Only snapshots measured under the current attacker assumptions, field classifications and research questions are listed; editing the recipe in the Inspector does not remove one, and moving the slider only selects a snapshot and restores its recipe on this page. It never calls the service.</p>
           <p><b>Order, left to right:</b> sample uniqueness, highest first. Ties use query loss, lowest first; then single-guess correctness, highest first{membershipKnown ? '' : ' (skipped: membership is unknown)'}; smallest group k, lowest first; and snapshot label and id. Query loss can increase or decrease between positions: compare the measured analytical cost of each recipe.</p>
-          <p>Sample uniqueness is the share of released rows alone in their known-field class. These are sample measurements under stated assumptions. A position is not a percentage of protection, nothing is interpolated, and no position is a guarantee.</p>
+          <p>Unique rows have a combination of known fields that no other row shares. Each position selects a real evaluated version; the scale does not invent results between versions.</p>
           {excludedText.length ? <p className="muted">Not on the scale: {excludedText.join('; ')}.</p> : null}
         </div>
       </details>

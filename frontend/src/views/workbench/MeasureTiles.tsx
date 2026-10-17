@@ -11,8 +11,8 @@ const ICON: Record<string, ReactNode> = {
   sensitive_guess_advantage: <Crosshair size={18} />, loss: <Scale size={18} />, suppression: <EyeOff size={18} />,
 };
 const SHORT: Record<string, string> = {
-  sample_unique: 'Rows unique on known fields', linkage: 'Verified exact linkage', k_min: 'Smallest group',
-  sensitive_guess_advantage: 'Sensitive inference', loss: 'Research-query loss', suppression: 'Rows suppressed',
+  sample_unique: 'Rows unique on known fields', linkage: 'Confirmed matches', k_min: 'Smallest group',
+  sensitive_guess_advantage: 'Sensitive-value guessing', loss: 'Changes to research answers', suppression: 'Rows suppressed',
 };
 /* One large tile for the headline measure, smaller ones for the rest; the order is the order of concern. */
 const ORDER = ['sample_unique', 'linkage', 'sensitive_guess_advantage', 'k_min', 'loss'];

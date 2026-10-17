@@ -1,3 +1,16 @@
+# Current 0.1.1 verification
+
+Source/assets checkpoint: `8edb1e1`; cloud frontend PR #1 merged. Immutable Archie revision: `r20261017h`. Backend 179 tests passed; frontend typecheck/build and the two focused regression tools passed. Real Archie Core intake/replay/cleanup passed for CSV, JSON and XLSX. Independently installed 0.1.1 wheel passed actual three-format intake, 25-category registry, 96/480 semantic candidate, external-file audit and CSV download without acknowledgment flags.
+
+The public browser journey and final UI reviews are being completed at this checkpoint. Earlier results below describe the older release and do not establish current uploaded-file acceptance.
+
+The hackathon page was observed showing **Project Submitted**, the user's latest description and an **Update Submission** button. The agent did not click Submit or Update and did not change that existing entry.
+
+---
+
+## Historical 0.1.0 evidence
+
+
 # PRISM verification record
 
 This record distinguishes calculation/API checks from live browser use. The application is a local row-release prototype; this record is not de-identification certification or release authorization.

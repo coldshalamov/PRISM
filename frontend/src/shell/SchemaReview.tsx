@@ -114,7 +114,7 @@ export function SchemaReview({ onClose }: { onClose: () => void }) {
 
       <fieldset className="row-unit">
         <legend>Records versus people</legend>
-        <p className="muted">PRISM counts <b>rows</b>. A group of five rows is five-person anonymity only when five different people each appear once. Repeated visits from one patient break that reading.</p>
+        <p className="muted">PRISM counts <b>rows</b>. Repeated appointments can belong to the same person, so five rows do not always mean five people.</p>
         <div className="row-unit-grid">
           <label>Person key (optional)
             <select value={entity} onChange={event => setEntity(event.target.value)} aria-describedby="entity-help">

@@ -8,6 +8,7 @@ import json
 import shutil
 import subprocess
 import sys
+import tomllib
 from pathlib import Path
 from zipfile import ZIP_DEFLATED, ZipFile
 
@@ -66,6 +67,13 @@ def main():
         raise SystemExit("Build the frontend first: npm run build --prefix frontend")
     package = ROOT / "backend" / "app"
     static = package / "static"
+    # Replace only this generated tree, rather than retaining stale bundles.
+    # Resolve before deleting so a junction cannot redirect cleanup elsewhere.
+    resolved_static = static.resolve()
+    if resolved_static.parent != package.resolve() or resolved_static.name != "static":
+        raise SystemExit("Refusing to replace a generated static directory outside backend/app.")
+    if static.exists():
+        shutil.rmtree(static)
     shutil.copytree(built, static, dirs_exist_ok=True)
     fixtures = package / "fixtures"
     shutil.copytree(ROOT / "examples" / "kit_benchmark", fixtures / "kit_benchmark", dirs_exist_ok=True)
@@ -98,13 +106,26 @@ def main():
 
     output = ROOT / "dist"
     output.mkdir(exist_ok=True)
+    # setuptools otherwise retains deleted static chunks in build/lib, even
+    # after app/static itself was refreshed from the current frontend build.
+    build_cache = ROOT / "backend" / "build"
+    resolved_cache = build_cache.resolve()
+    if resolved_cache.parent != (ROOT / "backend").resolve() or resolved_cache.name != "build":
+        raise SystemExit("Refusing to clear a generated build directory outside backend.")
+    if build_cache.exists():
+        shutil.rmtree(build_cache)
     subprocess.run([sys.executable, "-m", "pip", "wheel", "--no-deps", str(ROOT / "backend"), "--wheel-dir", str(output)], check=True)
+    project = tomllib.loads((ROOT / "backend" / "pyproject.toml").read_text(encoding="utf-8"))["project"]
+    wheel_name = project["name"].replace("-", "_")
+    wheels = list(output.glob(f"{wheel_name}-{project['version']}-*.whl"))
+    if len(wheels) != 1:
+        raise SystemExit("Expected exactly one wheel matching the current project version.")
     archive = output / "PRISM-workbench.zip"
     with ZipFile(archive, "w", ZIP_DEFLATED) as destination:
         for path in source_paths():
             relative = path.relative_to(ROOT)
             destination.write(path, "PRISM/" + relative.as_posix())
-        for wheel in output.glob("*.whl"):
+        for wheel in wheels:
             destination.write(wheel, "PRISM/dist/" + wheel.name)
     print(f"Created {archive} ({archive.stat().st_size:,} bytes)")
 
