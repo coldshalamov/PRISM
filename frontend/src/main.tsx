@@ -12,6 +12,8 @@ import './styles/data.css';
 import './styles/workspace.css';
 import './styles/views.css';
 import './styles/polish.css';
+import './styles/magic.css';
+import './styles/kit.css';
 import Shell from './shell/Shell';
 import { WorkspaceProvider } from './workspace';
 

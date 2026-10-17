@@ -1,0 +1,109 @@
+/* Workbench hero: workflow position, the refraction of the evaluated snapshot, and its measured tiles.
+   Violet = protected, orange = exposure, graphite = original, grey = lost. There is no green. */
+.hero { container-type: inline-size; position: relative; display: grid; gap: 14px; padding: 14px 20px 14px; flex: none; background: var(--surface); border-radius: var(--r-4); box-shadow: var(--shadow-ring), 0 1px 2px rgba(22, 26, 70, 0.04); }
+.hero > * { min-width: 0; }
+
+/* ---------- journey ---------- */
+.journey ol { display: flex; gap: 4px; margin-inline: -8px; }
+.journey-step { position: relative; flex: 1; min-width: 0; }
+.journey-step + .journey-step::before { content: ''; position: absolute; left: -2px; top: 50%; width: 7px; height: 7px; border-top: 2px solid var(--line-strong); border-right: 2px solid var(--line-strong); transform: translate(-50%, -50%) rotate(45deg); }
+.journey-btn { display: flex; align-items: center; gap: 10px; width: 100%; padding: 8px 12px; border: 0; border-radius: var(--r-3); background: transparent; text-align: left; color: inherit; }
+button.journey-btn:hover:not(:disabled) { background: var(--surface-2); }
+button.journey-btn:disabled { cursor: default; opacity: 0.6; }
+.journey-icon { display: grid; place-items: center; flex: none; width: 32px; height: 32px; border-radius: 50%; background: var(--surface-3); color: var(--ink-3); transition: background .2s, color .2s; }
+.journey-text { display: grid; min-width: 0; line-height: 1.2; }
+.journey-text b { font-family: var(--font-display); font-size: 14.5px; font-weight: 650; }
+.journey-text small { color: var(--ink-3); font-size: 12px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-top: 1px; }
+.journey-step.s-done .journey-icon { background: var(--accent-soft); color: var(--accent-ink); }
+.journey-step.is-current .journey-icon { background: linear-gradient(135deg, #7c62ff, #5b3cf2); color: #fff; box-shadow: 0 6px 14px -6px rgba(91, 60, 242, 0.85); }
+.journey-step.s-running .journey-icon { animation: pulse 1.2s ease-in-out infinite; }
+.journey-step.s-stale .journey-icon { background: var(--risk-soft); color: var(--risk-ink); box-shadow: inset 0 0 0 1.5px var(--risk); }
+.journey-step.s-stale small { color: var(--risk-ink); font-weight: 600; }
+.journey-step.s-na .journey-icon { background: transparent; color: var(--ink-4); border: 1.5px dashed var(--line-strong); }
+.journey-step.s-na .journey-text { opacity: 0.75; }
+.journey-step.s-todo:not(.is-current) .journey-text b { color: var(--ink-3); }
+
+/* ---------- body: refraction + tiles ---------- */
+.hero-body { display: grid; gap: 14px; align-items: center; }
+.hero-body.idle { grid-template-columns: minmax(0, 1fr); }
+
+.refraction { margin: 0; display: grid; grid-template-columns: auto minmax(150px, 400px) auto; grid-template-rows: auto auto; justify-content: center; align-items: stretch; column-gap: 10px; row-gap: 2px; }
+.refraction-in { align-self: center; display: grid; justify-items: end; line-height: 1.15; }
+.refraction-in b { font-family: var(--font-display); font-size: 22px; font-weight: 650; color: var(--original); }
+.refraction-in span { font-size: 12px; color: var(--ink-3); }
+.refraction-svg { width: 100%; height: auto; aspect-ratio: 400 / 130; display: block; overflow: visible; }
+.refraction .prism { stroke: var(--ink-3); stroke-width: 1.5; }
+.refraction .ray { stroke: var(--original); fill: none; }
+.refraction .ray-removed { stroke: var(--accent); }
+.refraction .ray-exposed { stroke: var(--risk); }
+.refraction .ray-lost { stroke: #8a92a6; }
+.refraction .ray.unknown { stroke-dasharray: 3 6; opacity: 0.55; }
+.refraction.is-idle .ray { stroke-width: 2; }
+.refraction-out { display: grid; grid-template-rows: repeat(3, 1fr); }
+.refraction-out li { display: flex; align-items: center; gap: 8px; min-width: 0; white-space: nowrap; }
+.refraction-out i { width: 10px; height: 10px; border-radius: 50%; flex: none; }
+.refraction-out b { font-family: var(--font-display); font-size: 16px; font-weight: 650; }
+.refraction-out span { font-size: 12.5px; color: var(--ink-3); }
+.ro-removed i { background: var(--accent); } .ro-exposed i { background: var(--risk); } .ro-lost i { background: #8a92a6; }
+.refraction-out li.unknown i { background: transparent; box-shadow: inset 0 0 0 1.5px var(--line-strong); }
+.refraction-out li.unknown b { color: var(--uncovered); font-weight: 500; }
+
+/* draw-in: the rays are drawn once per snapshot shown, never on a loop */
+@media (prefers-reduced-motion: no-preference) {
+  .refraction:not(.is-idle) .ray, .refraction:not(.is-idle) .beam-in { stroke-dasharray: 1; stroke-dashoffset: 1; animation: draw .7s var(--ease-out) forwards; animation-delay: calc(var(--i, 0) * 90ms + 60ms); }
+  .refraction:not(.is-idle) .beam-in { animation-delay: 0ms; }
+  .refraction:not(.is-idle) .ray.unknown { stroke-dasharray: 3 6; stroke-dashoffset: 0; animation: none; }
+}
+@keyframes draw { to { stroke-dashoffset: 0; } }
+
+/* ---------- tiles: one large, the rest small ---------- */
+.tiles { display: grid; grid-template-columns: 1.25fr 1fr 1fr; grid-auto-rows: minmax(68px, auto); gap: 10px; }
+.tiles .large { grid-row: span 2; }
+.tile-card { display: flex; flex-direction: column; justify-content: space-between; gap: 6px; padding: 10px 14px; border-radius: var(--r-3); background: var(--surface-2); box-shadow: inset 0 0 0 1px var(--line); min-width: 0; }
+.tile-card.large { padding: 14px 18px; background: linear-gradient(160deg, var(--accent-wash), rgba(242, 96, 42, 0.07)), var(--surface-2); }
+.tile-top { display: flex; align-items: center; gap: 8px; min-width: 0; }
+.tile-glyph { display: grid; place-items: center; flex: none; width: 28px; height: 28px; border-radius: var(--r-2); background: var(--surface); color: var(--ink-3); box-shadow: var(--shadow-ring); }
+.tile-card.large .tile-glyph { color: var(--risk-ink); }
+.tile-label { font-size: 12.5px; font-weight: 550; color: var(--ink-2); line-height: 1.2; min-width: 0; }
+.tile-value { font-family: var(--font-display); font-size: 24px; font-weight: 650; letter-spacing: -0.02em; line-height: 1.1; min-width: 0; }
+.tile-card.large .tile-value { font-size: 42px; color: var(--ink); }
+.tile-value .na { font-family: var(--font-ui); font-size: 13px; letter-spacing: 0; font-weight: 500; line-height: 1.3; display: block; }
+.tile-foot { display: flex; align-items: center; flex-wrap: wrap; gap: 4px 8px; min-height: 22px; }
+.tile-sub { font-size: 12px; color: var(--ink-3); }
+.delta-chip { display: inline-flex; align-items: center; gap: 4px; padding: 1px 8px; border-radius: var(--r-pill); font-size: 12px; font-weight: 650; background: var(--surface-3); color: var(--ink-3); }
+.delta-chip.better { background: var(--accent-soft); color: var(--accent-ink); }
+.delta-chip.worse { background: var(--risk-wash); color: var(--risk-ink); }
+.tile-aside { display: flex; align-items: center; gap: 6px; font-size: 12.5px; color: var(--ink-3); }
+.tile-bar { display: grid; gap: 3px; margin-top: 2px; }
+.tile-bar i { display: block; height: 6px; border-radius: var(--r-pill); min-width: 3px; transition: width .5s var(--ease-out); }
+.tile-bar .orig { background: var(--original-soft); }
+.tile-bar .prot { background: linear-gradient(90deg, #8a72ff, var(--accent)); }
+.tile-card.na-tile { box-shadow: inset 0 0 0 1.5px var(--line-strong); background: var(--surface); }
+
+/* ---------- idle: before the first candidate ---------- */
+.hero-idle { display: grid; justify-items: center; text-align: center; gap: 8px; padding-bottom: 4px; }
+.hero-idle h2 { font-size: 22px; font-weight: 650; }
+.hero-idle p { color: var(--ink-3); max-width: 46ch; }
+.hero-idle .btn { margin-top: 4px; }
+.hero-why { font-size: 13px; color: var(--ink-3); max-width: 60ch; text-align: left; }
+.hero-why summary { cursor: pointer; width: fit-content; margin: 0 auto; }
+.hero-why p { margin-top: 6px; max-width: none; }
+
+/* the snapshot picker lives in the hero's footer, flush with the card */
+.hero .sem-pref, .hero .sem-pref.unready { background: transparent; border: 0; border-radius: 0; padding: 12px 0 0; margin-top: 2px; box-shadow: 0 -1px 0 var(--line); grid-template-columns: minmax(0, 1fr); grid-template-areas: 'head' 'slider' 'read' 'order'; gap: 6px; }
+.hero .sem-pref-id code { display: none; }
+.hero .sem-pref-metrics { display: none; }
+.hero .sem-pref-head h2 { font-size: 14.5px; }
+
+@container (max-width: 760px) {
+  .journey ol { overflow-x: auto; scrollbar-width: none; }
+  .journey-step { flex: none; min-width: 148px; }
+  .tiles { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .tiles .large { grid-row: auto; grid-column: 1 / -1; }
+  .refraction { grid-template-columns: auto minmax(120px, 1fr) auto; column-gap: 6px; }
+  .refraction-in b { font-size: 18px; }
+}
+@container (min-width: 960px) {
+  .hero-body:not(.idle) { grid-template-columns: minmax(380px, 0.9fr) minmax(0, 1.1fr); gap: 24px; }
+  .hero-body:not(.idle) .refraction { grid-template-columns: auto minmax(120px, 1fr) auto; }
+}

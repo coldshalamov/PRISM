@@ -12,7 +12,7 @@ const fractionWidth = (value: unknown): string | undefined => finite(value) && v
 export function ExperimentView({ experiment }: { experiment: LabExperiment }) {
   const { id, title, explanation, inputs, result, lesson, assumptions, status } = experiment;
   return <article className="al-experiment" aria-label={title}>
-    <header><p className="al-eyebrow">Counterexample / {id}</p><h2>{title}</h2><p>{explanation}</p><Capability status={status} /></header>
+    <header><h2>{title}</h2><p>{explanation}</p><Capability status={status} /></header>
     {status !== 'implemented' ? <Notice tone="warn">This experiment is {status || 'unassessed'}. No completed result is inferred.</Notice> : id === 'differencing' ? <>
       <div className="al-equation" aria-label={`${num(inputs.all_positive_count)} minus ${num(inputs.all_except_target_positive_count)} equals ${num(result.inferred_target_value)}`}><div><strong>{num(inputs.all_positive_count, 0)}</strong><span>All positives</span><small>{num(inputs.people, 0)} fictional people</small></div><Minus size={20} aria-hidden="true" /><div><strong>{num(inputs.all_except_target_positive_count, 0)}</strong><span>Positives, except target</span><small>Same group, one exclusion</small></div><span className="al-equals" aria-hidden="true">=</span><div className="al-inferred"><strong>{num(result.inferred_target_value, 0)}</strong><span>Target’s inferred value</span><small>Binary attribute</small></div></div>
       <p className="al-verification">{result.correct === true ? <><Check size={14} />Verified against fictional ground truth: {num(result.verified_target_value, 0)}.</> : result.correct === false ? 'The inferred value did not match fixture ground truth.' : 'Correctness was not returned by the service.'}</p>

@@ -79,7 +79,7 @@
 }
 
 /* The primary action of a view must not scroll out of a narrow toolbar. */
-.toolbar > .btn.primary:last-child { position: sticky; right: 16px; box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.22), 0 6px 16px -8px rgba(91, 60, 242, 0.85), -18px 0 14px -6px var(--canvas); }
+.toolbar > .btn.primary:last-child { position: sticky; right: 16px; box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.22), 0 6px 16px -8px rgba(91, 60, 242, 0.85), -8px 0 6px -4px var(--canvas); }
 /* Tablet tools wrap into complete rows instead of covering their neighbours. */
 @media (min-width: 720px) and (max-width: 999px) {
   .app { grid-template-rows: 84px auto minmax(0, 1fr); }

@@ -25,7 +25,7 @@ button.sem-end:disabled { color: var(--ink-4); text-decoration: none; }
 .sem-pref-metrics dd { font-size: 14px; font-weight: 600; font-variant-numeric: tabular-nums; }
 .sem-pref-checks { font-size: 13px; }
 .sem-pref-actions { display: flex; gap: 8px; flex-wrap: wrap; }
-.sem-conflict { border-left: 3px solid var(--risk); background: var(--risk-soft); padding: 4px 10px; font-size: 13.5px; color: var(--risk-ink); }
+.sem-conflict { border-radius: var(--r-3); background: var(--risk-soft); padding: 8px 12px; font-size: 13.5px; color: var(--risk-ink); }
 .sem-conflict summary { display: flex; align-items: center; gap: 6px; cursor: pointer; font-weight: 600; width: fit-content; }
 .sem-conflict ul { margin-top: 4px; display: grid; gap: 3px; list-style: disc; padding-left: 18px; color: var(--ink-2); }
 .sem-conflict p { margin-top: 4px; color: var(--ink-2); }
@@ -35,15 +35,15 @@ button.sem-end:disabled { color: var(--ink-4); text-decoration: none; }
 
 /* ---------- Semantic intelligence ---------- */
 .sem { flex: none; position: relative; background: var(--surface); border:0;box-shadow:var(--shadow-ring); border-radius: var(--r-2); }
-.sem.open { border-color: var(--line-strong); }
-.sem-head { display: flex; align-items: center; gap: 2px 14px; flex-wrap: wrap; min-height: 36px; padding: 0 12px 0 2px; }
-.sem-toggle { display: inline-flex; align-items: center; gap: 6px; height: 36px; padding: 0 10px; border: 0; border-radius: var(--r-2); background: transparent; color: var(--ink); font-weight: 600; font-size: 14px; }
+
+.sem-head { display: flex; align-items: center; gap: 2px 14px; flex-wrap: wrap; min-height: 48px; padding: 0 18px 0 8px; }
+.sem-toggle { display: inline-flex; align-items: center; gap: 8px; height: 40px; padding: 0 12px; border: 0; border-radius: var(--r-3); background: transparent; color: var(--ink); font-weight: 600; font-size: 14px; }
 .sem-toggle:hover { background: var(--surface-2); }
 .sem-summary { flex: 1 1 220px; min-width: 0; font-size: 13px; color: var(--ink-3); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .sem-provider { font-size: 13px; color: var(--ink-2); white-space: nowrap; font-variant-numeric: tabular-nums; }
-.sem-body { display: grid; gap: 10px; padding: 10px 12px 12px; border-top: 1px solid var(--line); min-width: 0; }
+.sem-body { display: grid; gap: 12px; padding: 6px 18px 16px; min-width: 0; }
 .sem-actions { display: grid; gap: 8px; }
-.sem-disclosure { font-size: 13.5px; line-height: 1.5; color: var(--ink-2); max-width: 100ch; padding: 6px 10px; border-left: 3px solid var(--accent-line); background: var(--accent-wash); }
+.sem-disclosure { font-size: 13.5px; line-height: 1.5; color: var(--ink-2); max-width: 100ch; padding: 10px 14px; border-radius: var(--r-3); background: var(--accent-wash); }
 .sem-buttons { display: flex; gap: 8px; flex-wrap: wrap; }
 .sem-status { min-height: 18px; font-size: 13.5px; color: var(--ink-2); }
 .sem-status:empty { min-height: 0; }
@@ -58,7 +58,7 @@ button.sem-end:disabled { color: var(--ink-4); text-decoration: none; }
 .sem-empty { padding: 4px 0; }
 
 /* fields */
-.sem-table-scroll { max-height: 260px; overflow: auto; max-width: 100%; border: 1px solid var(--line); outline: none; position: relative; }
+.sem-table-scroll { max-height: 260px; overflow: auto; max-width: 100%; border-radius: var(--r-3); box-shadow: inset 0 0 0 1px var(--line); outline: none; position: relative; }
 .sem-table { min-width: 760px; }
 .sem-table th, .sem-table td { vertical-align: middle; }
 .sem-table tbody th { font-weight: 400; white-space: nowrap; }
@@ -99,7 +99,7 @@ button.sem-end:disabled { color: var(--ink-4); text-decoration: none; }
 .sem-finding-list { display: grid; gap: 6px; }
 .sem.is-stale .sem-finding-list, .sem.is-pending .sem-finding-list { opacity: 0.62; transition: opacity 0.3s; }
 .sem-finding { border:0;box-shadow:var(--shadow-ring); border-radius: var(--r-2); background: var(--surface); }
-.sem-finding.uncovered { border-style: dashed; border-color: var(--line-strong); }
+.sem-finding.uncovered { box-shadow: inset 0 0 0 1.5px var(--line-strong); background: var(--surface-2); }
 .sem-finding h4 { margin: 0; font-size: 14px; font-weight: 400; }
 .sem-finding-head { display: flex; align-items: center; gap: 4px 10px; flex-wrap: wrap; width: 100%; padding: 7px 10px; border: 0; background: transparent; text-align: left; font: inherit; color: inherit; }
 .sem-finding-head:hover { background: var(--surface-2); }

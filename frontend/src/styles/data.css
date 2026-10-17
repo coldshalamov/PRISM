@@ -36,10 +36,10 @@
 .pane { display: flex; flex-direction: column; min-width: 0; min-height: 260px; background: var(--surface); border-radius: var(--r-4); box-shadow: var(--shadow-ring), 0 1px 2px rgba(22, 26, 70, 0.04); overflow: hidden; }
 .pane.protected .pane-head { background: linear-gradient(180deg, var(--accent-wash), transparent); }
 .pane.original .pane-head { background: linear-gradient(180deg, rgba(76, 84, 102, 0.07), transparent); }
-.pane-head { display: flex; align-items: center; gap: 10px; padding: 14px 18px 10px; flex-wrap: wrap; }
+.pane-head { display: flex; align-items: center; gap: 10px; padding: 14px 18px 10px; }
 .pane-head h2 { font-size: 15px; font-weight: 650; }
-.pane-meta { color: var(--ink-3); font-size: 12.5px; min-width: 0; flex: 1 1 160px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.pane-tag { color: var(--ink-2); background: var(--surface-3); padding: 2px 10px; border-radius: var(--r-pill); font-size: 12px; font-weight: 600; display: inline-flex; align-items: center; }
+.pane-meta { color: var(--ink-3); font-size: 12.5px; min-width: 0; flex: 1 1 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.pane-tag { flex: none; white-space: nowrap; color: var(--ink-2); background: var(--surface-3); padding: 2px 10px; border-radius: var(--r-pill); font-size: 12px; font-weight: 600; display: inline-flex; align-items: center; }
 .pane.protected .pane-tag { background: var(--accent-soft); color: var(--accent-ink); }
 .pane-note { margin: 0 14px 8px; padding: 8px 12px; font-size: 12.5px; background: var(--risk-soft); color: var(--risk-ink); border-radius: var(--r-2); }
 .pane-body { flex: 1; min-height: 0; overflow: auto; display: flex; flex-direction: column; }
@@ -164,7 +164,7 @@
 .field-row { display: grid; gap: 6px; padding: 10px 10px; border-radius: var(--r-3); }
 .field-row:hover { background: var(--surface-2); }
 .field-row.exposed { background: var(--risk-soft); }
-.field-line { display: grid; grid-template-columns: minmax(0, 1fr) 140px; gap: 8px; align-items: center; }
+.field-line { display: grid; grid-template-columns: auto minmax(0, 1fr) 140px; gap: 10px; align-items: center; }
 .field-line select { height: var(--ctl-h-sm); font-size: 13px; width: 100%; }
 .field-title { display: grid; min-width: 0; line-height: 1.25; }
 .field-title b { font-family: var(--font-mono); font-size: 12.5px; font-weight: 500; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }

@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { ArrowDown, ArrowUp, ClipboardCheck, Copy, ListFilter, Play, Plus, RotateCcw, Save, Square, Trash2 } from 'lucide-react';
+import { ArrowDown, ArrowUp, ClipboardCheck, Copy, ListFilter, Play, Plus, RotateCcw, Save, Square, Target, Trash2 } from 'lucide-react';
 import { isAudit, workloadKey } from '../analysis';
 import { useDialogs } from '../dialogs';
 import { cell, num, pct } from '../format';
@@ -7,7 +7,9 @@ import { isWeightColumn, weightUnit } from '../recipe';
 import { scenarioById, scenarios } from '../scenarios';
 import { EvidenceBanner } from '../ui/EvidenceBanner';
 import { Empty, Notice } from '../ui/Feedback';
+import { PageHead } from '../ui/PageHead';
 import { InspectorSlot, ToolbarSlot } from '../ui/Slots';
+import { ViewEmpty } from '../ui/ViewEmpty';
 import { useWorkspace } from '../workspace';
 import type { ColumnSpec, QueryType, ResearchQuery } from '../types';
 import { QUERY_TYPES, QueryResults, queryTitle } from './intent/QueryResults';
@@ -99,7 +101,7 @@ function QueryEditor({ query, initialDraft, schema, onSave, onDraftChange, onDis
   };
   return (
     <form className="intent-editor" onSubmit={event => { event.preventDefault(); setSubmitted(true); if (!compiled.errors.length) onSave(compiled.query); }}>
-      <div className="intent-editor-head"><div><span className="intent-eyebrow">Question definition</span><h2>{queryTitle(draft.query)}</h2></div><span className={dirty ? 'intent-draft-mark' : 'intent-saved-mark'}>{dirty ? 'Unsaved edits' : 'Saved to workload'}</span></div>
+      <div className="intent-editor-head"><div><h2>{queryTitle(draft.query)}</h2></div><span className={dirty ? 'intent-draft-mark' : 'intent-saved-mark'}>{dirty ? 'Unsaved edits' : 'Saved to workload'}</span></div>
       <div className="intent-form-grid">
         <label className="intent-field"><span>Statistic</span><select value={draft.query.type} onChange={event => changeType(event.target.value as QueryType)}>{QUERY_TYPES.map(type => <option value={type.id} key={type.id}>{type.label}</option>)}</select></label>
         {draft.query.type !== 'group_count' ? <label className="intent-field"><span>{draft.query.type === 'correlation' ? 'Y · target field' : 'Target field'}</span><select value={draft.query.target ?? ''} onChange={event => setQuery({ target: event.target.value })}><option value="">Choose a field</option>{targets.map(column => <option key={column.name} value={column.name}>{column.name}{column.unit ? ` (${column.unit})` : ''}</option>)}</select></label> : <div className="intent-field intent-fixed"><span>Target</span><b>Rows in the selected cohort</b></div>}
@@ -182,14 +184,14 @@ export default function ResearchIntent() {
   };
   const remove = () => { if (!query) return; ws.setWorkload(workload.filter(item => item.id !== query.id)); setSelected(''); setLocalError(''); };
   const move = (offset: number) => { if (!query) return; const index = workload.indexOf(query); const next = [...workload]; const target = index + offset; if (target < 0 || target >= next.length) return; [next[index], next[target]] = [next[target], next[index]]; ws.setWorkload(next); };
-  if (!ws.dataset) return <div className="start"><Empty icon={<ListFilter size={26} />} title={ws.busy.boot ? 'Loading the research workspace…' : 'Open a dataset to define research intent'} actions={<button className="btn" type="button" onClick={() => ws.setView('workbench')}>Open workbench</button>}>Research questions use the fields in your current dataset.</Empty></div>;
+  if (!ws.dataset) return <div className="start"><ViewEmpty title={ws.busy.boot ? 'Loading the research workspace…' : 'Open a dataset to define research intent'} actions={<button className="btn" type="button" onClick={() => ws.setView('workbench')}>Open workbench</button>}>Research questions use the fields in your current dataset.</ViewEmpty></div>;
   const snapshotMatches = ws.active?.workload ? !dirty && workloadKey(ws.active.workload) === workloadKey(workload) : false;
   const initialDraft = query && ws.workloadDraft?.id === query.id ? (ws.workloadDraft.draft as Draft) : null;
   return <div className="intent-view">
     <ToolbarSlot><span className="intent-toolbar-label"><ListFilter size={15} />Research workload <span>{workload.length}/20 questions{dirty ? ' · unsaved edits' : ''}</span></span><span className="toolbar-spacer" />{pending ? <button className="btn" type="button" onClick={() => ws.cancel(ws.busy.apply ? 'apply' : 'assess')}><Square size={13} />Stop waiting</button> : null}<button className="btn primary" type="button" disabled={pending || dirty || auditSchemaChanged || !ws.reviewed || !scenario.evaluated || ws.health !== 'ok' || ws.sessionLost || !workload.length} title={dirty ? 'Save or discard your question edits first' : undefined} onClick={() => void run()}><Play size={14} />{pending ? 'Evaluating…' : 'Evaluate workload'}</button></ToolbarSlot>
     <InspectorSlot><IntentInspector /></InspectorSlot>
     <div className="intent-document">
-      <header className="intent-page-head"><div><span className="intent-eyebrow">Research intent</span><h1>Define what the data must preserve.</h1><p>Write the questions first. Measure whether the candidate still answers them.</p></div><button type="button" className="btn" disabled={workload.length >= 20 || dirty} onClick={() => append()}><Plus size={15} />Add question</button></header>
+      <PageHead className="intent-page-head" icon={<Target size={22} />} title="Define what the data must preserve." summary="Write the questions first. Measure whether the candidate still answers them."><button type="button" className="btn" disabled={workload.length >= 20 || dirty} onClick={() => append()}><Plus size={15} />Add question</button></PageHead>
       <EvidenceBanner />
       {!ws.reviewed ? <Notice title="Review the source fields before evaluation.">Confirm roles, numerical units and the person key in the workbench.<span className="notice-actions"><button className="btn small" type="button" onClick={() => dialogs.open('review')}><ClipboardCheck size={14} />Review classifications</button></span></Notice> : null}
       {!scenario.evaluated ? <Notice tone="warn" title="Aggregate-only release is not evaluated.">This context is for planning only. PRISM’s candidate evaluator operates on row releases; choose a supported sharing scenario to run it.</Notice> : null}
@@ -202,7 +204,7 @@ export default function ResearchIntent() {
           <div className="intent-question-actions"><div><button className="btn small" type="button" disabled={dirty || workload.indexOf(query) === 0} onClick={() => move(-1)} aria-label="Move question up"><ArrowUp size={14} /></button><button className="btn small" type="button" disabled={dirty || workload.indexOf(query) === workload.length - 1} onClick={() => move(1)} aria-label="Move question down"><ArrowDown size={14} /></button><button className="btn small" type="button" disabled={dirty || workload.length >= 20} onClick={() => append(query)}><Copy size={13} />Duplicate</button></div><div>{dirty ? <button type="button" className="btn small" onClick={discardDraft}><RotateCcw size={13} />Discard edits</button> : null}<button className="btn small danger" type="button" disabled={dirty} onClick={remove}><Trash2 size={13} />Remove question</button></div></div>
         </> : <Empty title="Begin with one research question" actions={<button className="btn primary" type="button" onClick={() => append()}><Plus size={14} />Add question</button>}>Choose a count, rate, mean, correlation or rate difference. Set the tolerance that would change your scientific conclusion.</Empty>}</div>
       </div>
-      <section className="intent-measured-section"><div className="intent-section-head"><div><span className="intent-eyebrow">Preservation check</span><h2>Source → {ws.active ? ws.labelOf(ws.active.candidateId) : 'candidate'}</h2></div><span className="intent-snapshot-note">{pending ? 'Previous snapshot · evaluation pending' : !ws.active ? 'Not yet evaluated' : !snapshotMatches ? 'Saved workload has changed' : 'Frozen workload results'}</span></div>
+      <section className="intent-measured-section"><div className="intent-section-head"><div><h2>Source → {ws.active ? ws.labelOf(ws.active.candidateId) : 'candidate'}</h2></div><span className="intent-snapshot-note">{pending ? 'Previous snapshot · evaluation pending' : !ws.active ? 'Not yet evaluated' : !snapshotMatches ? 'Saved workload has changed' : 'Frozen workload results'}</span></div>
         {ws.active ? <><p className="intent-help">These are actual query evaluations against the source, not preview-row estimates. {ws.stale.length ? 'The controls have changed; use the evidence banner to refresh this snapshot.' : ''}</p><QueryResults queries={ws.active.utility.queries} workload={ws.active.workload} schema={ws.active.schema} candidateLabel={ws.labelOf(ws.active.candidateId)} /><p className="intent-composite">Bounded workload loss <strong>{ws.active.utility.loss === null ? 'Unavailable' : num(ws.active.utility.loss, 4)}</strong> · {ws.active.utility.loss_definition ?? 'Weighted mean of min(1, absolute error / tolerance) for available selected tasks; unavailable weighted tasks abstain.'}</p>{ws.active.utility.warnings?.length ? <ul className="intent-issues">{ws.active.utility.warnings.map((warning, i) => <li key={i}>{warning}</li>)}</ul> : null}</> : <p className="intent-no-results">Save your questions, then evaluate the workload. No measurements have been made for these controls.</p>}
       </section>
       <details className="intent-mobile-context"><summary>Sharing scenario and search constraints</summary><IntentInspector /></details>

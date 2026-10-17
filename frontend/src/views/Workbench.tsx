@@ -12,7 +12,7 @@ import { num, plural } from '../format';
 import { useMedia } from '../hooks';
 import { columnTreatmentNote, normalizeSteps, recipeLabel, sameSteps } from '../recipe';
 import { EvidenceBanner } from '../ui/EvidenceBanner';
-import { Empty, Notice, Skeleton } from '../ui/Feedback';
+import { Empty, Skeleton } from '../ui/Feedback';
 import { InspectorSlot, ToolbarSlot } from '../ui/Slots';
 import { Tabs, panelProps } from '../ui/Tabs';
 import { Term } from '../ui/Tip';
@@ -21,7 +21,8 @@ import { DataTable } from './workbench/DataTable';
 import type { TableColumn } from './workbench/DataTable';
 import { Ledger } from './workbench/Ledger';
 import { RecipeInspector } from './workbench/RecipeInspector';
-import { ProtectionPreference, SemanticPanel } from './workbench/SemanticPanel';
+import { Hero } from './workbench/Hero';
+import { SemanticPanel } from './workbench/SemanticPanel';
 
 type PaneTab = 'table' | 'dist' | 'corr' | 'sub';
 type PaneMode = 'both' | 'original' | 'protected';
@@ -229,7 +230,7 @@ export default function Workbench() {
         {pending ? (
           <button type="button" className="btn" onClick={() => ws.cancel(busy.apply ? 'apply' : 'assess')}><Square size={13} fill="currentColor" />Stop waiting</button>
         ) : null}
-        <button type="button" className={`btn primary${busy.apply ? ' busy' : ''}`} disabled={busy.apply || !reviewed} onClick={() => void ws.apply()}>
+        <button type="button" className={`btn primary${busy.apply ? ' busy' : recipeEdited ? ' sheen' : ''}`} disabled={busy.apply || !reviewed} onClick={() => void ws.apply()}>
           <Play size={14} fill="currentColor" />{busy.apply ? 'Evaluating…' : 'Apply and evaluate'}
         </button>
       </ToolbarSlot>
@@ -237,13 +238,7 @@ export default function Workbench() {
 
       <div className={`panes-wrap${pending ? ' is-pending' : stale.length ? ' is-stale' : ''}`} {...panelProps(tabId, tab)}>
         <EvidenceBanner />
-        {!reviewed && !active ? (
-          <Notice tone="info" title="Start by reviewing the fields.">
-            PRISM suggests which columns identify a person, which are sensitive and which you analyse, and asks whether each person appears in one row. Confirm them once and the first candidate is created automatically.
-            <span className="notice-actions"><button type="button" className="btn primary" onClick={() => dialogs.open('review')}><ClipboardCheck size={15} />Review classifications</button></span>
-          </Notice>
-        ) : null}
-        <ProtectionPreference />
+        <Hero recipeEdited={recipeEdited} />
         <div className={`panes${showOriginal && showProtected ? '' : ' single'}`}>
           {showOriginal ? originalPane : null}
           {showProtected ? protectedPane : null}

@@ -1,0 +1,26 @@
+/* Shared "magic" primitives. Each has one job: a beam while work runs, a sheen when a button has unapplied work,
+   and a dotted field behind the hero and empty states (never behind tables). */
+
+.border-beam {
+  position: absolute; inset: 0; border-radius: inherit; pointer-events: none; padding: 2px; opacity: 0; transition: opacity .3s;
+  background: conic-gradient(from var(--beam-angle), transparent 0 68%, rgba(255, 179, 138, 0.95) 84%, rgba(150, 128, 255, 1) 100%);
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); -webkit-mask-composite: xor; mask-composite: exclude;
+}
+.border-beam.on { opacity: 1; animation: spin-beam 2.4s linear infinite; }
+@media (prefers-reduced-motion: reduce) { .border-beam.on { animation: none; --beam-angle: 140deg; } }
+
+/* A button that carries unapplied work catches the eye twice, then rests. */
+.btn.sheen:not(.busy) { overflow: hidden; }
+.btn.sheen:not(.busy)::after {
+  content: ''; position: absolute; inset: 0; pointer-events: none; transform: translateX(-120%);
+  background: linear-gradient(100deg, transparent 30%, rgba(255, 255, 255, 0.5) 50%, transparent 70%);
+  animation: sheen 1.8s var(--ease) 0.3s 2 both;
+}
+@keyframes sheen { to { transform: translateX(120%); } }
+@media (prefers-reduced-motion: reduce) { .btn.sheen:not(.busy)::after { animation: none; display: none; } }
+
+.dot-field { position: relative; isolation: isolate; }
+.dot-field::before {
+  content: ''; position: absolute; inset: 0; z-index: -1; pointer-events: none; border-radius: inherit; background: var(--dots);
+  -webkit-mask-image: radial-gradient(70% 90% at 100% 0%, #000, transparent 70%); mask-image: radial-gradient(70% 90% at 100% 0%, #000, transparent 70%);
+}

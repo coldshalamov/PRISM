@@ -1,14 +1,12 @@
 .km-view { height: 100%; min-height: 0; }
 .km-scroll { height: 100%; overflow: auto; padding: 28px 28px 38px; }
-.km-page-head { margin-bottom: 22px; max-width: 760px; }
+.km-page-head { margin-bottom: 20px; }
 .km-eyebrow { font-size: 12px; font-weight: 600; text-transform:none; letter-spacing:0; color: var(--ink-3); }
 .km-eyebrow > span { color: var(--line-strong); padding: 0 8px; }
-.km-page-head h1 { font-size: 21px; letter-spacing: -.02em; font-weight: 600; line-height: 1.25; margin: 6px 0 8px; }
-.km-page-head > p:last-child { max-width: 650px; color: var(--ink-3); font-size: 14px; }
 .km-toolbar-label { display: inline-flex; align-items: center; gap: 7px; font-size: 13px; color: var(--ink-3); white-space: nowrap; }
 .km-evidence { display: grid; gap: 16px; margin-top: 16px; }
 .km-evidence.km-old-evidence .km-readout-strip, .km-evidence.km-old-evidence .km-table-panel, .km-evidence.km-old-evidence .km-histogram { opacity: .65; }
-.km-readout-strip { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); border-block: 1px solid var(--line-strong); background: var(--surface); }
+.km-readout-strip { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); border-radius: var(--r-4); box-shadow: var(--shadow-ring); overflow: hidden; background: var(--surface); }
 .km-readout-strip > div { padding: 14px 16px; min-width: 0; border-right: 1px solid var(--line); }
 .km-readout-strip > div:last-child { border-right: 0; }
 .km-readout-strip dt { font-size: 12px; color: var(--ink-3); display: flex; align-items: center; gap: 3px; }
@@ -24,10 +22,10 @@
 .km-section-head { display: flex; align-items: flex-start; justify-content: space-between; flex-wrap: wrap; gap: 12px; padding: 18px 20px 8px; }
 .km-section-head h2 { font-size: 17px; font-weight: 500; margin-top: 4px; letter-spacing: -.025em; }
 .km-section-description { color: var(--ink-3); font-size: 13px; padding: 0 20px 14px; max-width: 750px; }
-.km-coverage-tag { font-size: 12px; padding: 3px 6px; background: var(--surface-2); border: 1px solid var(--line); color: var(--ink-2); white-space: nowrap; }
-.km-coverage-tag.bounded { border-style: dashed; }
-.km-coverage-line { padding: 9px 20px; display: flex; gap: 6px 18px; flex-wrap: wrap; background: var(--surface-2); border-block: 1px solid var(--line); font-size: 12px; }
-.km-coverage-line b { font-weight: 500; font-family: var(--font-mono); }
+.km-coverage-tag { font-size: 12.5px; padding: 3px 11px; background: var(--surface-3); border-radius: var(--r-pill); color: var(--ink-2); white-space: nowrap; font-weight: 550; }
+.km-coverage-tag.bounded { background: var(--risk-soft); color: var(--risk-ink); }
+.km-coverage-line { padding: 10px 20px; display: flex; gap: 6px 18px; flex-wrap: wrap; background: var(--surface-2); font-size: 13px; font-variant-numeric: tabular-nums; }
+.km-coverage-line b { font-weight: 650; font-variant-numeric: tabular-nums; }
 .km-coverage-line > span { color: var(--ink-3); }
 .km-bounded-note { padding: 8px 20px; font-size: 12.5px; color: var(--risk-ink); border-bottom: 1px solid var(--line); }
 .km-controls { padding: 10px 14px; display: flex; align-items: center; flex-wrap: wrap; gap: 8px; }
@@ -37,7 +35,7 @@
 .km-select-label { display: flex; align-items: center; gap: 5px; font-size: 12px; color: var(--ink-3); }
 .km-select-label select { font-size: 12.5px; padding-left: 6px; }
 .km-table-panel { min-width: 0; }
-.km-matrix-scroll { overflow: auto; max-height: 520px; border-block: 1px solid var(--line); }
+.km-matrix-scroll { overflow: auto; max-height: 520px; }
 .km-matrix { min-width: 550px; font-size: 12px; }
 .km-matrix th, .km-matrix td { padding: 6px 9px; vertical-align: middle; }
 .km-matrix thead th { text-transform: none; letter-spacing: 0; font-size: 12px; }
@@ -49,7 +47,7 @@
 .km-combination i { font-style: normal; color: var(--ink-4); }
 .km-matrix .km-field-cell { border-left: 1px solid var(--surface); border-right: 1px solid var(--surface); text-align: center; min-width: 56px; }
 .km-field-mark { display: inline-block; width: 5px; height: 5px; border-radius:var(--r-1); background: var(--risk-ink); vertical-align: middle; }
-.km-matrix .km-value { min-width: 92px; font-family: var(--font-mono); font-weight: 500; }
+.km-matrix .km-value { min-width: 92px; font-variant-numeric: tabular-nums; font-weight: 650; }
 .km-matrix .km-missing { background: repeating-linear-gradient(135deg, var(--surface-2) 0 3px, var(--line) 3px 4px); color: var(--ink-3); }
 .km-matrix .km-selected-row > th { box-shadow: inset 3px 0 var(--accent); background: var(--accent-soft); }
 .km-table-foot { padding: 6px 12px 6px 18px; display: flex; align-items: center; gap: 10px; color: var(--ink-3); font-size: 12px; }
@@ -68,9 +66,9 @@
 .km-hist-table th { text-align: left; font-weight: 500; width: 185px; padding-right: 15px; }
 .km-hist-table th small { display: block; font-size: 12px; font-weight: 400; color: var(--ink-3); }
 .km-hist-table thead th { color: var(--ink-3); font-size: 12px; font-weight: 400; }
-.km-hist-table .num { text-align: right; width: 90px; font-family: var(--font-mono); padding-left: 14px; white-space: nowrap; }
+.km-hist-table .num { text-align: right; width: 90px; font-variant-numeric: tabular-nums; padding-left: 14px; white-space: nowrap; }
 .km-bar-track { min-height: 16px; display: flex; align-items: center; }
-.km-bar-track > span { height: 16px; min-width: 0; display: block; background: var(--risk); opacity: .75; }
+.km-bar-track > span { border-radius: var(--r-pill); height: 14px; min-width: 0; display: block; background: var(--risk); opacity: .75; }
 .km-undistinguished .km-bar-track > span { background: repeating-linear-gradient(135deg, var(--original-soft) 0 3px, var(--surface-2) 3px 5px); border: 1px solid var(--line-strong); }
 .km-hist-table tfoot th, .km-hist-table tfoot td { border-bottom: 0; font-size: 12px; color: var(--ink-3); }
 .km-hist-note { font-size: 12px; color: var(--ink-3); line-height: 1.6; }

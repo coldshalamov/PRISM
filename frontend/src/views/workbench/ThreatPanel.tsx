@@ -1,18 +1,11 @@
 import { useMemo } from 'react';
-import { Eye, Fingerprint, Lock, RotateCcw, Target } from 'lucide-react';
+import { RotateCcw } from 'lucide-react';
 import { isAudit } from '../../analysis';
 import { personUnit, threatFromSchema, threatSentence, UNASSESSED } from '../../threat';
 import { Notice } from '../../ui/Feedback';
+import { ROLE_META, RoleIcon } from '../../ui/RoleIcon';
 import { Term } from '../../ui/Tip';
 import { useWorkspace } from '../../workspace';
-import type { Role } from '../../types';
-
-const ROLE_GLYPH: Partial<Record<Role, { icon: React.ReactNode; label: string }>> = {
-  direct_identifier: { icon: <Fingerprint size={12} />, label: 'Direct identifier' },
-  quasi_identifier: { icon: <Eye size={12} />, label: 'Quasi-identifier' },
-  sensitive: { icon: <Lock size={12} />, label: 'Sensitive' },
-  research_target: { icon: <Target size={12} />, label: 'Research target' },
-};
 const MAX_KNOWN = 20;
 const MAX_SECRET = 10;
 
@@ -56,10 +49,10 @@ export function ThreatPanel() {
         <thead><tr><th scope="col">Field</th><th scope="col">Known</th><th scope="col">Secret</th></tr></thead>
         <tbody>
           {dataset.schema.map(column => {
-            const glyph = ROLE_GLYPH[column.role];
+            const glyph = ROLE_META[column.role];
             return (
               <tr key={column.name}>
-                <th scope="row"><span className="field-name">{column.name}</span>{glyph ? <small className="role-note">{glyph.icon}{glyph.label}</small> : null}</th>
+                <th scope="row"><span className="field-name">{column.name}</span>{glyph ? <small className="role-note"><RoleIcon role={column.role} size={12} />{glyph.label}</small> : null}</th>
                 <td><input type="checkbox" aria-label={`Observer knows ${column.name}`} checked={threat.known.includes(column.name)} disabled={!threat.known.includes(column.name) && threat.known.length >= MAX_KNOWN} onChange={event => toggle('known', column.name, event.target.checked)} /></td>
                 <td><input type="checkbox" aria-label={`${column.name} is a secret the observer seeks`} checked={threat.secret.includes(column.name)} disabled={!threat.secret.includes(column.name) && threat.secret.length >= MAX_SECRET} onChange={event => toggle('secret', column.name, event.target.checked)} /></td>
               </tr>

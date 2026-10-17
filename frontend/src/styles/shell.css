@@ -12,6 +12,12 @@
 .app.insp-closed { grid-template-columns: var(--rail-w) minmax(0, 1fr) 0; }
 .app.insp-closed .inspector:not(.overlay) { visibility: hidden; }
 @media (max-width: 1359px) { .app { --inspector-w: 328px; } }
+/* A view with nothing to inspect gives the sheet its full width back. */
+@media (min-width: 1000px) {
+  .app.insp-open:has(.inspector:empty) { grid-template-columns: var(--rail-w) minmax(0, 1fr) 0; }
+  .app.insp-open:has(.inspector:empty) .inspector { visibility: hidden; }
+  .app.insp-open:has(.inspector:empty) .toolbar { border-top-right-radius: var(--r-4); }
+}
 
 /* ---------- rail: navigation + library ---------- */
 .rail {

@@ -12,6 +12,7 @@ import type { QuickKind } from '../../recipe';
 import { scenarioById, scenarios } from '../../scenarios';
 import { candidateThreat, threatSentence } from '../../threat';
 import { Notice } from '../../ui/Feedback';
+import { RoleIcon } from '../../ui/RoleIcon';
 import { Tabs, panelProps } from '../../ui/Tabs';
 import { Term } from '../../ui/Tip';
 import { useWorkspace } from '../../workspace';
@@ -44,6 +45,7 @@ function FieldRow({ spec }: { spec: ColumnSpec }) {
   return (
     <li className={`field-row${exposed ? ' exposed' : ''}`}>
       <div className="field-line">
+        <RoleIcon role={spec.role} size={13} reserve />
         <span className="field-title">
           <b title={spec.name}>{spec.name}</b>
           <small className={exposed ? 'risk-text' : ''}>
