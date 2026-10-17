@@ -482,10 +482,12 @@ export function WorkspaceProvider({ children }: { children: ReactNode }) {
     const request = threatRequest();
     const needsBaseline = !baseline || !baselineUsable;
     const created = await run('apply', 'The candidate could not be created.', async signal => {
-      const [candidate, base] = await Promise.all([
-        api.createCandidate(dataset.datasetId, recipe, request, workload, undefined, signal),
-        needsBaseline ? api.createCandidate(dataset.datasetId, [], request, workload, 'Unprotected baseline', signal).catch(() => null) : Promise.resolve(null),
-      ]);
+      // Archie uses optimistic session writes. The baseline depends on the
+      // candidate's completed write; parallel requests conflict on one visitor.
+      const candidate = await api.createCandidate(dataset.datasetId, recipe, request, workload, undefined, signal);
+      const base = needsBaseline
+        ? await api.createCandidate(dataset.datasetId, [], request, workload, 'Unprotected baseline', signal).catch(() => null)
+        : null;
       return { candidate, base };
     });
     if (!created) return null;

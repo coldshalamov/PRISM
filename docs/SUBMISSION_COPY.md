@@ -8,9 +8,11 @@
 
 **Track:** Enterprise AI
 
+**Theme:** AI safety, trust and governance
+
 **Project description:**
 
-PRISM gives enterprise research and data-sharing teams a purpose-aware review before internal or partner sharing. Removing names can leave identifying combinations and broad scrubbing can damage study questions. PRISM compares a source table with transformed candidates, measures declared disclosure attacks, and checks selected study questions and tolerances. In a reproduced fictional oncology benchmark of 480 records, removing ZIP reduced unique correct matches from 75 to 20 under an exact-match attack, while three selected protected answers stayed identical between the two recipes. Six views connect schema review, research intent, exposure analysis, bounded search and evidence exports. Its deterministic Python engine needs no generative AI model or GPU. Archie Core provides PostgreSQL/GraphQL. Vercel runs the frontend and Python compute. The public demo uses fictional fixtures and blocks uploads. PRISM documents tradeoffs for human review without clearing a release.
+Built for eMerge AI Hackathon 2026, PRISM supports the Enterprise AI theme of safety, trust and governance. Enterprise research teams compare source tables with transformed candidates before internal or partner sharing, measuring disclosure and changes to selected study questions. In a reproduced fictional oncology benchmark of 480 records, removing ZIP reduced unique correct matches from 75 to 20 under a declared exact-match attack. Three selected protected answers stayed identical between those recipes. Six views connect research intent, exposure analysis, bounded recipe search and evidence exports. The Python engine is deterministic, with no generative model at runtime. Archie Core provides PostgreSQL/GraphQL. Vercel runs the frontend and Python compute. The public demo blocks uploads and provides no release clearance. See the README's 'Background material and AI-tool disclosure' section for background IP, third-party software and development AI tools.
 
 **Technologies:** React, TypeScript, Vite, Python, FastAPI, pandas, NumPy, SciPy. Archie Core provides PostgreSQL and GraphQL. Vercel hosts the frontend and Python compute. Optional pyCANON cross-checks. The runtime uses a deterministic scientific engine with no generative AI model or GPU requirement. Coding agents assisted development. The full Python engine can also run locally for private CSVs.
 

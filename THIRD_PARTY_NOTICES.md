@@ -30,18 +30,27 @@ These exact versions and declared license labels were read from `frontend/packag
 |---|---|---|
 | react | 19.3.1 | MIT |
 | react-dom | 19.3.1 | MIT |
+| scheduler | 0.28.0 | MIT |
 | lucide-react | 0.468.0 | ISC |
+| @fontsource/ibm-plex-mono | 5.3.0 | OFL-1.1 |
+| @fontsource/ibm-plex-sans | 5.3.0 | OFL-1.1 |
+| @fontsource/ibm-plex-serif | 5.3.0 | OFL-1.1 |
 | @types/react | 19.3.0 | MIT |
 | @types/react-dom | 19.3.0 | MIT |
 | @vitejs/plugin-react | 4.7.0 | MIT |
 | TypeScript | 5.9.3 | Apache-2.0 |
 | Vite | 6.4.4 | MIT |
+| playwright-core | 1.64.1 | Apache-2.0 |
 
-React and React DOM are published by the React project; type declarations are from DefinitelyTyped. Lucide icons retain their upstream notices. Installed npm packages include their own LICENSE/NOTICE files; the lockfile includes resolved transitive packages and integrity hashes.
+React, React DOM and the transitive scheduler package are published by the React project; type declarations are from DefinitelyTyped. Lucide icons retain their upstream notices. Playwright is a development-only package, not part of the application runtime bundle. Installed npm packages include their own LICENSE/NOTICE files; the lockfile includes resolved transitive packages and integrity hashes.
+
+The IBM Plex Mono, Sans and Serif font files are self-hosted from the three Fontsource packages above. Their installed `LICENSE` files contain IBM's copyright notices and the full SIL Open Font License 1.1; the package metadata and lockfile both identify version 5.3.0 and `OFL-1.1`. The pitch preserves separate copies at `frontend/public/pitch/fonts/IBM-Plex-Mono-LICENSE.txt`, `IBM-Plex-Sans-LICENSE.txt` and `IBM-Plex-Serif-LICENSE.txt`, alongside the local WOFF2 files. No remote font service is needed.
+
+`scripts/package.py` reads the actual locked production npm package inventory and copies each package's complete installed license text into `backend/app/licenses/FRONTEND-RUNTIME-LICENSES.txt`. The same generated text is distributed in the static app as `THIRD_PARTY_LICENSES.txt` and retained at `frontend/public/THIRD_PARTY_LICENSES.txt`; it covers the three Fontsource packages, Lucide, React, React DOM and scheduler. The packager fails if an included production package lacks a recognized license-text file. Development-tool license files remain in their upstream distributions.
 
 ## Distribution boundaries
 
-The repository contains source and synthetic fixtures. Package installation downloads upstream distributions. If distributing a built application, vendored code, wheels, `node_modules` or a desktop bundle, preserve the applicable full copyright, license and NOTICE texts from every redistributed component, including transitive dependencies and bundled numerical libraries. This table is not a replacement for those texts. A complete redistribution review and a generated transitive notice bundle have not been performed.
+The repository contains source and synthetic fixtures. Package installation downloads upstream distributions. If distributing a built application, vendored code, wheels, `node_modules` or a desktop bundle, preserve the applicable full copyright, license and NOTICE texts from every redistributed component, including transitive dependencies and bundled numerical libraries. This table is not a replacement for those texts. The generated frontend production-license bundle is included as described above. A complete redistribution review, or a review of every Python transitive dependency and bundled numerical runtime, has not been performed; those dependency distributions retain their own full license and notice files.
 
 ARX, sdcMicro, SDMetrics, Anonymeter, OpenDP and SDV are references or unimplemented integrations, not bundled adapters. Their absence here does not grant rights to bundle them later. In particular, do not infer that a generator or its models share PRISM's MIT license; re-check the precise artifact and version before adding it.
 
