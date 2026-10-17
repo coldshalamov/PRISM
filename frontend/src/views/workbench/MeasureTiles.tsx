@@ -45,8 +45,8 @@ function Tile({ measure, large, aside }: { measure: Measure; large: boolean; asi
         <p className="tile-aside">
           <EyeOff size={14} aria-hidden="true" />
           {aside.to === null
-            ? <span className="na" title="This is not zero. The measurement does not apply or was not made.">Rows suppressed: {aside.naText ?? 'unavailable'}</span>
-            : <span className="tnum">{aside.format(aside.to)} of rows suppressed</span>}
+            ? <span className="na" title="This is not zero. The measurement does not apply or was not made.">{aside.label}: {aside.naText ?? 'unavailable'}</span>
+            : <span className="tnum">{aside.label}: {aside.format(aside.to)}</span>}
         </p>
       ) : null}
       {large && measure.bar && to !== null ? (

@@ -27,7 +27,7 @@ const RAYS = [
   { id: 'lost', from: [229, 90], to: [396, 108], className: 'ray-lost' },
 ] as const;
 
-export function Refraction({ values, idle = false, label }: { values: RefractionValues; idle?: boolean; label?: string }) {
+export function Refraction({ values, idle = false, label, external = false }: { values: RefractionValues; idle?: boolean; label?: string; external?: boolean }) {
   const before = unit(values.before);
   const after = unit(values.after);
   const loss = unit(values.loss);
@@ -85,7 +85,7 @@ export function Refraction({ values, idle = false, label }: { values: Refraction
       </svg>
 
       <ul className="refraction-out">
-        <li className={`ro-removed${measured.removed && !idle ? '' : ' unknown'}`}><i aria-hidden="true" /><b className="tnum">{idle ? '—' : removedText}</b><span>Removed</span></li>
+        <li className={`ro-removed${measured.removed && !idle ? '' : ' unknown'}`}><i aria-hidden="true" /><b className="tnum">{idle ? '—' : removedText}</b><span>{external ? 'Lower by' : 'Removed'}</span></li>
         <li className={`ro-exposed${measured.exposed && !idle ? '' : ' unknown'}`}><i aria-hidden="true" /><b className="tnum">{idle || after === null ? '—' : pct(after)}</b><span>Still unique</span></li>
         <li className={`ro-lost${measured.lost && !idle ? '' : ' unknown'}`}><i aria-hidden="true" /><b className="tnum">{idle ? '—' : lossText}</b><span>Research loss</span></li>
       </ul>

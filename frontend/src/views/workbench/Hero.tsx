@@ -1,4 +1,5 @@
 import { ClipboardCheck, Play } from 'lucide-react';
+import { isAudit } from '../../analysis';
 import { useDialogs } from '../../dialogs';
 import { BorderBeam } from '../../ui/magic/BorderBeam';
 import { useWorkspace } from '../../workspace';
@@ -34,7 +35,7 @@ export function Hero({ recipeEdited }: { recipeEdited: boolean }) {
       <Journey recipeEdited={recipeEdited} />
       {active ? (
         <div className="hero-body">
-          <Refraction values={values} label={ws.labelOf(active.candidateId)} />
+          <Refraction values={values} label={ws.labelOf(active.candidateId)} external={isAudit(active)} />
           <MeasureTiles measures={measures} />
         </div>
       ) : (

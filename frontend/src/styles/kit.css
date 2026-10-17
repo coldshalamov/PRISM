@@ -10,6 +10,7 @@
 @media (max-width: 719px) {
   .page-head { flex-wrap: wrap; row-gap: 10px; }
   .page-head h1 { font-size: 21px; }
+  .page-head-text { flex: 1 1 140px; }
   .page-head-actions { margin-left: 0; width: 100%; }
 }
 
