@@ -35,7 +35,7 @@ export interface UiPrefs { library: boolean; inspector: boolean; ledger: boolean
 const UI_KEY = 'prism.ui.v1';
 const VIEWS: ViewId[] = ['guide', 'workbench', 'map', 'lab', 'intent', 'pareto', 'report'];
 /* The screen a visitor lands on when the address names none. */
-const DEFAULT_VIEW: ViewId = 'workbench';
+const DEFAULT_VIEW: ViewId = 'guide';
 const BUSY_KEYS: BusyKey[] = ['boot', 'apply', 'assess', 'search', 'schema', 'import', 'audit', 'export', 'clear'];
 const BUSY_LABEL: Record<BusyKey, string> = {
   boot: 'loading the demo', apply: 'the candidate evaluation', assess: 'the re-evaluation', search: 'the candidate search',
