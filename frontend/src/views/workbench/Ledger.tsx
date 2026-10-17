@@ -36,9 +36,10 @@ function rowsMissing(candidate: Candidate, originalRows: number): number | null 
   return originalRows > 0 ? (originalRows - candidate.rowCount) / originalRows : null;
 }
 
-function measuresFor(candidate: Candidate, baseline: Candidate | null, originalRows: number, membershipKnown: boolean): Measure[] {
+function measuresFor(candidate: Candidate, baseline: Candidate | null, originalRows: number, membershipKnown: boolean | null): Measure[] {
   const m = candidate.risk.metrics;
   const b = baseline?.risk.metrics;
+  const membershipUnavailable = membershipKnown === null ? 'Not returned: membership assumption' : 'Not applicable: membership unknown';
   const get = (source: typeof m | undefined, key: string): number | null => {
     const value = source?.[key];
     return typeof value === 'number' ? value : null;
@@ -62,8 +63,8 @@ function measuresFor(candidate: Candidate, baseline: Candidate | null, originalR
     },
     { id: 'k_min', label: 'Smallest group (k)', glossary: 'k_min', from: get(b, 'k_min'), to: get(m, 'k_min'), format: v => num(v, 0), higherIsBetter: true, delta: (f, t) => numDelta(f, t, 0) },
     { id: 'sensitive_guess_advantage', label: 'Sensitive inference advantage', glossary: 'guess_advantage', from: get(b, 'sensitive_guess_advantage'), to: get(m, 'sensitive_guess_advantage'), format: v => pct(v), higherIsBetter: false, bar: true, delta: (f, t) => pointsDelta(f, t) },
-    { id: 'p_guess', label: 'Single-guess correctness', glossary: 'p_guess', from: membershipKnown ? get(b, 'p_guess') : null, to: membershipKnown ? get(m, 'p_guess') : null, naText: membershipKnown ? undefined : 'Not applicable: membership unknown', format: v => pct(v), higherIsBetter: false, bar: true, delta: (f, t) => pointsDelta(f, t) },
-    { id: 'row_entropy_bits', label: 'Row-index uncertainty (bits)', glossary: 'row_entropy', from: membershipKnown ? get(b, 'row_entropy_bits') : null, to: membershipKnown ? get(m, 'row_entropy_bits') : null, naText: membershipKnown ? undefined : 'Not applicable: membership unknown', format: v => num(v, 2), higherIsBetter: true, delta: (f, t) => numDelta(f, t, 2) },
+    { id: 'p_guess', label: 'Single-guess correctness', glossary: 'p_guess', from: membershipKnown ? get(b, 'p_guess') : null, to: membershipKnown ? get(m, 'p_guess') : null, naText: membershipKnown ? undefined : membershipUnavailable, format: v => pct(v), higherIsBetter: false, bar: true, delta: (f, t) => pointsDelta(f, t) },
+    { id: 'row_entropy_bits', label: 'Row-index uncertainty (bits)', glossary: 'row_entropy', from: membershipKnown ? get(b, 'row_entropy_bits') : null, to: membershipKnown ? get(m, 'row_entropy_bits') : null, naText: membershipKnown ? undefined : membershipUnavailable, format: v => num(v, 2), higherIsBetter: true, delta: (f, t) => numDelta(f, t, 2) },
     {
       id: 'suppression', label: external ? 'Rows fewer than the source' : 'Rows suppressed', glossary: 'suppression',
       from: baselineMissing !== null ? Math.max(0, baselineMissing) : null, to: moreRows ? null : missing,
@@ -183,7 +184,7 @@ export function Ledger({ onShowSubgroups }: { onShowSubgroups: () => void }) {
   const uncoveredFindings = findings.filter(f => findingCoverage(f) !== 'run').length;
   const uncoveredQueries = queries.filter(q => queryOutcome(q) === 'uncovered').length;
   const pending = busy.apply || busy.assess;
-  const membershipKnown = (active?.threatContext ?? active?.risk.threat_context)?.membershipKnown ?? true;
+  const membershipKnown = (active?.threatContext ?? active?.risk.threat_context)?.membershipKnown ?? null;
 
   return (
     <section className={`ledger${open ? ' open' : ''}${pending ? ' is-pending' : stale.length ? ' is-stale' : ''}`} aria-label="Measurement ledger">

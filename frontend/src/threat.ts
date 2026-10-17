@@ -31,11 +31,12 @@ export function personUnit(rowUnit?: RowUnit | null): PersonUnit {
 }
 
 /** The readable sentence frozen with a candidate; also used live in the threat builder. */
-export function threatSentence(options: { known: string[]; secret: string[]; membershipKnown: boolean; unit: PersonUnit; publicRule?: boolean }): string {
+export function threatSentence(options: { known: string[]; secret: string[]; membershipKnown: boolean | null; unit: PersonUnit; publicRule?: boolean }): string {
   const { known, secret, membershipKnown, unit, publicRule } = options;
   const parts = [
     `This test assumes the observer knows ${listPhrase(known)}`,
-    membershipKnown ? 'knows that each target is in this file' : 'does not know whether a target is in this file',
+    membershipKnown === null ? 'has an unrecorded membership assumption'
+      : membershipKnown ? 'knows that each target is in this file' : 'does not know whether a target is in this file',
   ];
   if (publicRule) parts.push('knows the public generalization rule');
   const lead = `${parts.slice(0, -1).join(', ')} and ${parts[parts.length - 1]}`;
@@ -46,10 +47,10 @@ export function threatSentence(options: { known: string[]; secret: string[]; mem
   return `${lead}${seeks}. ${person}`;
 }
 
-export function candidateThreat(candidate: Candidate, fallback: Threat): Threat & { unit: PersonUnit } {
+export function candidateThreat(candidate: Candidate, fallback: Threat): Omit<Threat, 'membershipKnown'> & { membershipKnown: boolean | null; unit: PersonUnit } {
   const known = candidate.threatModel?.qi ?? candidate.risk.qi ?? fallback.known;
   const secret = candidate.threatModel?.sensitive ?? candidate.risk.sensitive_targets ?? fallback.secret;
   const context = candidate.threatContext ?? candidate.risk.threat_context;
   const unit: PersonUnit = context?.repeatedEntitiesDetected ? 'repeated' : context?.oneRowPerPersonConfirmed ? 'confirmed' : 'unconfirmed';
-  return { known, secret, membershipKnown: context?.membershipKnown ?? true, unit };
+  return { known, secret, membershipKnown: context?.membershipKnown ?? null, unit };
 }

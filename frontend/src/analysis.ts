@@ -104,9 +104,9 @@ export function localFrontier(candidates: Candidate[], originalRows: number): Se
 export const isFeasible = (candidate: Candidate): boolean =>
   candidate.feasible ?? (candidate.constraints.length > 0 && candidate.constraints.every(check => check.pass));
 
-/** Cell highlighting is shown only when row correspondence is verified and unchanged in count. */
+/** External owner lineage does not imply that the two raw previews share row order. */
 export function rowsAligned(candidate: Candidate | null, dataset: Dataset | null): boolean {
-  if (!candidate || !dataset) return false;
+  if (!candidate || !dataset || isAudit(candidate)) return false;
   if (candidate.alignment !== 'verified') return false;
   if (candidate.rowCount !== dataset.rowCount) return false;
   return !candidate.recipe.steps.some(step => step.method === 'suppress_rows');

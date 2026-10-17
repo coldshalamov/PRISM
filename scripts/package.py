@@ -12,7 +12,7 @@ from pathlib import Path
 from zipfile import ZIP_DEFLATED, ZipFile
 
 ROOT = Path(__file__).resolve().parents[1]
-SOURCE_ROOTS = ("backend", "frontend", "api", "pitch", "docs", "examples", "schemas", "scripts", "deploy/archie")
+SOURCE_ROOTS = ("backend", "frontend", "api", "pitch", "docs", "examples", "schemas", "scripts", "deploy")
 ROOT_FILES = ("README.md", "LICENSE", "NOTICE", "THIRD_PARTY_NOTICES.md", "IMPLEMENTATION_CONTRACT.md",
               "setup.ps1", "start.ps1", ".gitignore", "Dockerfile", ".dockerignore", ".vercelignore", "vercel.json", "requirements.txt")
 ARTIFACT_FILES = ("DELIVERY_STATUS.json", "prism-workbench-1440.png", "prism-workbench-768.png",

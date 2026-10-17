@@ -1,17 +1,36 @@
 # Public fictional demo: Archie + Vercel
 
 The deployment configuration in the [PRISM repository](https://github.com/coldshalamov/PRISM)
-targets Vercel project `prism-healthcare`. Vercel serves the React/Vite frontend
-and runs the real Python privacy/utility calculations. Archie Core Postgres
-provides durable fictional visitor configuration through its tenant GraphQL
-API. Archie Logic is not used. Vercel Services is currently Beta and builds
-the frontend and backend together.
+targets Vercel project `prism-healthcare`. Vercel serves the fallback React/Vite
+frontend, immutable assets for the Archie entry, and the real Python
+privacy/utility calculations. Archie Core Postgres provides durable fictional
+visitor configuration through its tenant GraphQL API. The actual Archie
+workspace is a **static Vite application**, not a Next.js server. Its generated
+prototype entry has been replaced with the exact tracked
+`deploy/archie-static/index.html`. Archie Logic is not used. Vercel Services is
+currently Beta and builds the fallback frontend and backend together.
 
-**Public origin:** https://prism-healthcare-taupe.vercel.app/ . The deployed API
+**Canonical working origin:** https://prism-healthcare-taupe.vercel.app/ . The deployed API
 has reproduced 75 then 20 verified correct matches, exact comparison replay,
 and rejected intake with 403. The live Archie storage path has also been
 checked separately, as described below. Frontend acceptance is recorded in
 `artifacts/verification.md`.
+
+**Archie publication checkpoint:** Archie assigned
+https://41d0bdfd-0065-4b0b-a973-efbe1c1a9c5e.archie.site/ . The authenticated
+Archie preview rendered the replacement PRISM application and loaded the real
+5,000-row fictional fixture through the bridge. Publishing is in progress;
+the first public request returned HTTP 522 while Archie reported Deploying.
+Do not replace the canonical working URL with this address until its public
+page and application workflow pass. Current status is recorded in
+`artifacts/DELIVERY_STATUS.json` and `artifacts/verification.md`.
+
+All six old generated view exports have been read and reconciled in
+[ARCHIE_RECONCILIATION.md](ARCHIE_RECONCILIATION.md). The old entry was replaced;
+the maintained Python engine remains the single calculation runtime. Archie's
+GitHub synchronization still reports an error. The saved Code-editor entry is
+the exact tracked source; do not claim that automatic pull/synchronization
+works.
 
 `vercel.json` routes `/v1/*` and `/health` to `app.serverless_demo:app`. The local
 `app.main:app` remains the loopback workbench; it is never the public entrypoint.
@@ -31,12 +50,16 @@ Set these as server environment variables, never `VITE_*` variables:
 | `ARCHIE_AUTH_PREFIX` | `Bearer` for the UI-created key's configured alias |
 | `PRISM_SESSION_SECRET` | Random stable secret of at least 32 characters |
 | `PUBLIC_DEMO_HOST` | Exact production hostname, without scheme or path |
+| `PUBLIC_ARCHIE_ORIGINS` | Comma-separated exact HTTPS Archie preview and published origins, without trailing slashes or wildcards |
 
 Vercel's exact `VERCEL_URL` and `VERCEL_PROJECT_PRODUCTION_URL` values are also
-accepted as Host authorities. No wildcard, forwarded-host trust, external CORS
-origin, or cross-site request is accepted. State-changing requests require the
-exact same-origin Origin header. The visitor cookie is Secure, HttpOnly, and
-SameSite=Strict in production.
+accepted as Host authorities. No wildcard or forwarded-host trust is accepted.
+The ordinary Vercel flow retains its exact same-origin mutation requirement
+and Secure, HttpOnly, SameSite=Strict visitor cookie. The separate fictional
+bridge accepts only the exact origins in `PUBLIC_ARCHIE_ORIGINS`; it does not
+enable credentialed cross-origin cookies or general API CORS. Production and
+preview backend environments contain the exact Archie preview origin and the
+assigned public `archie.site` origin.
 
 The configured key's UI required the `Bearer` alias. Direct verification found
 that its raw key alone returns 401, while `Bearer <key>` succeeds. The client
@@ -52,7 +75,8 @@ existing project:
 npx vercel link --project prism-healthcare
 $demoEnvNames = @(
   "ARCHIE_GRAPHQL_ENDPOINT", "ARCHIE_PROJECT_ID", "ARCHIE_ENVIRONMENT",
-  "ARCHIE_API_KEY", "ARCHIE_AUTH_PREFIX", "PRISM_SESSION_SECRET", "PUBLIC_DEMO_HOST"
+  "ARCHIE_API_KEY", "ARCHIE_AUTH_PREFIX", "PRISM_SESSION_SECRET", "PUBLIC_DEMO_HOST",
+  "PUBLIC_ARCHIE_ORIGINS"
 )
 foreach ($demoEnvName in $demoEnvNames) {
   npx vercel env add $demoEnvName production
@@ -67,6 +91,66 @@ and set `PUBLIC_DEMO_HOST` to the exact hostname configured on the project.
 Changing the session secret changes reconstructed HMAC pseudonyms.
 Configure the same variables separately for `preview` if preview deployments
 need the backend. A successful build alone does not verify a usable public app.
+
+## Rebuild and publish the static Archie entry
+
+The current saved entry pins revision **`r20261017c`** under
+`frontend/public/archie-assets/r20261017c/`. These versioned JS, CSS and font
+files are public, immutable application assets, not private visitor data.
+Keep every revision still referenced by a published Archie page in Git and
+subsequent Vercel deployments.
+
+After frontend changes, choose a **new, unused revision**. From the repository
+root, for example:
+
+```powershell
+npm run typecheck --prefix frontend
+node deploy/archie-static/build-entry.mjs r20261017d
+npm run build --prefix frontend
+npx vercel deploy --prod
+```
+
+The entry builder runs Vite with the fixed CDN base, writes the new immutable
+assets and full runtime-license text, and rewrites
+`deploy/archie-static/index.html` to pin that revision. It refuses to overwrite
+an existing revision. Deploy Vercel **before** saving the new entry in Archie,
+then verify that the pinned JS/CSS/font URLs load with the asset CORS policy.
+The generated entry's CSP permits only the fixed Vercel origin for those
+assets and API connections; local entry policies remain separate.
+
+Copy that exact tracked `index.html` into the Archie Code editor's root
+`index.html`, save through Source Control, and publish. This is the currently
+working source-preserving update path while GitHub sync reports an error.
+Verify the assigned public Archie origin after publishing: page rendering,
+real fixture loading, candidate creation, bounded search and a report
+download must work there. The authenticated preview check and a Deploying
+label are not public-host acceptance.
+
+`deploy/archie/` retains a Next.js proxy adapter as an alternative for a
+server-capable host. **It is not the current Archie hosting path**; do not
+deploy its server routes into the static workspace or run a generator over
+the reviewed UI.
+
+## Fictional browser bridge
+
+When the production module is loaded from the fixed Vercel asset origin by
+the Archie page, `frontend/src/api.ts` uses the explicit bridge. A single-flight
+`POST /v1/browser-session` handshake returns a random 256-bit visitor token.
+The frontend retains it only in module memory and sends it in
+`X-PRISM-Demo-Session`, with `credentials: 'omit'`. It does not place the token
+in URLs, browser storage or cookies, and it never forwards Archie account
+credentials. A page reload starts a new visitor; the prior visitor's record
+becomes inaccessible without its token and expires after inactivity.
+
+The backend checks the exact allowlisted Origin, request route, method and
+headers. Preflight allows only the fictional API methods and `Content-Type`
+plus `X-PRISM-Demo-Session`; responses specify that exact Origin and omit
+`Access-Control-Allow-Credentials`. Missing, invalid, duplicate or expired
+tokens are rejected. The frontend associates responses with their session
+generation so an older expired response cannot clear a newer handshake.
+The existing Vercel same-origin cookie transport is unchanged. All fictional
+fixtures, intake rejection, visitor isolation and resource limits below still
+apply to the bridge.
 
 ## Archie data boundary
 
@@ -126,7 +210,8 @@ path; the public Vercel route is verified separately after deployment.
 Set `PRISM_DEMO_URL` to `https://prism-healthcare-taupe.vercel.app`
 (without a trailing slash). This PowerShell example loads a fictional
 fixture, computes both recipes, checks their comparison, and clears only that
-visitor's session. It sends no files or private rows:
+visitor's same-origin cookie session. It sends no files or private rows;
+it does not exercise the separate Archie browser bridge:
 
 ```powershell
 $demoOrigin = $env:PRISM_DEMO_URL.TrimEnd("/")

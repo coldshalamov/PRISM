@@ -65,7 +65,7 @@ export interface ExposureReading {
   rowCount: number;
   histogram: HistogramBin[];
   coverage: ExposureCoverage | undefined;
-  membershipKnown: boolean;
+  membershipKnown: boolean | null;
 }
 
 export function readExposure(candidate: Candidate): ExposureReading {
@@ -83,7 +83,7 @@ export function readExposure(candidate: Candidate): ExposureReading {
     rowCount: risk.row_count ?? candidate.rowCount,
     histogram: risk.exposure?.minimal_histogram ?? [],
     coverage: risk.exposure?.coverage,
-    membershipKnown: context?.membershipKnown ?? true,
+    membershipKnown: context?.membershipKnown ?? null,
   };
 }
 

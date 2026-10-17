@@ -160,6 +160,8 @@ export default function Workbench() {
         <p className="pane-foot">
           {aligned
             ? 'Rows correspond one-to-one (verified), so changed cells are highlighted.'
+            : external && active.alignment === 'verified'
+              ? 'Owner correspondence is verified for evaluation, but these previews retain file order. Row-by-row highlighting is unavailable.'
             : 'Rows are independent: no identity correspondence is shown or implied. Compare columns, not rows.'}
         </p>
       ) : null}
