@@ -45,9 +45,11 @@ function Fields() {
   const ready = checked && !unitMissing.length && !ws.busy.apply && !ws.busy.schema;
 
   const askJev = async () => {
-    const result = await ws.inspectSemantics(true);
+    const preview = await ws.previewSemantics();
+    if (!preview) { setJev('Could not read the column names. Try again.'); return; }
+    const result = await ws.inspectSemantics(true, {}, preview.metadataDigest);
     const calls = result?.provider?.calls ?? 0;
-    setJev(result && calls > 0 ? `Jev double-checked the field names. No row values were sent.` : `Jev isn’t connected on this server, so built-in rules sorted the fields.`);
+    setJev(result && calls > 0 ? `Jev checked the field names. Review its suggestions below.` : result ? `Built-in rules checked the fields. Jev returned no additional suggestions.` : `Jev could not complete this check. You can retry or use the built-in suggestions.`);
   };
   const confirm = async () => {
     await ws.saveSchema(schema, { entityColumn: dataset.rowUnit?.entityColumn ?? null, oneRowPerPersonConfirmed: oneRow }, true);
@@ -80,7 +82,7 @@ function Fields() {
       </div>
 
       <div className="guide-jev">
-        <p><b>Before using Jev:</b> PRISM sends only column labels, data types, units, neighboring labels and structural format names to the provider. Row values are never included in Jev requests.</p>
+        <p>Jev reads the column labels and suggests what they mean. Python tests the actual data.</p>
         <div className="guide-actions">
           <button type="button" className={`btn${asking ? ' busy' : ''}`} disabled={asking || ws.health === 'down'} onClick={() => void askJev()}><Sparkles size={15} />Ask Jev to double-check</button>
           {asking ? <button type="button" className="btn small" onClick={() => ws.cancel('schema')}><Square size={12} fill="currentColor" />Stop waiting</button> : null}
@@ -246,7 +248,7 @@ function Decide() {
           <p className="guide-warn" role="status"><Info size={15} aria-hidden="true" />These numbers describe an earlier setting. <button type="button" className="link" onClick={() => void ws.apply()}>Measure again</button></p>
         ) : null}
         <div className="guide-card">
-          <h2>People who could be singled out</h2>
+          <h2>Records that stand out</h2>
           <div className="guide-people-row">
             <People fraction={fraction} />
             <div className="guide-big"><b className="tnum">{fraction === null ? '—' : pct(fraction)}</b><span>{fraction === null ? 'not measured' : lit === 0 && fraction > 0 ? 'fewer than 1 in 100' : `about ${lit} in 100`}</span></div>
