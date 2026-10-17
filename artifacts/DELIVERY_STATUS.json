@@ -1,6 +1,6 @@
 {
   "application": "PRISM",
-  "status": "cloud_frontend_integration_and_publication_in_progress",
+  "status": "final_guided_archie_publication_in_progress",
   "backend": {
     "tests": 179,
     "result": "179 integrated tests passed",
@@ -24,10 +24,10 @@
       "Pareto Explorer",
       "Report"
     ],
-    "implementation": "Desktop-first source-visible workspace, direct hosted import/audit/export, canceled-upload response guards and optional model input view",
+    "implementation": "Cloud Sonnet guided default: grouped fields, optional Jev, one measured protection slider, plain-language findings, direct data/report download; six detailed views under Advanced tools",
     "requiredConsecutiveAuditApprovals": 3,
     "actualConsecutiveAuditApprovals": 3,
-    "liveVerification": "Public native CSV import, manual field roles, C1 exact matches 0/480; keeping AGE exact and re-evaluating C2 changed to480/480; external audit0unique andlinkageNotapplicable; real4formatdownloads; JSON/XLSX480x9andbadJSONrecovery passed. Userrequestedcloudagent simplifytheinterface; simplificationpendingcloudpush.",
+    "liveVerification": "Public native CSV import, manual field roles, C1 exact matches 0/480; keeping AGE exact and re-evaluating C2 changed to480/480; external audit0unique andlinkageNotapplicable; real4formatdownloads; JSON/XLSX480x9andbadJSONrecovery passed. Userrequestedcloudagent simplifytheinterface; simplificationpendingcloudpush. Finalguidedlocalflowpassed: groupedfields\u2192Jevpreview/digestrequest\u2192confirm\u21928realoptions\u2192slidermovedC1toS5,99.8%to1.7%; actualfullwidth1440pxrenderverified; finalpublicroutepending.",
     "previousFrozenApprovals": 3,
     "reviewedSource": "8edb1e130eb73fdba24fff916a1bb248a017cc02",
     "reviewReports": [
@@ -35,13 +35,14 @@
       "docs/frontend-reviews/v3-final-2.md",
       "docs/frontend-reviews/v3-final-3.md"
     ],
-    "reviewScope": "Approvals cover h; later cloud layout and plain-copy changes need targeted rendered acceptance, not inherited approval."
+    "reviewScope": "Three independent reviews cover prior h. Later cloud guided UI directly exercised by root; no claim that older approvals cover its changes."
   },
   "model": {
     "frontend": "Claude Sonnet 5.5 XHigh through Devin3000.11.3, tungsten-shampoo, completed",
     "improvement": "OpenCode Go Gemini4 Argon completed semantic audit; malformed data, unindexed candidate restoration and unconfirmed correction draft repairs verified",
     "semanticFrontend": "Claude Sonnet5.5 XHigh via Devin, pickled-border, completed; controller integrated exact ontology, revisions, previews and group focus",
-    "copy": "AGY1.4.0 Gemini3.8FlashHigh completed136.33s; conversationc68f4978-42d1-4cdc-b21c-3a523b039b94; corrected provider topology and identity overclaims before integration"
+    "copy": "AGY1.4.0 Gemini3.8FlashHigh completed136.33s; conversationc68f4978-42d1-4cdc-b21c-3a523b039b94; corrected provider topology and identity overclaims before integration",
+    "frontendCloud": "ClaudeSonnet5.5cloudbranchclaude/laughing-faraday-3epe4f mergedthroughd8412d9, includingguideddefault. No competinglocalQuickReviewrewritewaswritten."
   },
   "packaging": "0.1.1 rebuild after merged cloud assets in progress; prior installed backend/current formats passed",
   "releaseCleared": false,
@@ -50,9 +51,9 @@
     "demo": "https://41d0bdfd-0065-4b0b-a973-efbe1c1a9c5e.archie.site/",
     "repository": "https://github.com/coldshalamov/PRISM",
     "backend": "Archie HTML entry and Core uploaded tables/session configuration; Vercel immutable frontend assets and Python computation; optional OpenRouter Jev",
-    "verified": "Final e: architecture Jev disease_stage 86%, two calls; semantic480\u219296, user correction+reassessment, 8real searchresults/11attempts/6nondominated/1checksmet, allsixviews, JSON+CSVdownloads. Earlier d: kit75\u219220, fourdownloads, architecture24search.",
+    "verified": "Public h upload/evaluate/externalaudit/4exports complete; finaloentry/assets5312ec8savedinArchie, publicationpending",
     "publishedRevision": "r20261017h",
-    "nextRevision": "r20261017k",
+    "nextRevision": "r20261017o",
     "uploads": {
       "enabledInSource": true,
       "publicVerification": "Passed native CSV, JSON, XLSX; malformed JSON recovery; external protected CSV unknown pairing; actual HTML/JSON/recipe/CSV downloads on public revision h",

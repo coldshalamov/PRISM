@@ -2,7 +2,7 @@
 
 ## Current 0.1.1 release checkpoint
 
-The source below the historical record has changed. PR [#1](https://github.com/coldshalamov/PRISM/pull/1) is merged, with its typography, ink frame, refraction summary and shared components retained. Merge conflicts preserve real hosted imports, external-file audits, direct CSV download and canceled-request guards. The current source/assets checkpoint is `8edb1e1`, immutable revision `r20261017h`.
+The source below the historical record has changed. PR [#1](https://github.com/coldshalamov/PRISM/pull/1) is merged, with its typography, ink frame, refraction summary and shared components retained. Merge conflicts preserve real hosted imports, external-file audits, direct CSV download and canceled-request guards. The previous reviewed source checkpoint is `8edb1e1`; current deployment checkpoint is `5312ec8`, immutable revision `r20261017o` (cloud guided review integrated through `d8412d9`).
 
 - Integrated backend: **179 tests passed**. Frontend production build and both focused regression tools passed.
 - Real Archie Core integration: CSV, JSON and XLSX uploads, cold replay of candidate/report identity, external-file audit and visitor-owned uploaded-file cleanup passed. The semantic example produced 96 combination-unique rows out of 480; the separately uploaded protected file measured zero under its declared fields.

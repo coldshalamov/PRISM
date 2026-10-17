@@ -1,6 +1,6 @@
 # Current merged frontend reviews
 
-The 0.1.1 frontend retains cloud PR #1 design and adds real hosted intake. Final application source is `8edb1e1`, published as `r20261017h`. Successive focused independent reviews are [1](v3-final-1.md), [2](v3-final-2.md), and [3](v3-final-3.md). Review 3 is being completed. Actual public upload-to-export acceptance is separately recorded in [verification](../../artifacts/verification.md). These scoped approvals do not establish global optimality or substitute for the working route.
+The 0.1.1 frontend retains cloud PR #1 design and adds real hosted intake. Final application source is `8edb1e1`, published as `r20261017h`. Successive focused independent reviews are [1](v3-final-1.md), [2](v3-final-2.md), and [3](v3-final-3.md). All three returned PASS at that checkpoint. Subsequent cloud guided-review commits are integrated through `d8412d9`; those earlier approvals are not reused to claim approval of the later guided screen. Root directly checks its real slider/evaluation/download and rendered layout. Actual public upload-to-export acceptance is separately recorded in [verification](../../artifacts/verification.md). These scoped approvals do not establish global optimality or substitute for the working route.
 
 ## Historical 0.1.0 review sequence
 
