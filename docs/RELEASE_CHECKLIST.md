@@ -2,6 +2,8 @@
 
 ## Current 0.1.1 release checkpoint
 
+The cloud guided screen is published on Archie at the unchanged canonical root URL. The public DOM loads revision `r20261017o`. Start with [DEMO_QUICKSTART.md](DEMO_QUICKSTART.md).
+
 The source below the historical record has changed. PR [#1](https://github.com/coldshalamov/PRISM/pull/1) is merged, with its typography, ink frame, refraction summary and shared components retained. Merge conflicts preserve real hosted imports, external-file audits, direct CSV download and canceled-request guards. The previous reviewed source checkpoint is `8edb1e1`; current deployment checkpoint is `5312ec8`, immutable revision `r20261017o` (cloud guided review integrated through `d8412d9`).
 
 - Integrated backend: **179 tests passed**. Frontend production build and both focused regression tools passed.

@@ -1,6 +1,6 @@
 {
   "application": "PRISM",
-  "status": "final_guided_archie_publication_in_progress",
+  "status": "published_guided_release",
   "backend": {
     "tests": 179,
     "result": "179 integrated tests passed",
@@ -27,7 +27,7 @@
     "implementation": "Cloud Sonnet guided default: grouped fields, optional Jev, one measured protection slider, plain-language findings, direct data/report download; six detailed views under Advanced tools",
     "requiredConsecutiveAuditApprovals": 3,
     "actualConsecutiveAuditApprovals": 3,
-    "liveVerification": "Public native CSV import, manual field roles, C1 exact matches 0/480; keeping AGE exact and re-evaluating C2 changed to480/480; external audit0unique andlinkageNotapplicable; real4formatdownloads; JSON/XLSX480x9andbadJSONrecovery passed. Userrequestedcloudagent simplifytheinterface; simplificationpendingcloudpush. Finalguidedlocalflowpassed: groupedfields\u2192Jevpreview/digestrequest\u2192confirm\u21928realoptions\u2192slidermovedC1toS5,99.8%to1.7%; actualfullwidth1440pxrenderverified; finalpublicroutepending.",
+    "liveVerification": "Public native CSV import, manual field roles, C1 exact matches 0/480; keeping AGE exact and re-evaluating C2 changed to480/480; external audit0unique andlinkageNotapplicable; real4formatdownloads; JSON/XLSX480x9andbadJSONrecovery passed. Userrequestedcloudagent simplifytheinterface; simplificationpendingcloudpush. Finalguidedlocalflowpassed: groupedfields\u2192Jevpreview/digestrequest\u2192confirm\u21928realoptions\u2192slidermovedC1toS5,99.8%to1.7%; actualfullwidth1440pxrenderverified; finalpublicroutepending. FinalpublicArchierootnowloadsGuidedreviewandrevisiono; VercelpublicguidedJevchangedstageAmbiguoustoDiseasestageand8actualoptionscompleted.",
     "previousFrozenApprovals": 3,
     "reviewedSource": "8edb1e130eb73fdba24fff916a1bb248a017cc02",
     "reviewReports": [
@@ -44,16 +44,15 @@
     "copy": "AGY1.4.0 Gemini3.8FlashHigh completed136.33s; conversationc68f4978-42d1-4cdc-b21c-3a523b039b94; corrected provider topology and identity overclaims before integration",
     "frontendCloud": "ClaudeSonnet5.5cloudbranchclaude/laughing-faraday-3epe4f mergedthroughd8412d9, includingguideddefault. No competinglocalQuickReviewrewritewaswritten."
   },
-  "packaging": "0.1.1 rebuild after merged cloud assets in progress; prior installed backend/current formats passed",
+  "packaging": "Final0.1.1installedwheelpassed; currentcloudGuideassetsandPDFincluded; sourceZIP/releasepublicationinprogress",
   "releaseCleared": false,
   "track": "Enterprise AI",
   "deployment": {
     "demo": "https://41d0bdfd-0065-4b0b-a973-efbe1c1a9c5e.archie.site/",
     "repository": "https://github.com/coldshalamov/PRISM",
     "backend": "Archie HTML entry and Core uploaded tables/session configuration; Vercel immutable frontend assets and Python computation; optional OpenRouter Jev",
-    "verified": "Public h upload/evaluate/externalaudit/4exports complete; finaloentry/assets5312ec8savedinArchie, publicationpending",
-    "publishedRevision": "r20261017h",
-    "nextRevision": "r20261017o",
+    "verified": "Archie reported Published Justnow; actualcanonicalrootDOMloadsrevisiono/index-Cd6MwbWV.js and Guidedreview; VercelguidedJevAmbiguous\u2192Diseasestage,8actualsearchoptionsverified",
+    "publishedRevision": "r20261017o",
     "uploads": {
       "enabledInSource": true,
       "publicVerification": "Passed native CSV, JSON, XLSX; malformed JSON recovery; external protected CSV unknown pairing; actual HTML/JSON/recipe/CSV downloads on public revision h",
@@ -121,5 +120,5 @@
     },
     "rulesVersion": "1.1"
   },
-  "readyForHackathonReview": false
+  "readyForHackathonReview": true
 }
