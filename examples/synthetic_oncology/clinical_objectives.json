@@ -1,0 +1,49 @@
+[
+  {
+    "id": "mutation-by-stage",
+    "type": "group_rate",
+    "groupBy": [
+      "stage"
+    ],
+    "target": "mutation",
+    "positiveValue": true,
+    "weight": 2,
+    "tolerance": 0.03,
+    "minCohort": 25
+  },
+  {
+    "id": "response-by-mutation",
+    "type": "group_rate",
+    "groupBy": [
+      "mutation"
+    ],
+    "target": "response",
+    "positiveValue": true,
+    "weight": 3,
+    "tolerance": 0.03,
+    "minCohort": 25
+  },
+  {
+    "id": "age-by-stage",
+    "type": "group_mean",
+    "groupBy": [
+      "stage"
+    ],
+    "target": "age",
+    "weight": 1,
+    "tolerance": 2,
+    "minCohort": 25
+  },
+  {
+    "id": "response-by-stage",
+    "type": "group_rate",
+    "groupBy": [
+      "stage"
+    ],
+    "target": "response",
+    "positiveValue": true,
+    "weight": 2,
+    "tolerance": 0.03,
+    "minCohort": 25
+  }
+]

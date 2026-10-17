@@ -1,0 +1,25 @@
+# PRISM verification record
+
+This record distinguishes calculation/API checks from live browser use. The application is a local row-release prototype; this record is not de-identification certification or release authorization.
+
+## Completed before final frontend integration
+
+- Python3.11.15 environment: current backend suite111 passed (22.53s), with one Starlette TestClient legacy-HTTPX deprecation warning. The final backend change includes the directly reproduced session-clear race regression: an in-flight operation cannot recreate session data after clear.
+- Preserved original source kit:61 passed in its isolated reference package (worker-executed; installed dependency versions are recorded in the reconciliation notes).
+- Direct live IAB workflow at127.0.0.1:5173 against the current loopback API: opened the480-row fictional benchmark, reviewed classifications, created C1 and observed75/480 verified exact matches; removed ZIP, observed stale evidence until evaluation, created C2 and observed20/480 matches. The displayed C2 selected scientific answers were0.3625,0.4503 and0.6893; correlation error versus the source was about0.0058. These answers agree with C1, rather than claiming exact source correlation preservation.
+- Actual file-chooser upload of `examples/kit_benchmark/fictional_protected.csv`, explicit unknown-pairing mode and external audit completed. UI showed15.6% sample uniqueness while verified exact linkage was **Not applicable**, with no implied row correspondence.
+- Shared frontend export guards now enforce reviewed/current evidence and local-session availability across both Report and File menu; CSV menu entry routes to explicit review. Missing objective values are excluded from client frontier classification; missing membership metadata remains unknown. Protected table units follow the measured comparison unit after conversion.
+
+## Final integration checks
+
+Pending integrated Sonnet polish, production build, all-view live route, responsive layouts, downloads, package smoke check and the three requested sequential independent design approvals. No final approval is claimed by the preliminary evidence above.
+
+## Initial deployed backend check
+
+- Public origin `https://prism-healthcare-taupe.vercel.app`: Vercel Services build passed with Python3.12 from `backend/.python-version`. Health returns fictional demo mode, uploads disabled and Archie backend provider.
+- Actual HTTPS workflow against that origin loaded480 fictional rows, computed75 then20 verified exact matches after ZIP removal, and returned an identical protected comparison on a subsequent request. Intake returned403; pitch PDF returned200 with a valid PDF header. The probe cleared only its own visitor session. This verifies the deployed Python → Archie path, separately from the frontend polish still in progress.
+- Full backend suite after adding the hosted adapters:120 passed, one Starlette TestClient legacy-HTTPX deprecation warning. The two hosted adapters account for nine added focused checks.
+
+## Design review references
+
+Review criteria include the source kit's workflow/accessibility requirements and current primary guidance: [WCAG2.2](https://www.w3.org/TR/wcag/), [WAI-ARIA modal dialog pattern](https://www.w3.org/WAI/ARIA/apg/patterns/dialog-modal/), and [MDN reduced-motion media query](https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/At-rules/%40media/prefers-reduced-motion). These are review references, not a claim of formal conformance certification.

@@ -1,0 +1,236 @@
+{
+  "$defs": {
+    "ResearchQuery": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "maxLength": 100,
+          "minLength": 1,
+          "title": "Id",
+          "type": "string"
+        },
+        "type": {
+          "enum": [
+            "group_rate",
+            "group_count",
+            "group_mean",
+            "correlation",
+            "difference_in_rates"
+          ],
+          "title": "Type",
+          "type": "string"
+        },
+        "groupBy": {
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 5,
+          "title": "Groupby",
+          "type": "array"
+        },
+        "target": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Target"
+        },
+        "filter": {
+          "additionalProperties": true,
+          "title": "Filter",
+          "type": "object"
+        },
+        "positiveValue": {
+          "default": 1,
+          "title": "Positivevalue"
+        },
+        "weight": {
+          "default": 1,
+          "exclusiveMinimum": 0,
+          "maximum": 100,
+          "title": "Weight",
+          "type": "number"
+        },
+        "tolerance": {
+          "default": 0.05,
+          "exclusiveMinimum": 0,
+          "maximum": 1000000.0,
+          "title": "Tolerance",
+          "type": "number"
+        },
+        "minCohort": {
+          "default": 5,
+          "maximum": 100000,
+          "minimum": 1,
+          "title": "Mincohort",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "id",
+        "type"
+      ],
+      "title": "ResearchQuery",
+      "type": "object"
+    },
+    "TransformStep": {
+      "additionalProperties": false,
+      "properties": {
+        "method": {
+          "maxLength": 40,
+          "minLength": 1,
+          "title": "Method",
+          "type": "string"
+        },
+        "columns": {
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 80,
+          "title": "Columns",
+          "type": "array"
+        },
+        "params": {
+          "additionalProperties": true,
+          "title": "Params",
+          "type": "object"
+        }
+      },
+      "required": [
+        "method"
+      ],
+      "title": "TransformStep",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "qi": {
+      "anyOf": [
+        {
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 20,
+          "type": "array"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Qi"
+    },
+    "sensitive": {
+      "anyOf": [
+        {
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 10,
+          "type": "array"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Sensitive"
+    },
+    "workload": {
+      "anyOf": [
+        {
+          "items": {
+            "$ref": "#/$defs/ResearchQuery"
+          },
+          "maxItems": 20,
+          "type": "array"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Workload"
+    },
+    "membershipKnown": {
+      "anyOf": [
+        {
+          "type": "boolean"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Membershipknown"
+    },
+    "entityColumn": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Entitycolumn"
+    },
+    "oneRowPerPersonConfirmed": {
+      "anyOf": [
+        {
+          "type": "boolean"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Onerowperpersonconfirmed"
+    },
+    "datasetId": {
+      "title": "Datasetid",
+      "type": "string"
+    },
+    "steps": {
+      "items": {
+        "$ref": "#/$defs/TransformStep"
+      },
+      "maxItems": 64,
+      "title": "Steps",
+      "type": "array"
+    },
+    "seed": {
+      "default": 42,
+      "maximum": 4294967295,
+      "minimum": 0,
+      "title": "Seed",
+      "type": "integer"
+    },
+    "name": {
+      "anyOf": [
+        {
+          "maxLength": 100,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Name"
+    }
+  },
+  "required": [
+    "datasetId",
+    "steps"
+  ],
+  "title": "CandidateRequest",
+  "type": "object"
+}

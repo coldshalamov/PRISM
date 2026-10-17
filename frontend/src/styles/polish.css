@@ -1,0 +1,94 @@
+/* Final layer: deployment notice, recoverable view faults, subgroup comparison, and small corrections.
+   Loaded after the base layers; view-specific sheets load with their views and are edited directly. */
+
+/* ---------- deployment: hosted fictional demo / remote origin ---------- */
+.app.is-hosted .topbar { box-shadow: inset 0 -2px 0 rgba(179, 167, 255, 0.55); }
+.health-line { white-space: nowrap; }
+.health-line.hosted.ok, .health-line.hosted.checking { color: var(--shell-accent); font-weight: 600; letter-spacing: 0.02em; }
+.health-line.remote.ok { color: var(--shell-risk); font-weight: 600; }
+.session-line.hosted b { color: var(--shell-accent); }
+.session-line.remote b { color: var(--shell-risk); }
+@media (max-width: 719px) { .health-line.hosted, .health-line.remote { display: flex; font-size: 11px; } }
+
+.deploy-banner {
+  display: flex; align-items: flex-start; gap: 12px; margin: 12px 12px 0; padding: 10px 10px 10px 14px;
+  background: var(--surface); border: 1px solid var(--line-strong); border-left: 3px solid var(--accent); border-radius: var(--r-2);
+  font-size: 13px; line-height: 1.5;
+}
+.deploy-banner > svg { flex: none; margin-top: 3px; color: var(--accent-ink); }
+.deploy-banner.remote { border-left-color: var(--risk); background: var(--risk-soft); }
+.deploy-banner.remote > svg { color: var(--risk-ink); }
+.deploy-text { flex: 1 1 220px; min-width: 0; display: grid; gap: 2px; }
+.doc-meta { white-space: nowrap; }
+.deploy-text b { font-weight: 600; }
+.deploy-text p { color: var(--ink-2); max-width: 90ch; }
+.deploy-actions { display: flex; align-items: center; gap: 6px; flex: none; }
+@media (max-width: 719px) {
+  .deploy-banner { flex-wrap: wrap; margin: 8px 8px 0; }
+  .deploy-actions { margin-left: auto; }
+}
+
+.boot-error { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+.boot-error > span { flex: 1 1 280px; min-width: 0; }
+
+/* Notices above a view (deployment, session, start-up error) must not push its footer, the measurement ledger, below the fold:
+   the canvas stacks them and gives the view whatever height is left. */
+@media (min-width: 720px) {
+  .canvas { display: flex; flex-direction: column; }
+  .canvas > :not(.view) { flex: none; }
+  .canvas > .view { flex: 1 1 0; min-height: 0; height: auto; }
+}
+
+/* ---------- a view that fails to draw keeps the workspace alive ---------- */
+.view-fault { display: flex; gap: 14px; align-items: flex-start; max-width: 720px; margin: 28px auto; padding: 18px 20px; background: var(--risk-soft); border: 1px solid rgba(217, 72, 15, 0.28); border-left: 3px solid var(--risk); border-radius: var(--r-2); }
+.view-fault > svg { flex: none; margin-top: 2px; color: var(--risk-ink); }
+.view-fault h2 { font-size: 15px; font-weight: 600; margin-bottom: 6px; }
+.view-fault p { color: var(--ink-2); line-height: 1.55; }
+.view-fault-detail { margin-top: 8px; }
+.view-fault-detail code { font: 12px var(--font-mono); overflow-wrap: anywhere; }
+.view-fault-actions { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 14px; }
+
+/* ---------- pending / stale evidence ---------- */
+.evidence-banner.pending { color: var(--ink); font-weight: 400; }
+
+/* ---------- charts ---------- */
+.viz-warn { color: var(--risk-ink); }
+.viz-notes { display: grid; gap: 8px; padding: 6px 0 2px; font-size: 12.5px; color: var(--ink-2); line-height: 1.5; }
+.viz-notes b { font-weight: 600; display: block; margin-bottom: 2px; }
+.cohort-unit { font-weight: 400; color: var(--ink-3); }
+
+/* ---------- declared subgroup comparison ---------- */
+.subgroups { display: grid; gap: 10px; padding: 0 12px 12px; min-width: 0; }
+.subgroup-summary { display: grid; gap: 4px; padding: 8px 10px; background: var(--surface-2); border: 1px solid var(--line); font-size: 12.5px; line-height: 1.5; }
+.subgroup-summary p.muted { font-size: 12px; }
+.subgroup-scroll { overflow: auto; max-width: 100%; border: 1px solid var(--line); outline: none; }
+.subgroup-scroll .data-table { min-width: 520px; }
+.subgroup-scroll small.issue { font-weight: 400; }
+
+/* ---------- toasts: errors persist, so give them a firmer edge ---------- */
+.toast.error { border-left-width: 4px; }
+
+/* ---------- containment (found at 390px) ---------- */
+/* A grid with an implicit "auto" column grows to the widest tab strip inside it (686px on a 390px phone); cap the track. */
+.wb { grid-template-columns: minmax(0, 1fr); }
+/* Visually hidden text is absolutely positioned. Unless its scroll container is a containing block, a wide table's hidden
+   cells still widen the whole page even though the table itself scrolls. */
+.km-matrix-scroll, .table-scroll, .grid-scroll, .px-table-scroll, .report-table-scroll, .intent-table-scroll, .subgroup-scroll, .review-scroll, .mapping,
+.ledger-body, .pane-body, .panes-wrap, .inspector-scroll, .dialog-body, .library-scroll, .km-scroll, .al-scroll { position: relative; }
+@media (max-width: 719px) {
+  .toolbar > .tabs { max-width: 100%; overflow-x: auto; scrollbar-width: none; }
+}
+
+/* The primary action of a view must not scroll out of a narrow toolbar. */
+.toolbar > .btn.primary:last-child { position: sticky; right: 12px; box-shadow: -14px 0 12px -6px var(--surface); }
+/* Measured figures keep "152 / 480" on one line; the label column is the one that wraps. */
+.ledger-table td.num { white-space: nowrap; }
+
+/* ---------- small-screen touch targets ---------- */
+@media (max-width: 719px) {
+  .icon-btn { width: 36px; height: 36px; }
+  .btn { height: 36px; }
+  .btn.small { height: 32px; }
+  .tabs.segment button, .seg button { height: 32px; }
+  .tabs.underline button { height: 40px; }
+}

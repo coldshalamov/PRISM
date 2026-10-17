@@ -1,0 +1,30 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "prism-local-workbench"
+version = "0.1.0"
+description = "Local purpose-aware privacy engineering laboratory"
+requires-python = ">=3.11,<3.13"
+license = "MIT AND Apache-2.0"
+license-files = ["app/licenses/*"]
+dependencies = ["fastapi==0.143.3", "uvicorn==0.54.0", "python-multipart==0.0.32", "pandas==2.3.3", "numpy==2.0.2", "scipy==1.15.3", "httpx==0.28.1"]
+
+[project.optional-dependencies]
+dev = ["pytest==9.1.1", "httpx==0.28.1"]
+adapters = ["pycanon==1.3.6"]
+
+[project.scripts]
+prism = "app.main:run"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["app*"]
+
+[tool.setuptools.package-data]
+app = ["static/**/*", "static/*", "fixtures/**/*", "licenses/*"]
+
+[tool.pytest.ini_options]
+pythonpath = ["."]
+testpaths = ["tests"]

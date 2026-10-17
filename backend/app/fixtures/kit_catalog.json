@@ -1,0 +1,401 @@
+{
+  "version": "2026-10-17",
+  "scope": "Main tabular threat families; deliberately not an exhaustive list of all known exploits.",
+  "sources": {
+    "NIST188": "https://www.nist.gov/publications/de-identifying-government-datasets-techniques-and-governance",
+    "NIST226": "https://csrc.nist.gov/pubs/sp/800/226/final",
+    "HHS": "https://www.hhs.gov/hipaa/for-professionals/special-topics/de-identification/index.html",
+    "ARX": "https://arx.deidentifier.org/overview/",
+    "ANONYMETER": "https://github.com/statice/anonymeter",
+    "SDMETRICS": "https://docs.sdv.dev/sdmetrics",
+    "OPENDP": "https://docs.opendp.org/en/stable/api/user-guide/measurements/additive-noise-mechanisms.html",
+    "PRESIDIO": "https://presidio.dataprivacystack.org/",
+    "OWASP_CSV": "https://community.owasp.org/attacks/CSV_Injection",
+    "TCLOSENESS": "https://doi.org/10.1109/ICDE.2007.367856",
+    "SYNTHETIC": "https://arxiv.org/abs/2011.07018",
+    "SDNIST": "https://www.nist.gov/services-resources/software/sdnist-synthetic-data-report-tool"
+  },
+  "attacks": [
+    {
+      "id": "direct-identifiers",
+      "name": "Direct identifiers",
+      "coverage": "core",
+      "summary": "Names and contact details identify people without statistical tricks.",
+      "implemented": "Field-name and pattern scans; masks, drops and keyed pseudonyms.",
+      "mitigation": "Review all fields; remove unnecessary identifiers. Pseudonyms still permit linkage.",
+      "limitation": "Heuristics miss names and unfamiliar formats.",
+      "source": "NIST188"
+    },
+    {
+      "id": "quasi-uniqueness",
+      "name": "Quasi-identifier uniqueness",
+      "coverage": "core",
+      "summary": "Age, location and body measurements can form a distinctive combination.",
+      "implemented": "Exact equality-class sizes on explicitly chosen fields.",
+      "mitigation": "Generalize or remove unnecessary identifying precision.",
+      "limitation": "Sample uniqueness is not population identification probability.",
+      "source": "ARX"
+    },
+    {
+      "id": "record-linkage",
+      "name": "Record linkage",
+      "coverage": "core",
+      "summary": "Outside knowledge can point to a matching protected record.",
+      "implemented": "Verified exact-match replay for internally transformed data with private scoring lineage.",
+      "mitigation": "Reduce distinguishing attributes and test stronger attacker knowledge.",
+      "limitation": "No external identity database or fuzzy-match calibration is included.",
+      "source": "NIST188"
+    },
+    {
+      "id": "homogeneity",
+      "name": "Homogeneity / attribute disclosure",
+      "coverage": "core",
+      "summary": "Everyone in a plausible matching group may share the same sensitive fact.",
+      "implemented": "Distinct-l and homogeneous-group diagnostics.",
+      "mitigation": "Protect sensitive distributions, not just group sizes.",
+      "limitation": "Semantic similarity between different medical labels is not modeled.",
+      "source": "TCLOSENESS"
+    },
+    {
+      "id": "skewness",
+      "name": "Skewness and similarity",
+      "coverage": "core",
+      "summary": "A group can have multiple labels yet overwhelmingly suggest one condition.",
+      "implemented": "Categorical total-variation shift from the released-table distribution.",
+      "mitigation": "Consider a vetted t-closeness or related model with meaningful category distances.",
+      "limitation": "This diagnostic is not general t-closeness enforcement.",
+      "source": "TCLOSENESS"
+    },
+    {
+      "id": "background",
+      "name": "Background-knowledge inference",
+      "coverage": "partial",
+      "summary": "An attacker may already know more than the fields you selected.",
+      "implemented": "Editable known/secret roles and warnings for excluded quasi-identifiers.",
+      "mitigation": "Evaluate multiple plausible knowledge profiles.",
+      "limitation": "Unknown outside knowledge cannot be exhaustively enumerated.",
+      "source": "NIST188"
+    },
+    {
+      "id": "missingness",
+      "name": "Missingness fingerprints",
+      "coverage": "partial",
+      "summary": "The pattern of blank tests can itself distinguish a patient or imply a diagnosis.",
+      "implemented": "Nulls participate in equality classes; missing-rate utility comparisons.",
+      "mitigation": "Review missingness as information, not harmless empty space.",
+      "limitation": "Clinical meaning of missing tests is not inferred.",
+      "source": "NIST188"
+    },
+    {
+      "id": "rare-subgroups",
+      "name": "Rare subgroup exposure",
+      "coverage": "partial",
+      "summary": "Rare combinations can remain identifying after names disappear.",
+      "implemented": "Small equality-class diagnostics and suppression.",
+      "mitigation": "Review tails and rare cohorts separately; measure suppression bias.",
+      "limitation": "No population-frequency model or rare-genome analysis.",
+      "source": "NIST188"
+    },
+    {
+      "id": "membership",
+      "name": "Membership inference",
+      "coverage": "adapter",
+      "summary": "A release may reveal whether a person was in a study.",
+      "implemented": "Catalog and adapter boundary only; no built-in calibrated membership attacker.",
+      "mitigation": "Use independent member/nonmember evaluation and appropriate formal mechanisms.",
+      "limitation": "Not assessed must never appear as a passed test.",
+      "source": "SYNTHETIC"
+    },
+    {
+      "id": "synthetic-inference",
+      "name": "Synthetic-data inference",
+      "coverage": "adapter",
+      "summary": "Fake rows can still reveal facts learned from real participants.",
+      "implemented": "Optional Anonymeter inference adapter with independent-control requirements.",
+      "mitigation": "Audit generation provenance, controls, attack baselines and uncertainty.",
+      "limitation": "Adapter was not installed or runtime-verified in this delivery.",
+      "source": "ANONYMETER"
+    },
+    {
+      "id": "memorization",
+      "name": "Exact and near-copy memorization",
+      "coverage": "planned",
+      "summary": "A synthetic generator may reproduce unusual training examples.",
+      "implemented": "A future copy-distance audit is specified.",
+      "mitigation": "Test holdout-calibrated attacks, not distance alone.",
+      "limitation": "Nearest-neighbor distance is not a privacy guarantee.",
+      "source": "SYNTHETIC"
+    },
+    {
+      "id": "composition",
+      "name": "Cross-release intersection",
+      "coverage": "demo",
+      "summary": "Different coarse releases can become precise when combined.",
+      "implemented": "Computed synthetic 3-by-3 composition counterexample.",
+      "mitigation": "Review release history and alignment keys together.",
+      "limitation": "General multi-release attacker is not implemented.",
+      "source": "NIST188"
+    },
+    {
+      "id": "differencing",
+      "name": "Aggregate differencing",
+      "coverage": "demo",
+      "summary": "Subtract two large, overlapping statistics to expose a small difference.",
+      "implemented": "Computed synthetic count/sum counterexample.",
+      "mitigation": "Limit release surfaces; prefer a correctly accounted DP query service when suitable.",
+      "limitation": "Naive small-cell suppression and pairwise checks do not stop every attack.",
+      "source": "NIST226"
+    },
+    {
+      "id": "reconstruction",
+      "name": "Database reconstruction",
+      "coverage": "planned",
+      "summary": "Enough statistical constraints can determine hidden individual values.",
+      "implemented": "Described threat; no general reconstruction solver shipped.",
+      "mitigation": "Restrict exact query workloads or use carefully composed DP.",
+      "limitation": "A query-result scanner alone cannot certify safety.",
+      "source": "NIST226"
+    },
+    {
+      "id": "averaging",
+      "name": "Repeated-query noise averaging",
+      "coverage": "planned",
+      "summary": "Repeated noisy answers can be averaged to recover an accurate statistic.",
+      "implemented": "Budget design and regression-test requirements documented.",
+      "mitigation": "Use one global accountant and a deliberate cache/requery policy.",
+      "limitation": "The optional in-memory DP demonstration is not a persistent service.",
+      "source": "OPENDP"
+    },
+    {
+      "id": "hashes",
+      "name": "Hash and pseudonym attacks",
+      "coverage": "partial",
+      "summary": "Unsalted hashes of predictable values can be guessed; stable tokens enable joins.",
+      "implemented": "Keyed HMAC pseudonyms, secret not exported, retained-identifier warnings.",
+      "mitigation": "Use appropriate key management; avoid unnecessary cross-release stability.",
+      "limitation": "HMAC does not anonymize other fields or conceal duplicate frequencies.",
+      "source": "NIST188"
+    },
+    {
+      "id": "ordering",
+      "name": "Row order and hidden correspondence",
+      "coverage": "partial",
+      "summary": "Unchanged ordering can reveal a direct original-to-release mapping.",
+      "implemented": "Output rows shuffled by default; scoring lineage never exported.",
+      "mitigation": "Remove row numbers and inherited export metadata.",
+      "limitation": "Other attributes may still align rows, and audit reports are sensitive.",
+      "source": "NIST188"
+    },
+    {
+      "id": "dates",
+      "name": "Date and trajectory linkage",
+      "coverage": "partial",
+      "summary": "A distinctive sequence of dates can identify someone even after shifting.",
+      "implemented": "Date year extraction and optional per-subject offsets.",
+      "mitigation": "Review temporal patterns and clinical intervals explicitly.",
+      "limitation": "Sequence/trajectory attacks are not implemented.",
+      "source": "NIST188"
+    },
+    {
+      "id": "genomics",
+      "name": "Genomic and family inference",
+      "coverage": "planned",
+      "summary": "Genomes and relatives create identification routes that ordinary table checks miss.",
+      "implemented": "Scope warning and specialist-evaluation requirements.",
+      "mitigation": "Use domain-specific release review and access restrictions.",
+      "limitation": "No genomic safety determination is made.",
+      "source": "NIST188"
+    },
+    {
+      "id": "geolocation",
+      "name": "Location and mobility",
+      "coverage": "planned",
+      "summary": "A few distinctive places or routes can connect records to a person.",
+      "implemented": "ZIP prefix transform only.",
+      "mitigation": "Treat trajectories as high-dimensional identifiers.",
+      "limitation": "No GPS/mobility anonymization engine.",
+      "source": "NIST188"
+    },
+    {
+      "id": "free-text",
+      "name": "Free-text identifiers",
+      "coverage": "partial",
+      "summary": "Narratives can identify a person through names, events or unusual details.",
+      "implemented": "Regex pattern redaction; Presidio integration plan.",
+      "mitigation": "Review with domain-aware tools and human oversight.",
+      "limitation": "Regex is not reliable narrative de-identification.",
+      "source": "PRESIDIO"
+    },
+    {
+      "id": "multimedia",
+      "name": "Images, audio and file metadata",
+      "coverage": "out_of_scope",
+      "summary": "Faces, voices, headers or embedded metadata can disclose identities.",
+      "implemented": "Non-CSV formats rejected by the starter workflow.",
+      "mitigation": "Use specialist DICOM, image, audio and document pipelines.",
+      "limitation": "No OCR, voice anonymization or medical-image scrubber is shipped.",
+      "source": "HHS"
+    },
+    {
+      "id": "csv-injection",
+      "name": "Spreadsheet formula injection",
+      "coverage": "core",
+      "summary": "Untrusted cells can execute spreadsheet formulas when opened.",
+      "implemented": "Formula-leading cells and headers neutralized on export by default.",
+      "mitigation": "Keep formula-safe export enabled and disclose lexical changes.",
+      "limitation": "This is file-handling security, not statistical anonymization.",
+      "source": "OWASP_CSV"
+    },
+    {
+      "id": "diagnostic-leak",
+      "name": "Audit and selection leakage",
+      "coverage": "partial",
+      "summary": "Exact before/after metrics, rare examples or a selected recipe can expose source facts.",
+      "implemented": "Owner-only reports, no-store headers, no raw witnesses in release CSV.",
+      "mitigation": "Keep diagnostic artifacts confidential; privatize selection if it becomes public.",
+      "limitation": "The optimizer is non-DP and does not certify public report release.",
+      "source": "NIST226"
+    },
+    {
+      "id": "group-harm",
+      "name": "Group and inferential harms",
+      "coverage": "planned",
+      "summary": "A private individual contribution can coexist with harmful conclusions about a group.",
+      "implemented": "Documented release-review criterion.",
+      "mitigation": "Evaluate purpose, governance and possible group harms.",
+      "limitation": "Individual privacy mechanisms do not erase true population associations.",
+      "source": "NIST226"
+    },
+    {
+      "id": "transport",
+      "name": "Sharing authorization and transport",
+      "coverage": "out_of_scope",
+      "summary": "A protected file can still be sent to the wrong person or over an unsafe channel.",
+      "implemented": "Explicit export acknowledgment, no transmission function.",
+      "mitigation": "Check permission and use an approved encrypted transfer route.",
+      "limitation": "PRISM is not encryption, authorization, or a compliance determination.",
+      "source": "HHS"
+    }
+  ],
+  "methods": [
+    {
+      "id": "drop",
+      "name": "Drop columns",
+      "coverage": "core",
+      "summary": "Remove fields not required by the analysis.",
+      "limitation": "Exact deletion does not protect remaining combinations."
+    },
+    {
+      "id": "mask",
+      "name": "Mask values",
+      "coverage": "core",
+      "summary": "Replace a whole column with a constant, including blanks.",
+      "limitation": "Other columns can remain identifying."
+    },
+    {
+      "id": "pseudonymize",
+      "name": "Keyed pseudonyms",
+      "coverage": "core",
+      "summary": "Use HMAC with a fresh secret key for a candidate.",
+      "limitation": "Reversible mapping is not shipped; correlations and repeated tokens remain."
+    },
+    {
+      "id": "numeric_band",
+      "name": "Numeric bands",
+      "coverage": "core",
+      "summary": "Represent values as half-open intervals.",
+      "limitation": "Five-year and five-kilogram bands are starting choices, not safety standards."
+    },
+    {
+      "id": "prefix",
+      "name": "Prefix generalization",
+      "coverage": "core",
+      "summary": "Shorten a string such as a ZIP code.",
+      "limitation": "Three-digit ZIP codes require additional population conditions for HIPAA Safe Harbor."
+    },
+    {
+      "id": "top_bottom_code",
+      "name": "Top / bottom coding",
+      "coverage": "core",
+      "summary": "Replace extremes with threshold labels.",
+      "limitation": "May distort tail analysis; does not hide all extreme attributes."
+    },
+    {
+      "id": "round",
+      "name": "Rounding",
+      "coverage": "core",
+      "summary": "Round to a selected numeric step.",
+      "limitation": "Round-to-even behavior is explicit; rounding is not formal privacy."
+    },
+    {
+      "id": "rare_category",
+      "name": "Rare-category pooling",
+      "coverage": "core",
+      "summary": "Pool infrequent labels into an OTHER category.",
+      "limitation": "Pooling may erase scientifically important minorities."
+    },
+    {
+      "id": "date_year",
+      "name": "Year-only dates",
+      "coverage": "core",
+      "summary": "Discard month and day.",
+      "limitation": "Other dates, ages and unusual event patterns still matter."
+    },
+    {
+      "id": "date_shift",
+      "name": "Consistent date offsets",
+      "coverage": "core",
+      "summary": "Apply a secret per-entity date offset.",
+      "limitation": "Relative intervals remain and can identify a trajectory; not DP."
+    },
+    {
+      "id": "jitter",
+      "name": "Numeric perturbation",
+      "coverage": "core",
+      "summary": "Add experimental Gaussian perturbations.",
+      "limitation": "No privacy accounting or DP guarantee; may create implausible values."
+    },
+    {
+      "id": "shuffle",
+      "name": "Column shuffling",
+      "coverage": "core",
+      "summary": "Permute selected values while preserving the marginal distribution.",
+      "limitation": "Can destroy correlations and may leave many unchanged cells."
+    },
+    {
+      "id": "redact_patterns",
+      "name": "Pattern redaction",
+      "coverage": "core",
+      "summary": "Redact supported contact/identifier patterns.",
+      "limitation": "Does not cover all narrative identifiers."
+    },
+    {
+      "id": "k_suppression",
+      "name": "Small-class suppression",
+      "coverage": "core",
+      "summary": "Remove complete rows below a requested k under selected fields.",
+      "limitation": "Subject-unit and suppressed-cohort bias need review; no attribute-disclosure guarantee."
+    },
+    {
+      "id": "arx_models",
+      "name": "ARX privacy models",
+      "coverage": "planned",
+      "summary": "Vetted generalization search, microaggregation and richer constraints.",
+      "limitation": "Java worker is not integrated in this delivery."
+    },
+    {
+      "id": "dp_aggregates",
+      "name": "Differentially private aggregates",
+      "coverage": "adapter",
+      "summary": "Optional OpenDP primitive with explicit adjacency and charge.",
+      "limitation": "Demo accountant is not persistent or production-ready."
+    },
+    {
+      "id": "synthetic",
+      "name": "Synthetic generation",
+      "coverage": "planned",
+      "summary": "Produce statistical surrogate records.",
+      "limitation": "No neural generation, training job, or synthetic privacy claim in this prototype."
+    }
+  ]
+}

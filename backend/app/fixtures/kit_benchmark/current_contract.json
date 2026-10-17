@@ -1,0 +1,167 @@
+{
+  "schema": [
+    {
+      "name": "subject_id",
+      "dtype": "text",
+      "role": "direct_identifier",
+      "importance": 1.0,
+      "sensitivityReason": "Column name or structured format suggests a direct identifier; review required."
+    },
+    {
+      "name": "name",
+      "dtype": "text",
+      "role": "direct_identifier",
+      "importance": 1.0,
+      "sensitivityReason": "Column name or structured format suggests a direct identifier; review required."
+    },
+    {
+      "name": "age",
+      "dtype": "integer",
+      "role": "quasi_identifier",
+      "importance": 1.0,
+      "sensitivityReason": "Demographic or physical attribute may distinguish records in combination.",
+      "unit": "years"
+    },
+    {
+      "name": "zip",
+      "dtype": "category",
+      "role": "quasi_identifier",
+      "importance": 1.0,
+      "sensitivityReason": "Demographic or physical attribute may distinguish records in combination."
+    },
+    {
+      "name": "weight_kg",
+      "dtype": "float",
+      "role": "quasi_identifier",
+      "importance": 1.0,
+      "sensitivityReason": "Demographic or physical attribute may distinguish records in combination.",
+      "unit": "kg"
+    },
+    {
+      "name": "liver_metastasis",
+      "dtype": "integer",
+      "role": "sensitive",
+      "importance": 1.0,
+      "sensitivityReason": "Automatic suggestion only; identifiers and analytical importance may be missed."
+    },
+    {
+      "name": "KRAS",
+      "dtype": "integer",
+      "role": "sensitive",
+      "importance": 1.0,
+      "sensitivityReason": "Automatic suggestion only; identifiers and analytical importance may be missed."
+    },
+    {
+      "name": "failure_6m",
+      "dtype": "integer",
+      "role": "sensitive",
+      "importance": 1.0,
+      "sensitivityReason": "Automatic suggestion only; identifiers and analytical importance may be missed."
+    },
+    {
+      "name": "diagnosis_date",
+      "dtype": "date",
+      "role": "sensitive",
+      "importance": 1.0,
+      "sensitivityReason": "Automatic suggestion only; identifiers and analytical importance may be missed."
+    }
+  ],
+  "defaultSteps": [
+    {
+      "method": "drop",
+      "columns": [
+        "subject_id",
+        "name"
+      ],
+      "params": {}
+    },
+    {
+      "method": "band",
+      "columns": [
+        "age"
+      ],
+      "params": {
+        "width": 5
+      }
+    },
+    {
+      "method": "zip_prefix",
+      "columns": [
+        "zip"
+      ],
+      "params": {
+        "length": 3
+      }
+    },
+    {
+      "method": "band",
+      "columns": [
+        "weight_kg"
+      ],
+      "params": {
+        "width": 5
+      }
+    },
+    {
+      "method": "date_generalize",
+      "columns": [
+        "diagnosis_date"
+      ],
+      "params": {
+        "precision": "year"
+      }
+    }
+  ],
+  "defaultWorkload": [
+    {
+      "id": "six-month-failure",
+      "type": "group_rate",
+      "target": "failure_6m",
+      "groupBy": [],
+      "positiveValue": 1,
+      "weight": 1,
+      "tolerance": 0.02,
+      "minCohort": 5
+    },
+    {
+      "id": "liver-subgroup-failure",
+      "type": "group_rate",
+      "target": "failure_6m",
+      "groupBy": [],
+      "positiveValue": 1,
+      "filter": {
+        "liver_metastasis": 1
+      },
+      "weight": 1,
+      "tolerance": 0.03,
+      "minCohort": 5
+    },
+    {
+      "id": "age-weight-correlation",
+      "type": "correlation",
+      "groupBy": [
+        "age"
+      ],
+      "target": "weight_kg",
+      "weight": 1,
+      "tolerance": 0.05,
+      "minCohort": 5
+    }
+  ],
+  "qi": [
+    "age",
+    "zip",
+    "weight_kg"
+  ],
+  "sensitive": [
+    "liver_metastasis",
+    "KRAS",
+    "failure_6m"
+  ],
+  "name": "Original kit benchmark \u00b7 480 fictional records",
+  "synthetic": true,
+  "provenance": {
+    "source": "PRISM-hackathon-kit.zip",
+    "license": "Apache-2.0"
+  }
+}

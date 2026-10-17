@@ -1,0 +1,45 @@
+{
+  "application": "PRISM",
+  "status": "final_review_in_progress",
+  "backend": {
+    "tests": 120,
+    "result": "passed",
+    "warning": "Starlette TestClient deprecation for legacy HTTPX; runtime HTTP acceptance remains separate"
+  },
+  "originalKit": {
+    "tests": 61,
+    "result": "passed in preserved reference package",
+    "defaultVerifiedMatches": 75,
+    "zipRemovedVerifiedMatches": 20,
+    "targets": 480,
+    "selectedProtectedAnswersIdentical": true
+  },
+  "frontend": {
+    "views": [
+      "Workbench",
+      "Knowledge Map",
+      "Attack Lab",
+      "Research Intent",
+      "Pareto Explorer",
+      "Report"
+    ],
+    "implementation": "all six implemented; Sonnet integrated",
+    "requiredConsecutiveAuditApprovals": 3,
+    "actualConsecutiveAuditApprovals": 0,
+    "liveVerification": "real local all-view route, 24-candidate search (6 frontier), adoption, stale workload and all four export formats passed; responsive and final audits ongoing"
+  },
+  "model": {
+    "frontend": "Claude Sonnet 5.5 XHigh through Devin3000.11.3, tungsten-shampoo, completed",
+    "improvement": "OpenCode Go gemini-4-argon-contributor running through npm OpenCode2.0.31; legacy1.19.0 credential error bypassed using correct installation"
+  },
+  "packaging": "wheel and source ZIP built; independent installed-wheel verification running; final metadata refresh pending",
+  "releaseCleared": false,
+  "track": "Enterprise AI",
+  "deployment": {
+    "demo": "https://prism-healthcare-taupe.vercel.app/",
+    "repository": "https://github.com/coldshalamov/PRISM",
+    "backend": "Archie Core dedicated table; Vercel Python compute and frontend",
+    "verified": "HTTPS480-row fixture75→20, exact replay, uploads403 and pitch PDF200; final frontend replacement pending"
+  },
+  "submission": "Enterprise AI selected, text and URLs entered; final screenshots and Save Draft pending; never submitted"
+}

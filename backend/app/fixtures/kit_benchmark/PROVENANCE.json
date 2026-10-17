@@ -1,0 +1,16 @@
+{
+  "source": "User-supplied PRISM-hackathon-kit.zip",
+  "archive_sha256": "5d549a2e3e8c44c1257d8470b48b4656e4846c7f9bb234420a65474c69d3db83",
+  "source_prefix": "PRISM/",
+  "copyright": "Copyright 2026 PRISM contributors",
+  "license": "Apache-2.0",
+  "copied_files_sha256": {
+    "fictional_oncology.csv": "53ff61605b2d45fbbdfee72cb7f83e527aa86234c9cfd9e65e008242514aa065",
+    "fictional_protected.csv": "cf60607c8c62062b6c1fcc760c44e53d122588a35dd331e844f05f83fc2d05ea",
+    "default_request.json": "2d74b27f55f26eadacc905f8fa32cf3f6d0b7d740795d1c3c8e86eda7574d180",
+    "default_report.json": "bcd72f6e722b3093f9bfad8c92d03f9eadd97b92dee34450e4b1f5a607505281",
+    "LICENSE": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30",
+    "NOTICE": "d0380a97fbcb9fa7776828c7bfc1ca5addec577de18081a5ba83740c21544a04"
+  },
+  "note": "Files listed above are unmodified byte copies. The current API adapter and reproduction results are separate artifacts."
+}

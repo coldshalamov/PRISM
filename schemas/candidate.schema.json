@@ -1,0 +1,171 @@
+{
+  "$defs": {
+    "CandidateRecipe": {
+      "additionalProperties": false,
+      "properties": {
+        "steps": {
+          "items": {
+            "$ref": "#/$defs/TransformStep"
+          },
+          "title": "Steps",
+          "type": "array"
+        },
+        "seed": {
+          "default": 42,
+          "title": "Seed",
+          "type": "integer"
+        },
+        "version": {
+          "title": "Version",
+          "type": "string"
+        },
+        "releaseMode": {
+          "enum": [
+            "row_release",
+            "synthetic_release",
+            "aggregate_query",
+            "controlled_access"
+          ],
+          "title": "Releasemode",
+          "type": "string"
+        },
+        "provenance": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Provenance"
+        }
+      },
+      "required": [
+        "steps",
+        "version",
+        "releaseMode"
+      ],
+      "title": "CandidateRecipe",
+      "type": "object"
+    },
+    "TransformStep": {
+      "additionalProperties": false,
+      "properties": {
+        "method": {
+          "maxLength": 40,
+          "minLength": 1,
+          "title": "Method",
+          "type": "string"
+        },
+        "columns": {
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 80,
+          "title": "Columns",
+          "type": "array"
+        },
+        "params": {
+          "additionalProperties": true,
+          "title": "Params",
+          "type": "object"
+        }
+      },
+      "required": [
+        "method"
+      ],
+      "title": "TransformStep",
+      "type": "object"
+    }
+  },
+  "additionalProperties": true,
+  "properties": {
+    "candidateId": {
+      "title": "Candidateid",
+      "type": "string"
+    },
+    "datasetId": {
+      "title": "Datasetid",
+      "type": "string"
+    },
+    "name": {
+      "title": "Name",
+      "type": "string"
+    },
+    "rowCount": {
+      "title": "Rowcount",
+      "type": "integer"
+    },
+    "recipe": {
+      "$ref": "#/$defs/CandidateRecipe"
+    },
+    "preview": {
+      "items": {
+        "additionalProperties": true,
+        "type": "object"
+      },
+      "title": "Preview",
+      "type": "array"
+    },
+    "columns": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Columns",
+      "type": "array"
+    },
+    "risk": {
+      "additionalProperties": true,
+      "title": "Risk",
+      "type": "object"
+    },
+    "utility": {
+      "additionalProperties": true,
+      "title": "Utility",
+      "type": "object"
+    },
+    "constraints": {
+      "items": {
+        "additionalProperties": true,
+        "type": "object"
+      },
+      "title": "Constraints",
+      "type": "array"
+    },
+    "frontierMember": {
+      "title": "Frontiermember",
+      "type": "boolean"
+    },
+    "alignment": {
+      "enum": [
+        "verified",
+        "unpaired"
+      ],
+      "title": "Alignment",
+      "type": "string"
+    },
+    "createdAt": {
+      "title": "Createdat",
+      "type": "string"
+    }
+  },
+  "required": [
+    "candidateId",
+    "datasetId",
+    "name",
+    "rowCount",
+    "recipe",
+    "preview",
+    "columns",
+    "risk",
+    "utility",
+    "constraints",
+    "frontierMember",
+    "alignment",
+    "createdAt"
+  ],
+  "title": "CandidateSummary",
+  "type": "object"
+}

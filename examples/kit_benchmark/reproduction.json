@@ -1,0 +1,3848 @@
+{
+  "source": "User-supplied PRISM-hackathon-kit.zip",
+  "archive_sha256": "5d549a2e3e8c44c1257d8470b48b4656e4846c7f9bb234420a65474c69d3db83",
+  "original_suite": {
+    "passed": 61,
+    "warning": "Starlette/httpx TestClient deprecation",
+    "source_unmodified": true,
+    "environment_note": "Existing environment reused without installing kit constraints. FastAPI and Uvicorn exceed original kit declared upper bounds."
+  },
+  "environment": {
+    "fastapi": "0.143.3",
+    "uvicorn": "0.54.0",
+    "pydantic": "2.13.5",
+    "pandas": "2.3.3",
+    "numpy": "2.0.2",
+    "scipy": "1.15.3",
+    "pytest": "9.1.1",
+    "httpx": "0.28.1"
+  },
+  "results": [
+    {
+      "name": "default_5_3_5",
+      "steps": [
+        {
+          "method": "drop",
+          "columns": [
+            "subject_id",
+            "name"
+          ],
+          "params": {}
+        },
+        {
+          "method": "band",
+          "columns": [
+            "age"
+          ],
+          "params": {
+            "width": 5
+          }
+        },
+        {
+          "method": "zip_prefix",
+          "columns": [
+            "zip"
+          ],
+          "params": {
+            "length": 3
+          }
+        },
+        {
+          "method": "band",
+          "columns": [
+            "weight_kg"
+          ],
+          "params": {
+            "width": 5
+          }
+        },
+        {
+          "method": "date_generalize",
+          "columns": [
+            "diagnosis_date"
+          ],
+          "params": {
+            "precision": "year"
+          }
+        }
+      ],
+      "linkage": {
+        "id": "verified-exact-linkage",
+        "attackId": "verified_exact_linkage",
+        "status": "implemented",
+        "applicability": "row_release; known source membership, trusted owner scoring lineage and replayable public QI transforms",
+        "numerator": 75,
+        "denominator": 480,
+        "metricValue": 0.15625,
+        "metricUnit": "verified unique correct matches / source targets",
+        "severity": "high",
+        "columns": [
+          "age",
+          "zip",
+          "weight_kg"
+        ],
+        "narrative": "75 of 480 source targets have a verified unique correct exact-match candidate under the declared public QI replay.",
+        "algorithm": "Replay public QI transforms; exact candidate matching; private correspondence used only after matching to score correctness",
+        "sourceId": "KIT-EXACT-LINKAGE",
+        "source": "reference-kit/PRISM/backend/prism/privacy.py",
+        "assumptions": [
+          "Target membership in the source cohort is known; one source row is treated as one target.",
+          "Target-known QI are correct and the deterministic transformation codebook is public.",
+          "The attacker never receives owner lineage; owner correspondence is used only to score precomputed matches.",
+          "The source target cohort is fully enumerated; suppressed targets remain in its denominator."
+        ],
+        "caveats": [
+          "This is simulated source-target linkage, not independently validated external auxiliary-data linkage.",
+          "No population re-identification probability, unknown-membership false-positive calibration or release clearance is established.",
+          "Inapplicable replay is an uncovered attack, not zero risk; fuzzy or secret-compromise attacks may still apply.",
+          "The finite enumeration has no invented sampling confidence interval."
+        ],
+        "baseline": null,
+        "baselineDefinition": "No independent nonmember control is available; uniform tie-breaking within a matched candidate set is reported only as a model comparator.",
+        "matchedTargets": 480,
+        "ambiguousTargets": 405,
+        "unmatchedTargets": 0,
+        "uniqueCandidateTargets": 75,
+        "uniqueIncorrectMatches": 0,
+        "suppressedTargets": 0,
+        "expectedCorrectRandomTiebreakFraction": 0.3812499999999999,
+        "coverage": {
+          "targetsEnumerated": 480,
+          "releasedRows": 480,
+          "knownColumns": [
+            "age",
+            "zip",
+            "weight_kg"
+          ],
+          "externalAuxiliaryValidation": false,
+          "membershipKnown": true
+        }
+      },
+      "utility": {
+        "loss": 0.038840818973352086,
+        "queries": [
+          {
+            "id": "six-month-failure",
+            "label": "group_rate: failure_6m",
+            "type": "group_rate",
+            "original": 0.3625,
+            "protected": 0.3625,
+            "error": 0.0,
+            "tolerance": 0.02,
+            "weight": 1.0,
+            "pass": true,
+            "issues": [],
+            "warnings": [],
+            "normalizedError": 0.0,
+            "minCohort": 5,
+            "signFlip": false,
+            "status": "implemented",
+            "filterCoverage": {
+              "original": {
+                "definite": 480,
+                "possible": 480,
+                "uncertain": 0,
+                "total": 480,
+                "exact": true,
+                "definition": "Definite rows satisfy all filters for every represented value; possible rows may satisfy them. Conjunctive bounds can be conservative."
+              },
+              "protected": {
+                "definite": 480,
+                "possible": 480,
+                "uncertain": 0,
+                "total": 480,
+                "exact": true,
+                "definition": "Definite rows satisfy all filters for every represented value; possible rows may satisfy them. Conjunctive bounds can be conservative."
+              }
+            },
+            "originalDetails": [
+              {
+                "group": {},
+                "value": 0.3625,
+                "count": 480,
+                "missing": 0,
+                "ci95": [
+                  0.3207435728246209,
+                  0.40643978942438047
+                ]
+              }
+            ],
+            "protectedDetails": [
+              {
+                "group": {},
+                "value": 0.3625,
+                "count": 480,
+                "missing": 0,
+                "ci95": [
+                  0.3207435728246209,
+                  0.40643978942438047
+                ]
+              }
+            ]
+          },
+          {
+            "id": "liver-subgroup-failure",
+            "label": "group_rate: failure_6m",
+            "type": "group_rate",
+            "original": 0.450261780104712,
+            "protected": 0.450261780104712,
+            "error": 0.0,
+            "tolerance": 0.03,
+            "weight": 1.0,
+            "pass": true,
+            "issues": [],
+            "warnings": [],
+            "normalizedError": 0.0,
+            "minCohort": 5,
+            "signFlip": false,
+            "status": "implemented",
+            "filterCoverage": {
+              "original": {
+                "definite": 191,
+                "possible": 191,
+                "uncertain": 0,
+                "total": 480,
+                "exact": true,
+                "definition": "Definite rows satisfy all filters for every represented value; possible rows may satisfy them. Conjunctive bounds can be conservative."
+              },
+              "protected": {
+                "definite": 191,
+                "possible": 191,
+                "uncertain": 0,
+                "total": 480,
+                "exact": true,
+                "definition": "Definite rows satisfy all filters for every represented value; possible rows may satisfy them. Conjunctive bounds can be conservative."
+              }
+            },
+            "originalDetails": [
+              {
+                "group": {},
+                "value": 0.450261780104712,
+                "count": 191,
+                "missing": 0,
+                "ci95": [
+                  0.3813772435263099,
+                  0.5211075761060197
+                ]
+              }
+            ],
+            "protectedDetails": [
+              {
+                "group": {},
+                "value": 0.450261780104712,
+                "count": 191,
+                "missing": 0,
+                "ci95": [
+                  0.3813772435263099,
+                  0.5211075761060197
+                ]
+              }
+            ]
+          },
+          {
+            "id": "age-weight-correlation",
+            "label": "correlation: weight_kg by age",
+            "type": "correlation",
+            "original": 0.6951518368858259,
+            "protected": 0.6893257140398231,
+            "error": 0.0058261228460028125,
+            "tolerance": 0.05,
+            "weight": 1.0,
+            "pass": true,
+            "issues": [],
+            "warnings": [
+              "Numeric interval midpoints approximate correlation; within-bin structure is unknown"
+            ],
+            "normalizedError": 0.11652245692005625,
+            "minCohort": 5,
+            "signFlip": false,
+            "status": "implemented",
+            "filterCoverage": {
+              "original": {
+                "definite": 480,
+                "possible": 480,
+                "uncertain": 0,
+                "total": 480,
+                "exact": true,
+                "definition": "Definite rows satisfy all filters for every represented value; possible rows may satisfy them. Conjunctive bounds can be conservative."
+              },
+              "protected": {
+                "definite": 480,
+                "possible": 480,
+                "uncertain": 0,
+                "total": 480,
+                "exact": true,
+                "definition": "Definite rows satisfy all filters for every represented value; possible rows may satisfy them. Conjunctive bounds can be conservative."
+              }
+            },
+            "originalDetails": [
+              {
+                "group": {},
+                "value": 0.6951518368858259,
+                "count": 480
+              }
+            ],
+            "protectedDetails": [
+              {
+                "group": {},
+                "value": 0.6893257140398231,
+                "count": 480
+              }
+            ]
+          }
+        ],
+        "distributions": [
+          {
+            "column": "age",
+            "missing_original": 0,
+            "missing_protected": 0,
+            "dropped": false,
+            "total_original": 480,
+            "total_protected": 480,
+            "lexicalTv": 0.9999999999999999,
+            "lexicalTvDefinition": "Total variation of nonmissing literal encodings; domain changes can inflate it without measuring scientific harm",
+            "semanticComparison": {
+              "status": "implemented",
+              "domain": "half-open numeric intervals of width 5, origin 0",
+              "basis": "validated partition inferred from released interval labels; recipe origin unverified",
+              "tv": 0.0,
+              "original": [
+                {
+                  "label": "[65,70)",
+                  "count": 50,
+                  "fraction": 0.10416666666666667
+                },
+                {
+                  "label": "[75,80)",
+                  "count": 45,
+                  "fraction": 0.09375
+                },
+                {
+                  "label": "[35,40)",
+                  "count": 45,
+                  "fraction": 0.09375
+                },
+                {
+                  "label": "[55,60)",
+                  "count": 45,
+                  "fraction": 0.09375
+                },
+                {
+                  "label": "[60,65)",
+                  "count": 44,
+                  "fraction": 0.09166666666666666
+                },
+                {
+                  "label": "[45,50)",
+                  "count": 43,
+                  "fraction": 0.08958333333333333
+                },
+                {
+                  "label": "[80,85)",
+                  "count": 42,
+                  "fraction": 0.0875
+                },
+                {
+                  "label": "[70,75)",
+                  "count": 42,
+                  "fraction": 0.0875
+                },
+                {
+                  "label": "[50,55)",
+                  "count": 40,
+                  "fraction": 0.08333333333333333
+                },
+                {
+                  "label": "[30,35)",
+                  "count": 38,
+                  "fraction": 0.07916666666666666
+                },
+                {
+                  "label": "[40,45)",
+                  "count": 27,
+                  "fraction": 0.05625
+                },
+                {
+                  "label": "[85,90)",
+                  "count": 19,
+                  "fraction": 0.03958333333333333
+                }
+              ],
+              "protected": [
+                {
+                  "label": "[65,70)",
+                  "count": 50,
+                  "fraction": 0.10416666666666667
+                },
+                {
+                  "label": "[75,80)",
+                  "count": 45,
+                  "fraction": 0.09375
+                },
+                {
+                  "label": "[35,40)",
+                  "count": 45,
+                  "fraction": 0.09375
+                },
+                {
+                  "label": "[55,60)",
+                  "count": 45,
+                  "fraction": 0.09375
+                },
+                {
+                  "label": "[60,65)",
+                  "count": 44,
+                  "fraction": 0.09166666666666666
+                },
+                {
+                  "label": "[45,50)",
+                  "count": 43,
+                  "fraction": 0.08958333333333333
+                },
+                {
+                  "label": "[80,85)",
+                  "count": 42,
+                  "fraction": 0.0875
+                },
+                {
+                  "label": "[70,75)",
+                  "count": 42,
+                  "fraction": 0.0875
+                },
+                {
+                  "label": "[50,55)",
+                  "count": 40,
+                  "fraction": 0.08333333333333333
+                },
+                {
+                  "label": "[30,35)",
+                  "count": 38,
+                  "fraction": 0.07916666666666666
+                },
+                {
+                  "label": "[40,45)",
+                  "count": 27,
+                  "fraction": 0.05625
+                },
+                {
+                  "label": "[85,90)",
+                  "count": 19,
+                  "fraction": 0.03958333333333333
+                }
+              ],
+              "definition": "Total variation over nonmissing frequencies after both tables are mapped into the stated common domain",
+              "limitations": [
+                "Mapping aligns the named hierarchy; it does not establish preservation of finer-grained or future analyses",
+                "Missingness and retention are reported separately"
+              ]
+            },
+            "type": "numeric",
+            "original": [
+              {
+                "label": "30\u201335.8",
+                "lower": 30.0,
+                "upper": 35.75,
+                "count": 52,
+                "fraction": 0.10833333333333334
+              },
+              {
+                "label": "35.8\u201341.5",
+                "lower": 35.75,
+                "upper": 41.5,
+                "count": 40,
+                "fraction": 0.08333333333333333
+              },
+              {
+                "label": "41.5\u201347.2",
+                "lower": 41.5,
+                "upper": 47.25,
+                "count": 46,
+                "fraction": 0.09583333333333334
+              },
+              {
+                "label": "47.2\u201353",
+                "lower": 47.25,
+                "upper": 53.0,
+                "count": 39,
+                "fraction": 0.08125
+              },
+              {
+                "label": "53\u201358.8",
+                "lower": 53.0,
+                "upper": 58.75,
+                "count": 53,
+                "fraction": 0.11041666666666666
+              },
+              {
+                "label": "58.8\u201364.5",
+                "lower": 58.75,
+                "upper": 64.5,
+                "count": 52,
+                "fraction": 0.10833333333333334
+              },
+              {
+                "label": "64.5\u201370.2",
+                "lower": 64.5,
+                "upper": 70.25,
+                "count": 59,
+                "fraction": 0.12291666666666666
+              },
+              {
+                "label": "70.2\u201376",
+                "lower": 70.25,
+                "upper": 76.0,
+                "count": 43,
+                "fraction": 0.08958333333333333
+              },
+              {
+                "label": "76\u201381.8",
+                "lower": 76.0,
+                "upper": 81.75,
+                "count": 53,
+                "fraction": 0.11041666666666666
+              },
+              {
+                "label": "81.8\u201387.5",
+                "lower": 81.75,
+                "upper": 87.5,
+                "count": 43,
+                "fraction": 0.08958333333333333
+              }
+            ],
+            "protected": [
+              {
+                "label": "30\u201335.8",
+                "lower": 30.0,
+                "upper": 35.75,
+                "count": 38,
+                "fraction": 0.07916666666666666
+              },
+              {
+                "label": "35.8\u201341.5",
+                "lower": 35.75,
+                "upper": 41.5,
+                "count": 45,
+                "fraction": 0.09375
+              },
+              {
+                "label": "41.5\u201347.2",
+                "lower": 41.5,
+                "upper": 47.25,
+                "count": 27,
+                "fraction": 0.05625
+              },
+              {
+                "label": "47.2\u201353",
+                "lower": 47.25,
+                "upper": 53.0,
+                "count": 83,
+                "fraction": 0.17291666666666666
+              },
+              {
+                "label": "53\u201358.8",
+                "lower": 53.0,
+                "upper": 58.75,
+                "count": 45,
+                "fraction": 0.09375
+              },
+              {
+                "label": "58.8\u201364.5",
+                "lower": 58.75,
+                "upper": 64.5,
+                "count": 44,
+                "fraction": 0.09166666666666666
+              },
+              {
+                "label": "64.5\u201370.2",
+                "lower": 64.5,
+                "upper": 70.25,
+                "count": 50,
+                "fraction": 0.10416666666666667
+              },
+              {
+                "label": "70.2\u201376",
+                "lower": 70.25,
+                "upper": 76.0,
+                "count": 42,
+                "fraction": 0.0875
+              },
+              {
+                "label": "76\u201381.8",
+                "lower": 76.0,
+                "upper": 81.75,
+                "count": 45,
+                "fraction": 0.09375
+              },
+              {
+                "label": "81.8\u201387.5",
+                "lower": 81.75,
+                "upper": 87.5,
+                "count": 61,
+                "fraction": 0.12708333333333333
+              }
+            ],
+            "mean_original": 58.958333333333336,
+            "mean_protected": 59.552083333333336,
+            "midpoint_approximation": true,
+            "unparseable_original": 0,
+            "unparseable_protected": 0
+          },
+          {
+            "column": "zip",
+            "missing_original": 0,
+            "missing_protected": 0,
+            "dropped": false,
+            "total_original": 480,
+            "total_protected": 480,
+            "lexicalTv": 1.0,
+            "lexicalTvDefinition": "Total variation of nonmissing literal encodings; domain changes can inflate it without measuring scientific harm",
+            "semanticComparison": {
+              "status": "implemented",
+              "domain": "ZIP/postal prefix, 3 characters",
+              "basis": "validated uniform postal prefix inferred from labels; recipe unverified",
+              "tv": 0.0,
+              "original": [
+                {
+                  "label": "331",
+                  "count": 298,
+                  "fraction": 0.6208333333333333
+                },
+                {
+                  "label": "330",
+                  "count": 120,
+                  "fraction": 0.25
+                },
+                {
+                  "label": "021",
+                  "count": 62,
+                  "fraction": 0.12916666666666668
+                }
+              ],
+              "protected": [
+                {
+                  "label": "331",
+                  "count": 298,
+                  "fraction": 0.6208333333333333
+                },
+                {
+                  "label": "330",
+                  "count": 120,
+                  "fraction": 0.25
+                },
+                {
+                  "label": "021",
+                  "count": 62,
+                  "fraction": 0.12916666666666668
+                }
+              ],
+              "definition": "Total variation over nonmissing frequencies after both tables are mapped into the stated common domain",
+              "limitations": [
+                "Mapping aligns the named hierarchy; it does not establish preservation of finer-grained or future analyses",
+                "Missingness and retention are reported separately"
+              ]
+            },
+            "type": "categorical",
+            "original": [
+              {
+                "label": "331",
+                "count": 0,
+                "fraction": 0.0
+              },
+              {
+                "label": "330",
+                "count": 0,
+                "fraction": 0.0
+              },
+              {
+                "label": "33127",
+                "count": 66,
+                "fraction": 0.1375
+              },
+              {
+                "label": "021",
+                "count": 0,
+                "fraction": 0.0
+              },
+              {
+                "label": "02108",
+                "count": 62,
+                "fraction": 0.12916666666666668
+              },
+              {
+                "label": "33012",
+                "count": 61,
+                "fraction": 0.12708333333333333
+              },
+              {
+                "label": "33101",
+                "count": 61,
+                "fraction": 0.12708333333333333
+              },
+              {
+                "label": "33131",
+                "count": 59,
+                "fraction": 0.12291666666666666
+              },
+              {
+                "label": "33010",
+                "count": 59,
+                "fraction": 0.12291666666666666
+              },
+              {
+                "label": "33130",
+                "count": 58,
+                "fraction": 0.12083333333333333
+              },
+              {
+                "label": "33132",
+                "count": 54,
+                "fraction": 0.1125
+              }
+            ],
+            "protected": [
+              {
+                "label": "331",
+                "count": 298,
+                "fraction": 0.6208333333333333
+              },
+              {
+                "label": "330",
+                "count": 120,
+                "fraction": 0.25
+              },
+              {
+                "label": "33127",
+                "count": 0,
+                "fraction": 0.0
+              },
+              {
+                "label": "021",
+                "count": 62,
+                "fraction": 0.12916666666666668
+              },
+              {
+                "label": "02108",
+                "count": 0,
+                "fraction": 0.0
+              },
+              {
+                "label": "33012",
+                "count": 0,
+                "fraction": 0.0
+              },
+              {
+                "label": "33101",
+                "count": 0,
+                "fraction": 0.0
+              },
+              {
+                "label": "33131",
+                "count": 0,
+                "fraction": 0.0
+              },
+              {
+                "label": "33010",
+                "count": 0,
+                "fraction": 0.0
+              },
+              {
+                "label": "33130",
+                "count": 0,
+                "fraction": 0.0
+              },
+              {
+                "label": "33132",
+                "count": 0,
+                "fraction": 0.0
+              }
+            ],
+            "categories_total": 11,
+            "categories_shown": 11
+          },
+          {
+            "column": "weight_kg",
+            "missing_original": 0,
+            "missing_protected": 0,
+            "dropped": false,
+            "total_original": 480,
+            "total_protected": 480,
+            "lexicalTv": 0.9999999999999991,
+            "lexicalTvDefinition": "Total variation of nonmissing literal encodings; domain changes can inflate it without measuring scientific harm",
+            "semanticComparison": {
+              "status": "implemented",
+              "domain": "half-open numeric intervals of width 5, origin 0",
+              "basis": "validated partition inferred from released interval labels; recipe origin unverified",
+              "tv": 0.0,
+              "original": [
+                {
+                  "label": "[70,75)",
+                  "count": 84,
+                  "fraction": 0.175
+                },
+                {
+                  "label": "[75,80)",
+                  "count": 81,
+                  "fraction": 0.16875
+                },
+                {
+                  "label": "[80,85)",
+                  "count": 64,
+                  "fraction": 0.13333333333333333
+                },
+                {
+                  "label": "[65,70)",
+                  "count": 63,
+                  "fraction": 0.13125
+                },
+                {
+                  "label": "[60,65)",
+                  "count": 62,
+                  "fraction": 0.12916666666666668
+                },
+                {
+                  "label": "[55,60)",
+                  "count": 43,
+                  "fraction": 0.08958333333333333
+                },
+                {
+                  "label": "[85,90)",
+                  "count": 31,
+                  "fraction": 0.06458333333333334
+                },
+                {
+                  "label": "[50,55)",
+                  "count": 17,
+                  "fraction": 0.035416666666666666
+                },
+                {
+                  "label": "[90,95)",
+                  "count": 15,
+                  "fraction": 0.03125
+                },
+                {
+                  "label": "[45,50)",
+                  "count": 12,
+                  "fraction": 0.025
+                },
+                {
+                  "label": "[95,100)",
+                  "count": 3,
+                  "fraction": 0.00625
+                },
+                {
+                  "label": "[100,105)",
+                  "count": 2,
+                  "fraction": 0.004166666666666667
+                },
+                {
+                  "label": "[105,110)",
+                  "count": 1,
+                  "fraction": 0.0020833333333333333
+                },
+                {
+                  "label": "[40,45)",
+                  "count": 1,
+                  "fraction": 0.0020833333333333333
+                },
+                {
+                  "label": "[35,40)",
+                  "count": 1,
+                  "fraction": 0.0020833333333333333
+                }
+              ],
+              "protected": [
+                {
+                  "label": "[70,75)",
+                  "count": 84,
+                  "fraction": 0.175
+                },
+                {
+                  "label": "[75,80)",
+                  "count": 81,
+                  "fraction": 0.16875
+                },
+                {
+                  "label": "[80,85)",
+                  "count": 64,
+                  "fraction": 0.13333333333333333
+                },
+                {
+                  "label": "[65,70)",
+                  "count": 63,
+                  "fraction": 0.13125
+                },
+                {
+                  "label": "[60,65)",
+                  "count": 62,
+                  "fraction": 0.12916666666666668
+                },
+                {
+                  "label": "[55,60)",
+                  "count": 43,
+                  "fraction": 0.08958333333333333
+                },
+                {
+                  "label": "[85,90)",
+                  "count": 31,
+                  "fraction": 0.06458333333333334
+                },
+                {
+                  "label": "[50,55)",
+                  "count": 17,
+                  "fraction": 0.035416666666666666
+                },
+                {
+                  "label": "[90,95)",
+                  "count": 15,
+                  "fraction": 0.03125
+                },
+                {
+                  "label": "[45,50)",
+                  "count": 12,
+                  "fraction": 0.025
+                },
+                {
+                  "label": "[95,100)",
+                  "count": 3,
+                  "fraction": 0.00625
+                },
+                {
+                  "label": "[100,105)",
+                  "count": 2,
+                  "fraction": 0.004166666666666667
+                },
+                {
+                  "label": "[105,110)",
+                  "count": 1,
+                  "fraction": 0.0020833333333333333
+                },
+                {
+                  "label": "[40,45)",
+                  "count": 1,
+                  "fraction": 0.0020833333333333333
+                },
+                {
+                  "label": "[35,40)",
+                  "count": 1,
+                  "fraction": 0.0020833333333333333
+                }
+              ],
+              "definition": "Total variation over nonmissing frequencies after both tables are mapped into the stated common domain",
+              "limitations": [
+                "Mapping aligns the named hierarchy; it does not establish preservation of finer-grained or future analyses",
+                "Missingness and retention are reported separately"
+              ]
+            },
+            "type": "numeric",
+            "original": [
+              {
+                "label": "37.5\u201344.5",
+                "lower": 37.5,
+                "upper": 44.5,
+                "count": 2,
+                "fraction": 0.004166666666666667
+              },
+              {
+                "label": "44.5\u201351.5",
+                "lower": 44.5,
+                "upper": 51.5,
+                "count": 15,
+                "fraction": 0.03125
+              },
+              {
+                "label": "51.5\u201358.5",
+                "lower": 51.5,
+                "upper": 58.5,
+                "count": 43,
+                "fraction": 0.08958333333333333
+              },
+              {
+                "label": "58.5\u201365.5",
+                "lower": 58.5,
+                "upper": 65.5,
+                "count": 85,
+                "fraction": 0.17708333333333334
+              },
+              {
+                "label": "65.5\u201372.5",
+                "lower": 65.5,
+                "upper": 72.5,
+                "count": 87,
+                "fraction": 0.18125
+              },
+              {
+                "label": "72.5\u201379.5",
+                "lower": 72.5,
+                "upper": 79.5,
+                "count": 125,
+                "fraction": 0.2604166666666667
+              },
+              {
+                "label": "79.5\u201386.5",
+                "lower": 79.5,
+                "upper": 86.5,
+                "count": 81,
+                "fraction": 0.16875
+              },
+              {
+                "label": "86.5\u201393.5",
+                "lower": 86.5,
+                "upper": 93.5,
+                "count": 31,
+                "fraction": 0.06458333333333334
+              },
+              {
+                "label": "93.5\u2013100",
+                "lower": 93.5,
+                "upper": 100.5,
+                "count": 10,
+                "fraction": 0.020833333333333332
+              },
+              {
+                "label": "100\u2013108",
+                "lower": 100.5,
+                "upper": 107.5,
+                "count": 1,
+                "fraction": 0.0020833333333333333
+              }
+            ],
+            "protected": [
+              {
+                "label": "37.5\u201344.5",
+                "lower": 37.5,
+                "upper": 44.5,
+                "count": 2,
+                "fraction": 0.004166666666666667
+              },
+              {
+                "label": "44.5\u201351.5",
+                "lower": 44.5,
+                "upper": 51.5,
+                "count": 12,
+                "fraction": 0.025
+              },
+              {
+                "label": "51.5\u201358.5",
+                "lower": 51.5,
+                "upper": 58.5,
+                "count": 60,
+                "fraction": 0.125
+              },
+              {
+                "label": "58.5\u201365.5",
+                "lower": 58.5,
+                "upper": 65.5,
+                "count": 62,
+                "fraction": 0.12916666666666668
+              },
+              {
+                "label": "65.5\u201372.5",
+                "lower": 65.5,
+                "upper": 72.5,
+                "count": 63,
+                "fraction": 0.13125
+              },
+              {
+                "label": "72.5\u201379.5",
+                "lower": 72.5,
+                "upper": 79.5,
+                "count": 165,
+                "fraction": 0.34375
+              },
+              {
+                "label": "79.5\u201386.5",
+                "lower": 79.5,
+                "upper": 86.5,
+                "count": 64,
+                "fraction": 0.13333333333333333
+              },
+              {
+                "label": "86.5\u201393.5",
+                "lower": 86.5,
+                "upper": 93.5,
+                "count": 46,
+                "fraction": 0.09583333333333334
+              },
+              {
+                "label": "93.5\u2013100",
+                "lower": 93.5,
+                "upper": 100.5,
+                "count": 3,
+                "fraction": 0.00625
+              },
+              {
+                "label": "100\u2013108",
+                "lower": 100.5,
+                "upper": 107.5,
+                "count": 3,
+                "fraction": 0.00625
+              }
+            ],
+            "mean_original": 71.84666666666666,
+            "mean_protected": 71.86458333333333,
+            "midpoint_approximation": true,
+            "unparseable_original": 0,
+            "unparseable_protected": 0
+          },
+          {
+            "column": "liver_metastasis",
+            "missing_original": 0,
+            "missing_protected": 0,
+            "dropped": false,
+            "total_original": 480,
+            "total_protected": 480,
+            "lexicalTv": 0.0,
+            "lexicalTvDefinition": "Total variation of nonmissing literal encodings; domain changes can inflate it without measuring scientific harm",
+            "semanticComparison": {
+              "status": "unavailable",
+              "domain": null,
+              "tv": null,
+              "limitation": "No numeric interval hierarchy; numeric histograms use shared edges and native measurements"
+            },
+            "type": "numeric",
+            "original": [
+              {
+                "label": "0\u20130.1",
+                "lower": 0.0,
+                "upper": 0.1,
+                "count": 289,
+                "fraction": 0.6020833333333333
+              },
+              {
+                "label": "0.1\u20130.2",
+                "lower": 0.1,
+                "upper": 0.2,
+                "count": 0,
+                "fraction": 0.0
+              },
+              {
+                "label": "0.2\u20130.3",
+                "lower": 0.2,
+                "upper": 0.30000000000000004,
+                "count": 0,
+                "fraction": 0.0
+              },
+              {
+                "label": "0.3\u20130.4",
+                "lower": 0.30000000000000004,
+                "upper": 0.4,
+                "count": 0,
+                "fraction": 0.0
+              },
+              {
+                "label": "0.4\u20130.5",
+                "lower": 0.4,
+                "upper": 0.5,
+                "count": 0,
+                "fraction": 0.0
+              },
+              {
+                "label": "0.5\u20130.6",
+                "lower": 0.5,
+                "upper": 0.6000000000000001,
+                "count": 0,
+                "fraction": 0.0
+              },
+              {
+                "label": "0.6\u20130.7",
+                "lower": 0.6000000000000001,
+                "upper": 0.7000000000000001,
+                "count": 0,
+                "fraction": 0.0
+              },
+              {
+                "label": "0.7\u20130.8",
+                "lower": 0.7000000000000001,
+                "upper": 0.8,
+                "count": 0,
+                "fraction": 0.0
+              },
+              {
+                "label": "0.8\u20130.9",
+                "lower": 0.8,
+                "upper": 0.9,
+                "count": 0,
+                "fraction": 0.0
+              },
+              {
+                "label": "0.9\u20131",
+                "lower": 0.9,
+                "upper": 1.0,
+                "count": 191,
+                "fraction": 0.39791666666666664
+              }
+            ],
+            "protected": [
+              {
+                "label": "0\u20130.1",
+                "lower": 0.0,
+                "upper": 0.1,
+                "count": 289,
+                "fraction": 0.6020833333333333
+              },
+              {
+                "label": "0.1\u20130.2",
+                "lower": 0.1,
+                "upper": 0.2,
+                "count": 0,
+                "fraction": 0.0
+              },
+              {
+                "label": "0.2\u20130.3",
+                "lower": 0.2,
+                "upper": 0.30000000000000004,
+                "count": 0,
+                "fraction": 0.0
+              },
+              {
+                "label": "0.3\u20130.4",
+                "lower": 0.30000000000000004,
+                "upper": 0.4,
+                "count": 0,
+                "fraction": 0.0
+              },
+              {
+                "label": "0.4\u20130.5",
+                "lower": 0.4,
+                "upper": 0.5,
+                "count": 0,
+                "fraction": 0.0
+              },
+              {
+                "label": "0.5\u20130.6",
+                "lower": 0.5,
+                "upper": 0.6000000000000001,
+                "count": 0,
+                "fraction": 0.0
+              },
+              {
+                "label": "0.6\u20130.7",
+                "lower": 0.6000000000000001,
+                "upper": 0.7000000000000001,
+                "count": 0,
+                "fraction": 0.0
+              },
+              {
+                "label": "0.7\u20130.8",
+                "lower": 0.7000000000000001,
+                "upper": 0.8,
+                "count": 0,
+                "fraction": 0.0
+              },
+              {
+                "label": "0.8\u20130.9",
+                "lower": 0.8,
+                "upper": 0.9,
+                "count": 0,
+                "fraction": 0.0
+              },
+              {
+                "label": "0.9\u20131",
+                "lower": 0.9,
+                "upper": 1.0,
+                "count": 191,
+                "fraction": 0.39791666666666664
+              }
+            ],
+            "mean_original": 0.39791666666666664,
+            "mean_protected": 0.39791666666666664,
+            "midpoint_approximation": false,
+            "unparseable_original": 0,
+            "unparseable_protected": 0
+          },
+          {
+            "column": "KRAS",
+            "missing_original": 0,
+            "missing_protected": 0,
+            "dropped": false,
+            "total_original": 480,
+            "total_protected": 480,
+            "lexicalTv": 0.0,
+            "lexicalTvDefinition": "Total variation of nonmissing literal encodings; domain changes can inflate it without measuring scientific harm",
+            "semanticComparison": {
+              "status": "unavailable",
+              "domain": null,
+              "tv": null,
+              "limitation": "No numeric interval hierarchy; numeric histograms use shared edges and native measurements"
+            },
+            "type": "numeric",
+            "original": [
+              {
+                "label": "0\u20130.1",
+                "lower": 0.0,
+                "upper": 0.1,
+                "count": 328,
+                "fraction": 0.6833333333333333
+              },
+              {
+                "label": "0.1\u20130.2",
+                "lower": 0.1,
+                "upper": 0.2,
+                "count": 0,
+                "fraction": 0.0
+              },
+              {
+                "label": "0.2\u20130.3",
+                "lower": 0.2,
+                "upper": 0.30000000000000004,
+                "count": 0,
+                "fraction": 0.0
+              },
+              {
+                "label": "0.3\u20130.4",
+                "lower": 0.30000000000000004,
+                "upper": 0.4,
+                "count": 0,
+                "fraction": 0.0
+              },
+              {
+                "label": "0.4\u20130.5",
+                "lower": 0.4,
+                "upper": 0.5,
+                "count": 0,
+                "fraction": 0.0
+              },
+              {
+                "label": "0.5\u20130.6",
+                "lower": 0.5,
+                "upper": 0.6000000000000001,
+                "count": 0,
+                "fraction": 0.0
+              },
+              {
+                "label": "0.6\u20130.7",
+                "lower": 0.6000000000000001,
+                "upper": 0.7000000000000001,
+                "count": 0,
+                "fraction": 0.0
+              },
+              {
+                "label": "0.7\u20130.8",
+                "lower": 0.7000000000000001,
+                "upper": 0.8,
+                "count": 0,
+                "fraction": 0.0
+              },
+              {
+                "label": "0.8\u20130.9",
+                "lower": 0.8,
+                "upper": 0.9,
+                "count": 0,
+                "fraction": 0.0
+              },
+              {
+                "label": "0.9\u20131",
+                "lower": 0.9,
+                "upper": 1.0,
+                "count": 152,
+                "fraction": 0.31666666666666665
+              }
+            ],
+            "protected": [
+              {
+                "label": "0\u20130.1",
+                "lower": 0.0,
+                "upper": 0.1,
+                "count": 328,
+                "fraction": 0.6833333333333333
+              },
+              {
+                "label": "0.1\u20130.2",
+                "lower": 0.1,
+                "upper": 0.2,
+                "count": 0,
+                "fraction": 0.0
+              },
+              {
+                "label": "0.2\u20130.3",
+                "lower": 0.2,
+                "upper": 0.30000000000000004,
+                "count": 0,
+                "fraction": 0.0
+              },
+              {
+                "label": "0.3\u20130.4",
+                "lower": 0.30000000000000004,
+                "upper": 0.4,
+                "count": 0,
+                "fraction": 0.0
+              },
+              {
+                "label": "0.4\u20130.5",
+                "lower": 0.4,
+                "upper": 0.5,
+                "count": 0,
+                "fraction": 0.0
+              },
+              {
+                "label": "0.5\u20130.6",
+                "lower": 0.5,
+                "upper": 0.6000000000000001,
+                "count": 0,
+                "fraction": 0.0
+              },
+              {
+                "label": "0.6\u20130.7",
+                "lower": 0.6000000000000001,
+                "upper": 0.7000000000000001,
+                "count": 0,
+                "fraction": 0.0
+              },
+              {
+                "label": "0.7\u20130.8",
+                "lower": 0.7000000000000001,
+                "upper": 0.8,
+                "count": 0,
+                "fraction": 0.0
+              },
+              {
+                "label": "0.8\u20130.9",
+                "lower": 0.8,
+                "upper": 0.9,
+                "count": 0,
+                "fraction": 0.0
+              },
+              {
+                "label": "0.9\u20131",
+                "lower": 0.9,
+                "upper": 1.0,
+                "count": 152,
+                "fraction": 0.31666666666666665
+              }
+            ],
+            "mean_original": 0.31666666666666665,
+            "mean_protected": 0.31666666666666665,
+            "midpoint_approximation": false,
+            "unparseable_original": 0,
+            "unparseable_protected": 0
+          },
+          {
+            "column": "failure_6m",
+            "missing_original": 0,
+            "missing_protected": 0,
+            "dropped": false,
+            "total_original": 480,
+            "total_protected": 480,
+            "lexicalTv": 0.0,
+            "lexicalTvDefinition": "Total variation of nonmissing literal encodings; domain changes can inflate it without measuring scientific harm",
+            "semanticComparison": {
+              "status": "unavailable",
+              "domain": null,
+              "tv": null,
+              "limitation": "No numeric interval hierarchy; numeric histograms use shared edges and native measurements"
+            },
+            "type": "numeric",
+            "original": [
+              {
+                "label": "0\u20130.1",
+                "lower": 0.0,
+                "upper": 0.1,
+                "count": 306,
+                "fraction": 0.6375
+              },
+              {
+                "label": "0.1\u20130.2",
+                "lower": 0.1,
+                "upper": 0.2,
+                "count": 0,
+                "fraction": 0.0
+              },
+              {
+                "label": "0.2\u20130.3",
+                "lower": 0.2,
+                "upper": 0.30000000000000004,
+                "count": 0,
+                "fraction": 0.0
+              },
+              {
+                "label": "0.3\u20130.4",
+                "lower": 0.30000000000000004,
+                "upper": 0.4,
+                "count": 0,
+                "fraction": 0.0
+              },
+              {
+                "label": "0.4\u20130.5",
+                "lower": 0.4,
+                "upper": 0.5,
+                "count": 0,
+                "fraction": 0.0
+              },
+              {
+                "label": "0.5\u20130.6",
+                "lower": 0.5,
+                "upper": 0.6000000000000001,
+                "count": 0,
+                "fraction": 0.0
+              },
+              {
+                "label": "0.6\u20130.7",
+                "lower": 0.6000000000000001,
+                "upper": 0.7000000000000001,
+                "count": 0,
+                "fraction": 0.0
+              },
+              {
+                "label": "0.7\u20130.8",
+                "lower": 0.7000000000000001,
+                "upper": 0.8,
+                "count": 0,
+                "fraction": 0.0
+              },
+              {
+                "label": "0.8\u20130.9",
+                "lower": 0.8,
+                "upper": 0.9,
+                "count": 0,
+                "fraction": 0.0
+              },
+              {
+                "label": "0.9\u20131",
+                "lower": 0.9,
+                "upper": 1.0,
+                "count": 174,
+                "fraction": 0.3625
+              }
+            ],
+            "protected": [
+              {
+                "label": "0\u20130.1",
+                "lower": 0.0,
+                "upper": 0.1,
+                "count": 306,
+                "fraction": 0.6375
+              },
+              {
+                "label": "0.1\u20130.2",
+                "lower": 0.1,
+                "upper": 0.2,
+                "count": 0,
+                "fraction": 0.0
+              },
+              {
+                "label": "0.2\u20130.3",
+                "lower": 0.2,
+                "upper": 0.30000000000000004,
+                "count": 0,
+                "fraction": 0.0
+              },
+              {
+                "label": "0.3\u20130.4",
+                "lower": 0.30000000000000004,
+                "upper": 0.4,
+                "count": 0,
+                "fraction": 0.0
+              },
+              {
+                "label": "0.4\u20130.5",
+                "lower": 0.4,
+                "upper": 0.5,
+                "count": 0,
+                "fraction": 0.0
+              },
+              {
+                "label": "0.5\u20130.6",
+                "lower": 0.5,
+                "upper": 0.6000000000000001,
+                "count": 0,
+                "fraction": 0.0
+              },
+              {
+                "label": "0.6\u20130.7",
+                "lower": 0.6000000000000001,
+                "upper": 0.7000000000000001,
+                "count": 0,
+                "fraction": 0.0
+              },
+              {
+                "label": "0.7\u20130.8",
+                "lower": 0.7000000000000001,
+                "upper": 0.8,
+                "count": 0,
+                "fraction": 0.0
+              },
+              {
+                "label": "0.8\u20130.9",
+                "lower": 0.8,
+                "upper": 0.9,
+                "count": 0,
+                "fraction": 0.0
+              },
+              {
+                "label": "0.9\u20131",
+                "lower": 0.9,
+                "upper": 1.0,
+                "count": 174,
+                "fraction": 0.3625
+              }
+            ],
+            "mean_original": 0.3625,
+            "mean_protected": 0.3625,
+            "midpoint_approximation": false,
+            "unparseable_original": 0,
+            "unparseable_protected": 0
+          },
+          {
+            "column": "diagnosis_date",
+            "missing_original": 0,
+            "missing_protected": 0,
+            "dropped": false,
+            "total_original": 480,
+            "total_protected": 480,
+            "lexicalTv": 1.0000000000000009,
+            "lexicalTvDefinition": "Total variation of nonmissing literal encodings; domain changes can inflate it without measuring scientific harm",
+            "semanticComparison": {
+              "status": "implemented",
+              "domain": "year",
+              "basis": "validated date prefix; chronology and trajectories remain unassessed",
+              "tv": 0.0,
+              "original": [
+                {
+                  "label": "2024",
+                  "count": 480,
+                  "fraction": 1.0
+                }
+              ],
+              "protected": [
+                {
+                  "label": "2024",
+                  "count": 480,
+                  "fraction": 1.0
+                }
+              ],
+              "definition": "Total variation over nonmissing frequencies after both tables are mapped into the stated common domain",
+              "limitations": [
+                "Mapping aligns the named hierarchy; it does not establish preservation of finer-grained or future analyses",
+                "Missingness and retention are reported separately"
+              ]
+            },
+            "type": "categorical",
+            "original": [
+              {
+                "label": "2024",
+                "count": 0,
+                "fraction": 0.0
+              },
+              {
+                "label": "2024-02-02",
+                "count": 5,
+                "fraction": 0.010416666666666666
+              },
+              {
+                "label": "2024-03-03",
+                "count": 5,
+                "fraction": 0.010416666666666666
+              },
+              {
+                "label": "2024-04-04",
+                "count": 5,
+                "fraction": 0.010416666666666666
+              },
+              {
+                "label": "2024-01-01",
+                "count": 5,
+                "fraction": 0.010416666666666666
+              },
+              {
+                "label": "2024-06-06",
+                "count": 5,
+                "fraction": 0.010416666666666666
+              },
+              {
+                "label": "2024-07-07",
+                "count": 5,
+                "fraction": 0.010416666666666666
+              },
+              {
+                "label": "2024-08-08",
+                "count": 5,
+                "fraction": 0.010416666666666666
+              },
+              {
+                "label": "2024-09-09",
+                "count": 5,
+                "fraction": 0.010416666666666666
+              },
+              {
+                "label": "2024-10-10",
+                "count": 5,
+                "fraction": 0.010416666666666666
+              },
+              {
+                "label": "2024-11-11",
+                "count": 5,
+                "fraction": 0.010416666666666666
+              },
+              {
+                "label": "2024-12-12",
+                "count": 5,
+                "fraction": 0.010416666666666666
+              },
+              {
+                "label": "2024-05-05",
+                "count": 5,
+                "fraction": 0.010416666666666666
+              },
+              {
+                "label": "2024-02-14",
+                "count": 5,
+                "fraction": 0.010416666666666666
+              },
+              {
+                "label": "2024-03-15",
+                "count": 5,
+                "fraction": 0.010416666666666666
+              },
+              {
+                "label": "2024-04-16",
+                "count": 5,
+                "fraction": 0.010416666666666666
+              },
+              {
+                "label": "2024-05-17",
+                "count": 5,
+                "fraction": 0.010416666666666666
+              },
+              {
+                "label": "2024-06-18",
+                "count": 5,
+                "fraction": 0.010416666666666666
+              },
+              {
+                "label": "2024-07-19",
+                "count": 5,
+                "fraction": 0.010416666666666666
+              },
+              {
+                "label": "2024-08-20",
+                "count": 5,
+                "fraction": 0.010416666666666666
+              },
+              {
+                "label": "Other categories (combined tail)",
+                "count": 385,
+                "fraction": 0.8020833333333334,
+                "tail": true
+              }
+            ],
+            "protected": [
+              {
+                "label": "2024",
+                "count": 480,
+                "fraction": 1.0
+              },
+              {
+                "label": "2024-02-02",
+                "count": 0,
+                "fraction": 0.0
+              },
+              {
+                "label": "2024-03-03",
+                "count": 0,
+                "fraction": 0.0
+              },
+              {
+                "label": "2024-04-04",
+                "count": 0,
+                "fraction": 0.0
+              },
+              {
+                "label": "2024-01-01",
+                "count": 0,
+                "fraction": 0.0
+              },
+              {
+                "label": "2024-06-06",
+                "count": 0,
+                "fraction": 0.0
+              },
+              {
+                "label": "2024-07-07",
+                "count": 0,
+                "fraction": 0.0
+              },
+              {
+                "label": "2024-08-08",
+                "count": 0,
+                "fraction": 0.0
+              },
+              {
+                "label": "2024-09-09",
+                "count": 0,
+                "fraction": 0.0
+              },
+              {
+                "label": "2024-10-10",
+                "count": 0,
+                "fraction": 0.0
+              },
+              {
+                "label": "2024-11-11",
+                "count": 0,
+                "fraction": 0.0
+              },
+              {
+                "label": "2024-12-12",
+                "count": 0,
+                "fraction": 0.0
+              },
+              {
+                "label": "2024-05-05",
+                "count": 0,
+                "fraction": 0.0
+              },
+              {
+                "label": "2024-02-14",
+                "count": 0,
+                "fraction": 0.0
+              },
+              {
+                "label": "2024-03-15",
+                "count": 0,
+                "fraction": 0.0
+              },
+              {
+                "label": "2024-04-16",
+                "count": 0,
+                "fraction": 0.0
+              },
+              {
+                "label": "2024-05-17",
+                "count": 0,
+                "fraction": 0.0
+              },
+              {
+                "label": "2024-06-18",
+                "count": 0,
+                "fraction": 0.0
+              },
+              {
+                "label": "2024-07-19",
+                "count": 0,
+                "fraction": 0.0
+              },
+              {
+                "label": "2024-08-20",
+                "count": 0,
+                "fraction": 0.0
+              },
+              {
+                "label": "Other categories (combined tail)",
+                "count": 0,
+                "fraction": 0.0,
+                "tail": true
+              }
+            ],
+            "categories_total": 109,
+            "categories_shown": 20
+          }
+        ],
+        "correlations": [
+          {
+            "x": "age",
+            "y": "weight_kg",
+            "original": 0.6951518368858259,
+            "protected": 0.6893257140398231,
+            "sign_flip": false,
+            "n_original": 480,
+            "n_protected": 480,
+            "midpoint_approximation": true
+          },
+          {
+            "x": "age",
+            "y": "liver_metastasis",
+            "original": -0.00990945747904202,
+            "protected": -0.004417332346527827,
+            "sign_flip": false,
+            "n_original": 480,
+            "n_protected": 480,
+            "midpoint_approximation": true
+          },
+          {
+            "x": "age",
+            "y": "KRAS",
+            "original": 0.061762188005335374,
+            "protected": 0.06392369417423892,
+            "sign_flip": false,
+            "n_original": 480,
+            "n_protected": 480,
+            "midpoint_approximation": true
+          },
+          {
+            "x": "age",
+            "y": "failure_6m",
+            "original": 0.11888879040837884,
+            "protected": 0.12020216829399545,
+            "sign_flip": false,
+            "n_original": 480,
+            "n_protected": 480,
+            "midpoint_approximation": true
+          },
+          {
+            "x": "weight_kg",
+            "y": "liver_metastasis",
+            "original": -0.01724204310102026,
+            "protected": -0.008999341015417031,
+            "sign_flip": false,
+            "n_original": 480,
+            "n_protected": 480,
+            "midpoint_approximation": true
+          },
+          {
+            "x": "weight_kg",
+            "y": "KRAS",
+            "original": 0.041705888091071036,
+            "protected": 0.038695149174461554,
+            "sign_flip": false,
+            "n_original": 480,
+            "n_protected": 480,
+            "midpoint_approximation": true
+          },
+          {
+            "x": "weight_kg",
+            "y": "failure_6m",
+            "original": 0.09673424809151936,
+            "protected": 0.09520061631267508,
+            "sign_flip": false,
+            "n_original": 480,
+            "n_protected": 480,
+            "midpoint_approximation": true
+          },
+          {
+            "x": "liver_metastasis",
+            "y": "KRAS",
+            "original": -0.013572369445419147,
+            "protected": -0.013572369445419147,
+            "sign_flip": false,
+            "n_original": 480,
+            "n_protected": 480,
+            "midpoint_approximation": false
+          },
+          {
+            "x": "liver_metastasis",
+            "y": "failure_6m",
+            "original": 0.14841544065021264,
+            "protected": 0.14841544065021264,
+            "sign_flip": false,
+            "n_original": 480,
+            "n_protected": 480,
+            "midpoint_approximation": false
+          },
+          {
+            "x": "KRAS",
+            "y": "failure_6m",
+            "original": 0.13881405873183988,
+            "protected": 0.13881405873183988,
+            "sign_flip": false,
+            "n_original": 480,
+            "n_protected": 480,
+            "midpoint_approximation": false
+          }
+        ],
+        "warnings": [
+          "Numeric bands are decoded by interval midpoints; exact within-bin research values are unavailable",
+          "Wilson rate intervals are approximate binomial intervals, not evidence of clinical validity or privacy"
+        ],
+        "loss_definition": "weighted mean min(1, max-cohort absolute error / declared tolerance); unavailable required query makes loss unavailable; cohort-failed query loss=1",
+        "subgroups": [],
+        "worstSubgroup": {
+          "assessed": 0,
+          "insufficientEvidence": 0,
+          "worstRetention": null,
+          "worstQuery": null,
+          "worstMissingness": null,
+          "unavailableQueries": 0,
+          "coverage": {
+            "cap": 64,
+            "evaluated": 0,
+            "skipped": [],
+            "definition": "Cohorts declared in workload groupBy, with caller-supplied subgroup_by optional. No undisclosed population-wide worst-case claim."
+          }
+        },
+        "workloadCoverageComplete": true,
+        "alignment": "verified",
+        "rows_original": 480,
+        "rows_protected": 480
+      }
+    },
+    {
+      "name": "zip_removed",
+      "steps": [
+        {
+          "method": "drop",
+          "columns": [
+            "subject_id",
+            "name"
+          ],
+          "params": {}
+        },
+        {
+          "method": "band",
+          "columns": [
+            "age"
+          ],
+          "params": {
+            "width": 5
+          }
+        },
+        {
+          "method": "band",
+          "columns": [
+            "weight_kg"
+          ],
+          "params": {
+            "width": 5
+          }
+        },
+        {
+          "method": "date_generalize",
+          "columns": [
+            "diagnosis_date"
+          ],
+          "params": {
+            "precision": "year"
+          }
+        },
+        {
+          "method": "drop",
+          "columns": [
+            "zip"
+          ],
+          "params": {}
+        }
+      ],
+      "linkage": {
+        "id": "verified-exact-linkage",
+        "attackId": "verified_exact_linkage",
+        "status": "implemented",
+        "applicability": "row_release; known source membership, trusted owner scoring lineage and replayable public QI transforms",
+        "numerator": 20,
+        "denominator": 480,
+        "metricValue": 0.041666666666666664,
+        "metricUnit": "verified unique correct matches / source targets",
+        "severity": "high",
+        "columns": [
+          "age",
+          "weight_kg"
+        ],
+        "narrative": "20 of 480 source targets have a verified unique correct exact-match candidate under the declared public QI replay.",
+        "algorithm": "Replay public QI transforms; exact candidate matching; private correspondence used only after matching to score correctness",
+        "sourceId": "KIT-EXACT-LINKAGE",
+        "source": "reference-kit/PRISM/backend/prism/privacy.py",
+        "assumptions": [
+          "Target membership in the source cohort is known; one source row is treated as one target.",
+          "Target-known QI are correct and the deterministic transformation codebook is public.",
+          "The attacker never receives owner lineage; owner correspondence is used only to score precomputed matches.",
+          "The source target cohort is fully enumerated; suppressed targets remain in its denominator."
+        ],
+        "caveats": [
+          "This is simulated source-target linkage, not independently validated external auxiliary-data linkage.",
+          "No population re-identification probability, unknown-membership false-positive calibration or release clearance is established.",
+          "Inapplicable replay is an uncovered attack, not zero risk; fuzzy or secret-compromise attacks may still apply.",
+          "The finite enumeration has no invented sampling confidence interval."
+        ],
+        "baseline": null,
+        "baselineDefinition": "No independent nonmember control is available; uniform tie-breaking within a matched candidate set is reported only as a model comparator.",
+        "matchedTargets": 480,
+        "ambiguousTargets": 460,
+        "unmatchedTargets": 0,
+        "uniqueCandidateTargets": 20,
+        "uniqueIncorrectMatches": 0,
+        "suppressedTargets": 0,
+        "expectedCorrectRandomTiebreakFraction": 0.18958333333333366,
+        "coverage": {
+          "targetsEnumerated": 480,
+          "releasedRows": 480,
+          "knownColumns": [
+            "age",
+            "weight_kg"
+          ],
+          "externalAuxiliaryValidation": false,
+          "membershipKnown": true
+        }
+      },
+      "utility": {
+        "loss": 0.038840818973352086,
+        "queries": [
+          {
+            "id": "six-month-failure",
+            "label": "group_rate: failure_6m",
+            "type": "group_rate",
+            "original": 0.3625,
+            "protected": 0.3625,
+            "error": 0.0,
+            "tolerance": 0.02,
+            "weight": 1.0,
+            "pass": true,
+            "issues": [],
+            "warnings": [],
+            "normalizedError": 0.0,
+            "minCohort": 5,
+            "signFlip": false,
+            "status": "implemented",
+            "filterCoverage": {
+              "original": {
+                "definite": 480,
+                "possible": 480,
+                "uncertain": 0,
+                "total": 480,
+                "exact": true,
+                "definition": "Definite rows satisfy all filters for every represented value; possible rows may satisfy them. Conjunctive bounds can be conservative."
+              },
+              "protected": {
+                "definite": 480,
+                "possible": 480,
+                "uncertain": 0,
+                "total": 480,
+                "exact": true,
+                "definition": "Definite rows satisfy all filters for every represented value; possible rows may satisfy them. Conjunctive bounds can be conservative."
+              }
+            },
+            "originalDetails": [
+              {
+                "group": {},
+                "value": 0.3625,
+                "count": 480,
+                "missing": 0,
+                "ci95": [
+                  0.3207435728246209,
+                  0.40643978942438047
+                ]
+              }
+            ],
+            "protectedDetails": [
+              {
+                "group": {},
+                "value": 0.3625,
+                "count": 480,
+                "missing": 0,
+                "ci95": [
+                  0.3207435728246209,
+                  0.40643978942438047
+                ]
+              }
+            ]
+          },
+          {
+            "id": "liver-subgroup-failure",
+            "label": "group_rate: failure_6m",
+            "type": "group_rate",
+            "original": 0.450261780104712,
+            "protected": 0.450261780104712,
+            "error": 0.0,
+            "tolerance": 0.03,
+            "weight": 1.0,
+            "pass": true,
+            "issues": [],
+            "warnings": [],
+            "normalizedError": 0.0,
+            "minCohort": 5,
+            "signFlip": false,
+            "status": "implemented",
+            "filterCoverage": {
+              "original": {
+                "definite": 191,
+                "possible": 191,
+                "uncertain": 0,
+                "total": 480,
+                "exact": true,
+                "definition": "Definite rows satisfy all filters for every represented value; possible rows may satisfy them. Conjunctive bounds can be conservative."
+              },
+              "protected": {
+                "definite": 191,
+                "possible": 191,
+                "uncertain": 0,
+                "total": 480,
+                "exact": true,
+                "definition": "Definite rows satisfy all filters for every represented value; possible rows may satisfy them. Conjunctive bounds can be conservative."
+              }
+            },
+            "originalDetails": [
+              {
+                "group": {},
+                "value": 0.450261780104712,
+                "count": 191,
+                "missing": 0,
+                "ci95": [
+                  0.3813772435263099,
+                  0.5211075761060197
+                ]
+              }
+            ],
+            "protectedDetails": [
+              {
+                "group": {},
+                "value": 0.450261780104712,
+                "count": 191,
+                "missing": 0,
+                "ci95": [
+                  0.3813772435263099,
+                  0.5211075761060197
+                ]
+              }
+            ]
+          },
+          {
+            "id": "age-weight-correlation",
+            "label": "correlation: weight_kg by age",
+            "type": "correlation",
+            "original": 0.6951518368858259,
+            "protected": 0.6893257140398231,
+            "error": 0.0058261228460028125,
+            "tolerance": 0.05,
+            "weight": 1.0,
+            "pass": true,
+            "issues": [],
+            "warnings": [
+              "Numeric interval midpoints approximate correlation; within-bin structure is unknown"
+            ],
+            "normalizedError": 0.11652245692005625,
+            "minCohort": 5,
+            "signFlip": false,
+            "status": "implemented",
+            "filterCoverage": {
+              "original": {
+                "definite": 480,
+                "possible": 480,
+                "uncertain": 0,
+                "total": 480,
+                "exact": true,
+                "definition": "Definite rows satisfy all filters for every represented value; possible rows may satisfy them. Conjunctive bounds can be conservative."
+              },
+              "protected": {
+                "definite": 480,
+                "possible": 480,
+                "uncertain": 0,
+                "total": 480,
+                "exact": true,
+                "definition": "Definite rows satisfy all filters for every represented value; possible rows may satisfy them. Conjunctive bounds can be conservative."
+              }
+            },
+            "originalDetails": [
+              {
+                "group": {},
+                "value": 0.6951518368858259,
+                "count": 480
+              }
+            ],
+            "protectedDetails": [
+              {
+                "group": {},
+                "value": 0.6893257140398231,
+                "count": 480
+              }
+            ]
+          }
+        ],
+        "distributions": [
+          {
+            "column": "age",
+            "missing_original": 0,
+            "missing_protected": 0,
+            "dropped": false,
+            "total_original": 480,
+            "total_protected": 480,
+            "lexicalTv": 0.9999999999999999,
+            "lexicalTvDefinition": "Total variation of nonmissing literal encodings; domain changes can inflate it without measuring scientific harm",
+            "semanticComparison": {
+              "status": "implemented",
+              "domain": "half-open numeric intervals of width 5, origin 0",
+              "basis": "validated partition inferred from released interval labels; recipe origin unverified",
+              "tv": 0.0,
+              "original": [
+                {
+                  "label": "[65,70)",
+                  "count": 50,
+                  "fraction": 0.10416666666666667
+                },
+                {
+                  "label": "[75,80)",
+                  "count": 45,
+                  "fraction": 0.09375
+                },
+                {
+                  "label": "[35,40)",
+                  "count": 45,
+                  "fraction": 0.09375
+                },
+                {
+                  "label": "[55,60)",
+                  "count": 45,
+                  "fraction": 0.09375
+                },
+                {
+                  "label": "[60,65)",
+                  "count": 44,
+                  "fraction": 0.09166666666666666
+                },
+                {
+                  "label": "[45,50)",
+                  "count": 43,
+                  "fraction": 0.08958333333333333
+                },
+                {
+                  "label": "[80,85)",
+                  "count": 42,
+                  "fraction": 0.0875
+                },
+                {
+                  "label": "[70,75)",
+                  "count": 42,
+                  "fraction": 0.0875
+                },
+                {
+                  "label": "[50,55)",
+                  "count": 40,
+                  "fraction": 0.08333333333333333
+                },
+                {
+                  "label": "[30,35)",
+                  "count": 38,
+                  "fraction": 0.07916666666666666
+                },
+                {
+                  "label": "[40,45)",
+                  "count": 27,
+                  "fraction": 0.05625
+                },
+                {
+                  "label": "[85,90)",
+                  "count": 19,
+                  "fraction": 0.03958333333333333
+                }
+              ],
+              "protected": [
+                {
+                  "label": "[65,70)",
+                  "count": 50,
+                  "fraction": 0.10416666666666667
+                },
+                {
+                  "label": "[75,80)",
+                  "count": 45,
+                  "fraction": 0.09375
+                },
+                {
+                  "label": "[35,40)",
+                  "count": 45,
+                  "fraction": 0.09375
+                },
+                {
+                  "label": "[55,60)",
+                  "count": 45,
+                  "fraction": 0.09375
+                },
+                {
+                  "label": "[60,65)",
+                  "count": 44,
+                  "fraction": 0.09166666666666666
+                },
+                {
+                  "label": "[45,50)",
+                  "count": 43,
+                  "fraction": 0.08958333333333333
+                },
+                {
+                  "label": "[80,85)",
+                  "count": 42,
+                  "fraction": 0.0875
+                },
+                {
+                  "label": "[70,75)",
+                  "count": 42,
+                  "fraction": 0.0875
+                },
+                {
+                  "label": "[50,55)",
+                  "count": 40,
+                  "fraction": 0.08333333333333333
+                },
+                {
+                  "label": "[30,35)",
+                  "count": 38,
+                  "fraction": 0.07916666666666666
+                },
+                {
+                  "label": "[40,45)",
+                  "count": 27,
+                  "fraction": 0.05625
+                },
+                {
+                  "label": "[85,90)",
+                  "count": 19,
+                  "fraction": 0.03958333333333333
+                }
+              ],
+              "definition": "Total variation over nonmissing frequencies after both tables are mapped into the stated common domain",
+              "limitations": [
+                "Mapping aligns the named hierarchy; it does not establish preservation of finer-grained or future analyses",
+                "Missingness and retention are reported separately"
+              ]
+            },
+            "type": "numeric",
+            "original": [
+              {
+                "label": "30\u201335.8",
+                "lower": 30.0,
+                "upper": 35.75,
+                "count": 52,
+                "fraction": 0.10833333333333334
+              },
+              {
+                "label": "35.8\u201341.5",
+                "lower": 35.75,
+                "upper": 41.5,
+                "count": 40,
+                "fraction": 0.08333333333333333
+              },
+              {
+                "label": "41.5\u201347.2",
+                "lower": 41.5,
+                "upper": 47.25,
+                "count": 46,
+                "fraction": 0.09583333333333334
+              },
+              {
+                "label": "47.2\u201353",
+                "lower": 47.25,
+                "upper": 53.0,
+                "count": 39,
+                "fraction": 0.08125
+              },
+              {
+                "label": "53\u201358.8",
+                "lower": 53.0,
+                "upper": 58.75,
+                "count": 53,
+                "fraction": 0.11041666666666666
+              },
+              {
+                "label": "58.8\u201364.5",
+                "lower": 58.75,
+                "upper": 64.5,
+                "count": 52,
+                "fraction": 0.10833333333333334
+              },
+              {
+                "label": "64.5\u201370.2",
+                "lower": 64.5,
+                "upper": 70.25,
+                "count": 59,
+                "fraction": 0.12291666666666666
+              },
+              {
+                "label": "70.2\u201376",
+                "lower": 70.25,
+                "upper": 76.0,
+                "count": 43,
+                "fraction": 0.08958333333333333
+              },
+              {
+                "label": "76\u201381.8",
+                "lower": 76.0,
+                "upper": 81.75,
+                "count": 53,
+                "fraction": 0.11041666666666666
+              },
+              {
+                "label": "81.8\u201387.5",
+                "lower": 81.75,
+                "upper": 87.5,
+                "count": 43,
+                "fraction": 0.08958333333333333
+              }
+            ],
+            "protected": [
+              {
+                "label": "30\u201335.8",
+                "lower": 30.0,
+                "upper": 35.75,
+                "count": 38,
+                "fraction": 0.07916666666666666
+              },
+              {
+                "label": "35.8\u201341.5",
+                "lower": 35.75,
+                "upper": 41.5,
+                "count": 45,
+                "fraction": 0.09375
+              },
+              {
+                "label": "41.5\u201347.2",
+                "lower": 41.5,
+                "upper": 47.25,
+                "count": 27,
+                "fraction": 0.05625
+              },
+              {
+                "label": "47.2\u201353",
+                "lower": 47.25,
+                "upper": 53.0,
+                "count": 83,
+                "fraction": 0.17291666666666666
+              },
+              {
+                "label": "53\u201358.8",
+                "lower": 53.0,
+                "upper": 58.75,
+                "count": 45,
+                "fraction": 0.09375
+              },
+              {
+                "label": "58.8\u201364.5",
+                "lower": 58.75,
+                "upper": 64.5,
+                "count": 44,
+                "fraction": 0.09166666666666666
+              },
+              {
+                "label": "64.5\u201370.2",
+                "lower": 64.5,
+                "upper": 70.25,
+                "count": 50,
+                "fraction": 0.10416666666666667
+              },
+              {
+                "label": "70.2\u201376",
+                "lower": 70.25,
+                "upper": 76.0,
+                "count": 42,
+                "fraction": 0.0875
+              },
+              {
+                "label": "76\u201381.8",
+                "lower": 76.0,
+                "upper": 81.75,
+                "count": 45,
+                "fraction": 0.09375
+              },
+              {
+                "label": "81.8\u201387.5",
+                "lower": 81.75,
+                "upper": 87.5,
+                "count": 61,
+                "fraction": 0.12708333333333333
+              }
+            ],
+            "mean_original": 58.958333333333336,
+            "mean_protected": 59.552083333333336,
+            "midpoint_approximation": true,
+            "unparseable_original": 0,
+            "unparseable_protected": 0
+          },
+          {
+            "column": "zip",
+            "missing_original": 0,
+            "missing_protected": 0,
+            "dropped": true,
+            "total_original": 480,
+            "total_protected": 0,
+            "lexicalTv": null,
+            "lexicalTvDefinition": "Total variation of nonmissing literal encodings; domain changes can inflate it without measuring scientific harm",
+            "semanticComparison": {
+              "status": "unavailable",
+              "domain": null,
+              "tv": null,
+              "limitation": "One side has no nonmissing observations"
+            },
+            "type": "categorical",
+            "original": [
+              {
+                "label": "33127",
+                "count": 66,
+                "fraction": 0.1375
+              },
+              {
+                "label": "02108",
+                "count": 62,
+                "fraction": 0.12916666666666668
+              },
+              {
+                "label": "33101",
+                "count": 61,
+                "fraction": 0.12708333333333333
+              },
+              {
+                "label": "33012",
+                "count": 61,
+                "fraction": 0.12708333333333333
+              },
+              {
+                "label": "33010",
+                "count": 59,
+                "fraction": 0.12291666666666666
+              },
+              {
+                "label": "33131",
+                "count": 59,
+                "fraction": 0.12291666666666666
+              },
+              {
+                "label": "33130",
+                "count": 58,
+                "fraction": 0.12083333333333333
+              },
+              {
+                "label": "33132",
+                "count": 54,
+                "fraction": 0.1125
+              }
+            ],
+            "protected": [
+              {
+                "label": "33127",
+                "count": 0,
+                "fraction": 0.0
+              },
+              {
+                "label": "02108",
+                "count": 0,
+                "fraction": 0.0
+              },
+              {
+                "label": "33101",
+                "count": 0,
+                "fraction": 0.0
+              },
+              {
+                "label": "33012",
+                "count": 0,
+                "fraction": 0.0
+              },
+              {
+                "label": "33010",
+                "count": 0,
+                "fraction": 0.0
+              },
+              {
+                "label": "33131",
+                "count": 0,
+                "fraction": 0.0
+              },
+              {
+                "label": "33130",
+                "count": 0,
+                "fraction": 0.0
+              },
+              {
+                "label": "33132",
+                "count": 0,
+                "fraction": 0.0
+              }
+            ],
+            "categories_total": 8,
+            "categories_shown": 8
+          },
+          {
+            "column": "weight_kg",
+            "missing_original": 0,
+            "missing_protected": 0,
+            "dropped": false,
+            "total_original": 480,
+            "total_protected": 480,
+            "lexicalTv": 0.9999999999999991,
+            "lexicalTvDefinition": "Total variation of nonmissing literal encodings; domain changes can inflate it without measuring scientific harm",
+            "semanticComparison": {
+              "status": "implemented",
+              "domain": "half-open numeric intervals of width 5, origin 0",
+              "basis": "validated partition inferred from released interval labels; recipe origin unverified",
+              "tv": 0.0,
+              "original": [
+                {
+                  "label": "[70,75)",
+                  "count": 84,
+                  "fraction": 0.175
+                },
+                {
+                  "label": "[75,80)",
+                  "count": 81,
+                  "fraction": 0.16875
+                },
+                {
+                  "label": "[80,85)",
+                  "count": 64,
+                  "fraction": 0.13333333333333333
+                },
+                {
+                  "label": "[65,70)",
+                  "count": 63,
+                  "fraction": 0.13125
+                },
+                {
+                  "label": "[60,65)",
+                  "count": 62,
+                  "fraction": 0.12916666666666668
+                },
+                {
+                  "label": "[55,60)",
+                  "count": 43,
+                  "fraction": 0.08958333333333333
+                },
+                {
+                  "label": "[85,90)",
+                  "count": 31,
+                  "fraction": 0.06458333333333334
+                },
+                {
+                  "label": "[50,55)",
+                  "count": 17,
+                  "fraction": 0.035416666666666666
+                },
+                {
+                  "label": "[90,95)",
+                  "count": 15,
+                  "fraction": 0.03125
+                },
+                {
+                  "label": "[45,50)",
+                  "count": 12,
+                  "fraction": 0.025
+                },
+                {
+                  "label": "[95,100)",
+                  "count": 3,
+                  "fraction": 0.00625
+                },
+                {
+                  "label": "[100,105)",
+                  "count": 2,
+                  "fraction": 0.004166666666666667
+                },
+                {
+                  "label": "[105,110)",
+                  "count": 1,
+                  "fraction": 0.0020833333333333333
+                },
+                {
+                  "label": "[40,45)",
+                  "count": 1,
+                  "fraction": 0.0020833333333333333
+                },
+                {
+                  "label": "[35,40)",
+                  "count": 1,
+                  "fraction": 0.0020833333333333333
+                }
+              ],
+              "protected": [
+                {
+                  "label": "[70,75)",
+                  "count": 84,
+                  "fraction": 0.175
+                },
+                {
+                  "label": "[75,80)",
+                  "count": 81,
+                  "fraction": 0.16875
+                },
+                {
+                  "label": "[80,85)",
+                  "count": 64,
+                  "fraction": 0.13333333333333333
+                },
+                {
+                  "label": "[65,70)",
+                  "count": 63,
+                  "fraction": 0.13125
+                },
+                {
+                  "label": "[60,65)",
+                  "count": 62,
+                  "fraction": 0.12916666666666668
+                },
+                {
+                  "label": "[55,60)",
+                  "count": 43,
+                  "fraction": 0.08958333333333333
+                },
+                {
+                  "label": "[85,90)",
+                  "count": 31,
+                  "fraction": 0.06458333333333334
+                },
+                {
+                  "label": "[50,55)",
+                  "count": 17,
+                  "fraction": 0.035416666666666666
+                },
+                {
+                  "label": "[90,95)",
+                  "count": 15,
+                  "fraction": 0.03125
+                },
+                {
+                  "label": "[45,50)",
+                  "count": 12,
+                  "fraction": 0.025
+                },
+                {
+                  "label": "[95,100)",
+                  "count": 3,
+                  "fraction": 0.00625
+                },
+                {
+                  "label": "[100,105)",
+                  "count": 2,
+                  "fraction": 0.004166666666666667
+                },
+                {
+                  "label": "[105,110)",
+                  "count": 1,
+                  "fraction": 0.0020833333333333333
+                },
+                {
+                  "label": "[40,45)",
+                  "count": 1,
+                  "fraction": 0.0020833333333333333
+                },
+                {
+                  "label": "[35,40)",
+                  "count": 1,
+                  "fraction": 0.0020833333333333333
+                }
+              ],
+              "definition": "Total variation over nonmissing frequencies after both tables are mapped into the stated common domain",
+              "limitations": [
+                "Mapping aligns the named hierarchy; it does not establish preservation of finer-grained or future analyses",
+                "Missingness and retention are reported separately"
+              ]
+            },
+            "type": "numeric",
+            "original": [
+              {
+                "label": "37.5\u201344.5",
+                "lower": 37.5,
+                "upper": 44.5,
+                "count": 2,
+                "fraction": 0.004166666666666667
+              },
+              {
+                "label": "44.5\u201351.5",
+                "lower": 44.5,
+                "upper": 51.5,
+                "count": 15,
+                "fraction": 0.03125
+              },
+              {
+                "label": "51.5\u201358.5",
+                "lower": 51.5,
+                "upper": 58.5,
+                "count": 43,
+                "fraction": 0.08958333333333333
+              },
+              {
+                "label": "58.5\u201365.5",
+                "lower": 58.5,
+                "upper": 65.5,
+                "count": 85,
+                "fraction": 0.17708333333333334
+              },
+              {
+                "label": "65.5\u201372.5",
+                "lower": 65.5,
+                "upper": 72.5,
+                "count": 87,
+                "fraction": 0.18125
+              },
+              {
+                "label": "72.5\u201379.5",
+                "lower": 72.5,
+                "upper": 79.5,
+                "count": 125,
+                "fraction": 0.2604166666666667
+              },
+              {
+                "label": "79.5\u201386.5",
+                "lower": 79.5,
+                "upper": 86.5,
+                "count": 81,
+                "fraction": 0.16875
+              },
+              {
+                "label": "86.5\u201393.5",
+                "lower": 86.5,
+                "upper": 93.5,
+                "count": 31,
+                "fraction": 0.06458333333333334
+              },
+              {
+                "label": "93.5\u2013100",
+                "lower": 93.5,
+                "upper": 100.5,
+                "count": 10,
+                "fraction": 0.020833333333333332
+              },
+              {
+                "label": "100\u2013108",
+                "lower": 100.5,
+                "upper": 107.5,
+                "count": 1,
+                "fraction": 0.0020833333333333333
+              }
+            ],
+            "protected": [
+              {
+                "label": "37.5\u201344.5",
+                "lower": 37.5,
+                "upper": 44.5,
+                "count": 2,
+                "fraction": 0.004166666666666667
+              },
+              {
+                "label": "44.5\u201351.5",
+                "lower": 44.5,
+                "upper": 51.5,
+                "count": 12,
+                "fraction": 0.025
+              },
+              {
+                "label": "51.5\u201358.5",
+                "lower": 51.5,
+                "upper": 58.5,
+                "count": 60,
+                "fraction": 0.125
+              },
+              {
+                "label": "58.5\u201365.5",
+                "lower": 58.5,
+                "upper": 65.5,
+                "count": 62,
+                "fraction": 0.12916666666666668
+              },
+              {
+                "label": "65.5\u201372.5",
+                "lower": 65.5,
+                "upper": 72.5,
+                "count": 63,
+                "fraction": 0.13125
+              },
+              {
+                "label": "72.5\u201379.5",
+                "lower": 72.5,
+                "upper": 79.5,
+                "count": 165,
+                "fraction": 0.34375
+              },
+              {
+                "label": "79.5\u201386.5",
+                "lower": 79.5,
+                "upper": 86.5,
+                "count": 64,
+                "fraction": 0.13333333333333333
+              },
+              {
+                "label": "86.5\u201393.5",
+                "lower": 86.5,
+                "upper": 93.5,
+                "count": 46,
+                "fraction": 0.09583333333333334
+              },
+              {
+                "label": "93.5\u2013100",
+                "lower": 93.5,
+                "upper": 100.5,
+                "count": 3,
+                "fraction": 0.00625
+              },
+              {
+                "label": "100\u2013108",
+                "lower": 100.5,
+                "upper": 107.5,
+                "count": 3,
+                "fraction": 0.00625
+              }
+            ],
+            "mean_original": 71.84666666666666,
+            "mean_protected": 71.86458333333333,
+            "midpoint_approximation": true,
+            "unparseable_original": 0,
+            "unparseable_protected": 0
+          },
+          {
+            "column": "liver_metastasis",
+            "missing_original": 0,
+            "missing_protected": 0,
+            "dropped": false,
+            "total_original": 480,
+            "total_protected": 480,
+            "lexicalTv": 0.0,
+            "lexicalTvDefinition": "Total variation of nonmissing literal encodings; domain changes can inflate it without measuring scientific harm",
+            "semanticComparison": {
+              "status": "unavailable",
+              "domain": null,
+              "tv": null,
+              "limitation": "No numeric interval hierarchy; numeric histograms use shared edges and native measurements"
+            },
+            "type": "numeric",
+            "original": [
+              {
+                "label": "0\u20130.1",
+                "lower": 0.0,
+                "upper": 0.1,
+                "count": 289,
+                "fraction": 0.6020833333333333
+              },
+              {
+                "label": "0.1\u20130.2",
+                "lower": 0.1,
+                "upper": 0.2,
+                "count": 0,
+                "fraction": 0.0
+              },
+              {
+                "label": "0.2\u20130.3",
+                "lower": 0.2,
+                "upper": 0.30000000000000004,
+                "count": 0,
+                "fraction": 0.0
+              },
+              {
+                "label": "0.3\u20130.4",
+                "lower": 0.30000000000000004,
+                "upper": 0.4,
+                "count": 0,
+                "fraction": 0.0
+              },
+              {
+                "label": "0.4\u20130.5",
+                "lower": 0.4,
+                "upper": 0.5,
+                "count": 0,
+                "fraction": 0.0
+              },
+              {
+                "label": "0.5\u20130.6",
+                "lower": 0.5,
+                "upper": 0.6000000000000001,
+                "count": 0,
+                "fraction": 0.0
+              },
+              {
+                "label": "0.6\u20130.7",
+                "lower": 0.6000000000000001,
+                "upper": 0.7000000000000001,
+                "count": 0,
+                "fraction": 0.0
+              },
+              {
+                "label": "0.7\u20130.8",
+                "lower": 0.7000000000000001,
+                "upper": 0.8,
+                "count": 0,
+                "fraction": 0.0
+              },
+              {
+                "label": "0.8\u20130.9",
+                "lower": 0.8,
+                "upper": 0.9,
+                "count": 0,
+                "fraction": 0.0
+              },
+              {
+                "label": "0.9\u20131",
+                "lower": 0.9,
+                "upper": 1.0,
+                "count": 191,
+                "fraction": 0.39791666666666664
+              }
+            ],
+            "protected": [
+              {
+                "label": "0\u20130.1",
+                "lower": 0.0,
+                "upper": 0.1,
+                "count": 289,
+                "fraction": 0.6020833333333333
+              },
+              {
+                "label": "0.1\u20130.2",
+                "lower": 0.1,
+                "upper": 0.2,
+                "count": 0,
+                "fraction": 0.0
+              },
+              {
+                "label": "0.2\u20130.3",
+                "lower": 0.2,
+                "upper": 0.30000000000000004,
+                "count": 0,
+                "fraction": 0.0
+              },
+              {
+                "label": "0.3\u20130.4",
+                "lower": 0.30000000000000004,
+                "upper": 0.4,
+                "count": 0,
+                "fraction": 0.0
+              },
+              {
+                "label": "0.4\u20130.5",
+                "lower": 0.4,
+                "upper": 0.5,
+                "count": 0,
+                "fraction": 0.0
+              },
+              {
+                "label": "0.5\u20130.6",
+                "lower": 0.5,
+                "upper": 0.6000000000000001,
+                "count": 0,
+                "fraction": 0.0
+              },
+              {
+                "label": "0.6\u20130.7",
+                "lower": 0.6000000000000001,
+                "upper": 0.7000000000000001,
+                "count": 0,
+                "fraction": 0.0
+              },
+              {
+                "label": "0.7\u20130.8",
+                "lower": 0.7000000000000001,
+                "upper": 0.8,
+                "count": 0,
+                "fraction": 0.0
+              },
+              {
+                "label": "0.8\u20130.9",
+                "lower": 0.8,
+                "upper": 0.9,
+                "count": 0,
+                "fraction": 0.0
+              },
+              {
+                "label": "0.9\u20131",
+                "lower": 0.9,
+                "upper": 1.0,
+                "count": 191,
+                "fraction": 0.39791666666666664
+              }
+            ],
+            "mean_original": 0.39791666666666664,
+            "mean_protected": 0.39791666666666664,
+            "midpoint_approximation": false,
+            "unparseable_original": 0,
+            "unparseable_protected": 0
+          },
+          {
+            "column": "KRAS",
+            "missing_original": 0,
+            "missing_protected": 0,
+            "dropped": false,
+            "total_original": 480,
+            "total_protected": 480,
+            "lexicalTv": 0.0,
+            "lexicalTvDefinition": "Total variation of nonmissing literal encodings; domain changes can inflate it without measuring scientific harm",
+            "semanticComparison": {
+              "status": "unavailable",
+              "domain": null,
+              "tv": null,
+              "limitation": "No numeric interval hierarchy; numeric histograms use shared edges and native measurements"
+            },
+            "type": "numeric",
+            "original": [
+              {
+                "label": "0\u20130.1",
+                "lower": 0.0,
+                "upper": 0.1,
+                "count": 328,
+                "fraction": 0.6833333333333333
+              },
+              {
+                "label": "0.1\u20130.2",
+                "lower": 0.1,
+                "upper": 0.2,
+                "count": 0,
+                "fraction": 0.0
+              },
+              {
+                "label": "0.2\u20130.3",
+                "lower": 0.2,
+                "upper": 0.30000000000000004,
+                "count": 0,
+                "fraction": 0.0
+              },
+              {
+                "label": "0.3\u20130.4",
+                "lower": 0.30000000000000004,
+                "upper": 0.4,
+                "count": 0,
+                "fraction": 0.0
+              },
+              {
+                "label": "0.4\u20130.5",
+                "lower": 0.4,
+                "upper": 0.5,
+                "count": 0,
+                "fraction": 0.0
+              },
+              {
+                "label": "0.5\u20130.6",
+                "lower": 0.5,
+                "upper": 0.6000000000000001,
+                "count": 0,
+                "fraction": 0.0
+              },
+              {
+                "label": "0.6\u20130.7",
+                "lower": 0.6000000000000001,
+                "upper": 0.7000000000000001,
+                "count": 0,
+                "fraction": 0.0
+              },
+              {
+                "label": "0.7\u20130.8",
+                "lower": 0.7000000000000001,
+                "upper": 0.8,
+                "count": 0,
+                "fraction": 0.0
+              },
+              {
+                "label": "0.8\u20130.9",
+                "lower": 0.8,
+                "upper": 0.9,
+                "count": 0,
+                "fraction": 0.0
+              },
+              {
+                "label": "0.9\u20131",
+                "lower": 0.9,
+                "upper": 1.0,
+                "count": 152,
+                "fraction": 0.31666666666666665
+              }
+            ],
+            "protected": [
+              {
+                "label": "0\u20130.1",
+                "lower": 0.0,
+                "upper": 0.1,
+                "count": 328,
+                "fraction": 0.6833333333333333
+              },
+              {
+                "label": "0.1\u20130.2",
+                "lower": 0.1,
+                "upper": 0.2,
+                "count": 0,
+                "fraction": 0.0
+              },
+              {
+                "label": "0.2\u20130.3",
+                "lower": 0.2,
+                "upper": 0.30000000000000004,
+                "count": 0,
+                "fraction": 0.0
+              },
+              {
+                "label": "0.3\u20130.4",
+                "lower": 0.30000000000000004,
+                "upper": 0.4,
+                "count": 0,
+                "fraction": 0.0
+              },
+              {
+                "label": "0.4\u20130.5",
+                "lower": 0.4,
+                "upper": 0.5,
+                "count": 0,
+                "fraction": 0.0
+              },
+              {
+                "label": "0.5\u20130.6",
+                "lower": 0.5,
+                "upper": 0.6000000000000001,
+                "count": 0,
+                "fraction": 0.0
+              },
+              {
+                "label": "0.6\u20130.7",
+                "lower": 0.6000000000000001,
+                "upper": 0.7000000000000001,
+                "count": 0,
+                "fraction": 0.0
+              },
+              {
+                "label": "0.7\u20130.8",
+                "lower": 0.7000000000000001,
+                "upper": 0.8,
+                "count": 0,
+                "fraction": 0.0
+              },
+              {
+                "label": "0.8\u20130.9",
+                "lower": 0.8,
+                "upper": 0.9,
+                "count": 0,
+                "fraction": 0.0
+              },
+              {
+                "label": "0.9\u20131",
+                "lower": 0.9,
+                "upper": 1.0,
+                "count": 152,
+                "fraction": 0.31666666666666665
+              }
+            ],
+            "mean_original": 0.31666666666666665,
+            "mean_protected": 0.31666666666666665,
+            "midpoint_approximation": false,
+            "unparseable_original": 0,
+            "unparseable_protected": 0
+          },
+          {
+            "column": "failure_6m",
+            "missing_original": 0,
+            "missing_protected": 0,
+            "dropped": false,
+            "total_original": 480,
+            "total_protected": 480,
+            "lexicalTv": 0.0,
+            "lexicalTvDefinition": "Total variation of nonmissing literal encodings; domain changes can inflate it without measuring scientific harm",
+            "semanticComparison": {
+              "status": "unavailable",
+              "domain": null,
+              "tv": null,
+              "limitation": "No numeric interval hierarchy; numeric histograms use shared edges and native measurements"
+            },
+            "type": "numeric",
+            "original": [
+              {
+                "label": "0\u20130.1",
+                "lower": 0.0,
+                "upper": 0.1,
+                "count": 306,
+                "fraction": 0.6375
+              },
+              {
+                "label": "0.1\u20130.2",
+                "lower": 0.1,
+                "upper": 0.2,
+                "count": 0,
+                "fraction": 0.0
+              },
+              {
+                "label": "0.2\u20130.3",
+                "lower": 0.2,
+                "upper": 0.30000000000000004,
+                "count": 0,
+                "fraction": 0.0
+              },
+              {
+                "label": "0.3\u20130.4",
+                "lower": 0.30000000000000004,
+                "upper": 0.4,
+                "count": 0,
+                "fraction": 0.0
+              },
+              {
+                "label": "0.4\u20130.5",
+                "lower": 0.4,
+                "upper": 0.5,
+                "count": 0,
+                "fraction": 0.0
+              },
+              {
+                "label": "0.5\u20130.6",
+                "lower": 0.5,
+                "upper": 0.6000000000000001,
+                "count": 0,
+                "fraction": 0.0
+              },
+              {
+                "label": "0.6\u20130.7",
+                "lower": 0.6000000000000001,
+                "upper": 0.7000000000000001,
+                "count": 0,
+                "fraction": 0.0
+              },
+              {
+                "label": "0.7\u20130.8",
+                "lower": 0.7000000000000001,
+                "upper": 0.8,
+                "count": 0,
+                "fraction": 0.0
+              },
+              {
+                "label": "0.8\u20130.9",
+                "lower": 0.8,
+                "upper": 0.9,
+                "count": 0,
+                "fraction": 0.0
+              },
+              {
+                "label": "0.9\u20131",
+                "lower": 0.9,
+                "upper": 1.0,
+                "count": 174,
+                "fraction": 0.3625
+              }
+            ],
+            "protected": [
+              {
+                "label": "0\u20130.1",
+                "lower": 0.0,
+                "upper": 0.1,
+                "count": 306,
+                "fraction": 0.6375
+              },
+              {
+                "label": "0.1\u20130.2",
+                "lower": 0.1,
+                "upper": 0.2,
+                "count": 0,
+                "fraction": 0.0
+              },
+              {
+                "label": "0.2\u20130.3",
+                "lower": 0.2,
+                "upper": 0.30000000000000004,
+                "count": 0,
+                "fraction": 0.0
+              },
+              {
+                "label": "0.3\u20130.4",
+                "lower": 0.30000000000000004,
+                "upper": 0.4,
+                "count": 0,
+                "fraction": 0.0
+              },
+              {
+                "label": "0.4\u20130.5",
+                "lower": 0.4,
+                "upper": 0.5,
+                "count": 0,
+                "fraction": 0.0
+              },
+              {
+                "label": "0.5\u20130.6",
+                "lower": 0.5,
+                "upper": 0.6000000000000001,
+                "count": 0,
+                "fraction": 0.0
+              },
+              {
+                "label": "0.6\u20130.7",
+                "lower": 0.6000000000000001,
+                "upper": 0.7000000000000001,
+                "count": 0,
+                "fraction": 0.0
+              },
+              {
+                "label": "0.7\u20130.8",
+                "lower": 0.7000000000000001,
+                "upper": 0.8,
+                "count": 0,
+                "fraction": 0.0
+              },
+              {
+                "label": "0.8\u20130.9",
+                "lower": 0.8,
+                "upper": 0.9,
+                "count": 0,
+                "fraction": 0.0
+              },
+              {
+                "label": "0.9\u20131",
+                "lower": 0.9,
+                "upper": 1.0,
+                "count": 174,
+                "fraction": 0.3625
+              }
+            ],
+            "mean_original": 0.3625,
+            "mean_protected": 0.3625,
+            "midpoint_approximation": false,
+            "unparseable_original": 0,
+            "unparseable_protected": 0
+          },
+          {
+            "column": "diagnosis_date",
+            "missing_original": 0,
+            "missing_protected": 0,
+            "dropped": false,
+            "total_original": 480,
+            "total_protected": 480,
+            "lexicalTv": 1.0000000000000009,
+            "lexicalTvDefinition": "Total variation of nonmissing literal encodings; domain changes can inflate it without measuring scientific harm",
+            "semanticComparison": {
+              "status": "implemented",
+              "domain": "year",
+              "basis": "validated date prefix; chronology and trajectories remain unassessed",
+              "tv": 0.0,
+              "original": [
+                {
+                  "label": "2024",
+                  "count": 480,
+                  "fraction": 1.0
+                }
+              ],
+              "protected": [
+                {
+                  "label": "2024",
+                  "count": 480,
+                  "fraction": 1.0
+                }
+              ],
+              "definition": "Total variation over nonmissing frequencies after both tables are mapped into the stated common domain",
+              "limitations": [
+                "Mapping aligns the named hierarchy; it does not establish preservation of finer-grained or future analyses",
+                "Missingness and retention are reported separately"
+              ]
+            },
+            "type": "categorical",
+            "original": [
+              {
+                "label": "2024",
+                "count": 0,
+                "fraction": 0.0
+              },
+              {
+                "label": "2024-02-02",
+                "count": 5,
+                "fraction": 0.010416666666666666
+              },
+              {
+                "label": "2024-03-03",
+                "count": 5,
+                "fraction": 0.010416666666666666
+              },
+              {
+                "label": "2024-04-04",
+                "count": 5,
+                "fraction": 0.010416666666666666
+              },
+              {
+                "label": "2024-01-01",
+                "count": 5,
+                "fraction": 0.010416666666666666
+              },
+              {
+                "label": "2024-06-06",
+                "count": 5,
+                "fraction": 0.010416666666666666
+              },
+              {
+                "label": "2024-07-07",
+                "count": 5,
+                "fraction": 0.010416666666666666
+              },
+              {
+                "label": "2024-08-08",
+                "count": 5,
+                "fraction": 0.010416666666666666
+              },
+              {
+                "label": "2024-09-09",
+                "count": 5,
+                "fraction": 0.010416666666666666
+              },
+              {
+                "label": "2024-10-10",
+                "count": 5,
+                "fraction": 0.010416666666666666
+              },
+              {
+                "label": "2024-11-11",
+                "count": 5,
+                "fraction": 0.010416666666666666
+              },
+              {
+                "label": "2024-12-12",
+                "count": 5,
+                "fraction": 0.010416666666666666
+              },
+              {
+                "label": "2024-05-05",
+                "count": 5,
+                "fraction": 0.010416666666666666
+              },
+              {
+                "label": "2024-02-14",
+                "count": 5,
+                "fraction": 0.010416666666666666
+              },
+              {
+                "label": "2024-03-15",
+                "count": 5,
+                "fraction": 0.010416666666666666
+              },
+              {
+                "label": "2024-04-16",
+                "count": 5,
+                "fraction": 0.010416666666666666
+              },
+              {
+                "label": "2024-05-17",
+                "count": 5,
+                "fraction": 0.010416666666666666
+              },
+              {
+                "label": "2024-06-18",
+                "count": 5,
+                "fraction": 0.010416666666666666
+              },
+              {
+                "label": "2024-07-19",
+                "count": 5,
+                "fraction": 0.010416666666666666
+              },
+              {
+                "label": "2024-08-20",
+                "count": 5,
+                "fraction": 0.010416666666666666
+              },
+              {
+                "label": "Other categories (combined tail)",
+                "count": 385,
+                "fraction": 0.8020833333333334,
+                "tail": true
+              }
+            ],
+            "protected": [
+              {
+                "label": "2024",
+                "count": 480,
+                "fraction": 1.0
+              },
+              {
+                "label": "2024-02-02",
+                "count": 0,
+                "fraction": 0.0
+              },
+              {
+                "label": "2024-03-03",
+                "count": 0,
+                "fraction": 0.0
+              },
+              {
+                "label": "2024-04-04",
+                "count": 0,
+                "fraction": 0.0
+              },
+              {
+                "label": "2024-01-01",
+                "count": 0,
+                "fraction": 0.0
+              },
+              {
+                "label": "2024-06-06",
+                "count": 0,
+                "fraction": 0.0
+              },
+              {
+                "label": "2024-07-07",
+                "count": 0,
+                "fraction": 0.0
+              },
+              {
+                "label": "2024-08-08",
+                "count": 0,
+                "fraction": 0.0
+              },
+              {
+                "label": "2024-09-09",
+                "count": 0,
+                "fraction": 0.0
+              },
+              {
+                "label": "2024-10-10",
+                "count": 0,
+                "fraction": 0.0
+              },
+              {
+                "label": "2024-11-11",
+                "count": 0,
+                "fraction": 0.0
+              },
+              {
+                "label": "2024-12-12",
+                "count": 0,
+                "fraction": 0.0
+              },
+              {
+                "label": "2024-05-05",
+                "count": 0,
+                "fraction": 0.0
+              },
+              {
+                "label": "2024-02-14",
+                "count": 0,
+                "fraction": 0.0
+              },
+              {
+                "label": "2024-03-15",
+                "count": 0,
+                "fraction": 0.0
+              },
+              {
+                "label": "2024-04-16",
+                "count": 0,
+                "fraction": 0.0
+              },
+              {
+                "label": "2024-05-17",
+                "count": 0,
+                "fraction": 0.0
+              },
+              {
+                "label": "2024-06-18",
+                "count": 0,
+                "fraction": 0.0
+              },
+              {
+                "label": "2024-07-19",
+                "count": 0,
+                "fraction": 0.0
+              },
+              {
+                "label": "2024-08-20",
+                "count": 0,
+                "fraction": 0.0
+              },
+              {
+                "label": "Other categories (combined tail)",
+                "count": 0,
+                "fraction": 0.0,
+                "tail": true
+              }
+            ],
+            "categories_total": 109,
+            "categories_shown": 20
+          }
+        ],
+        "correlations": [
+          {
+            "x": "age",
+            "y": "weight_kg",
+            "original": 0.6951518368858259,
+            "protected": 0.6893257140398231,
+            "sign_flip": false,
+            "n_original": 480,
+            "n_protected": 480,
+            "midpoint_approximation": true
+          },
+          {
+            "x": "age",
+            "y": "liver_metastasis",
+            "original": -0.00990945747904202,
+            "protected": -0.004417332346527827,
+            "sign_flip": false,
+            "n_original": 480,
+            "n_protected": 480,
+            "midpoint_approximation": true
+          },
+          {
+            "x": "age",
+            "y": "KRAS",
+            "original": 0.061762188005335374,
+            "protected": 0.06392369417423892,
+            "sign_flip": false,
+            "n_original": 480,
+            "n_protected": 480,
+            "midpoint_approximation": true
+          },
+          {
+            "x": "age",
+            "y": "failure_6m",
+            "original": 0.11888879040837884,
+            "protected": 0.12020216829399545,
+            "sign_flip": false,
+            "n_original": 480,
+            "n_protected": 480,
+            "midpoint_approximation": true
+          },
+          {
+            "x": "weight_kg",
+            "y": "liver_metastasis",
+            "original": -0.01724204310102026,
+            "protected": -0.008999341015417031,
+            "sign_flip": false,
+            "n_original": 480,
+            "n_protected": 480,
+            "midpoint_approximation": true
+          },
+          {
+            "x": "weight_kg",
+            "y": "KRAS",
+            "original": 0.041705888091071036,
+            "protected": 0.038695149174461554,
+            "sign_flip": false,
+            "n_original": 480,
+            "n_protected": 480,
+            "midpoint_approximation": true
+          },
+          {
+            "x": "weight_kg",
+            "y": "failure_6m",
+            "original": 0.09673424809151936,
+            "protected": 0.09520061631267508,
+            "sign_flip": false,
+            "n_original": 480,
+            "n_protected": 480,
+            "midpoint_approximation": true
+          },
+          {
+            "x": "liver_metastasis",
+            "y": "KRAS",
+            "original": -0.013572369445419147,
+            "protected": -0.013572369445419147,
+            "sign_flip": false,
+            "n_original": 480,
+            "n_protected": 480,
+            "midpoint_approximation": false
+          },
+          {
+            "x": "liver_metastasis",
+            "y": "failure_6m",
+            "original": 0.14841544065021264,
+            "protected": 0.14841544065021264,
+            "sign_flip": false,
+            "n_original": 480,
+            "n_protected": 480,
+            "midpoint_approximation": false
+          },
+          {
+            "x": "KRAS",
+            "y": "failure_6m",
+            "original": 0.13881405873183988,
+            "protected": 0.13881405873183988,
+            "sign_flip": false,
+            "n_original": 480,
+            "n_protected": 480,
+            "midpoint_approximation": false
+          }
+        ],
+        "warnings": [
+          "Numeric bands are decoded by interval midpoints; exact within-bin research values are unavailable",
+          "Wilson rate intervals are approximate binomial intervals, not evidence of clinical validity or privacy"
+        ],
+        "loss_definition": "weighted mean min(1, max-cohort absolute error / declared tolerance); unavailable required query makes loss unavailable; cohort-failed query loss=1",
+        "subgroups": [],
+        "worstSubgroup": {
+          "assessed": 0,
+          "insufficientEvidence": 0,
+          "worstRetention": null,
+          "worstQuery": null,
+          "worstMissingness": null,
+          "unavailableQueries": 0,
+          "coverage": {
+            "cap": 64,
+            "evaluated": 0,
+            "skipped": [],
+            "definition": "Cohorts declared in workload groupBy, with caller-supplied subgroup_by optional. No undisclosed population-wide worst-case claim."
+          }
+        },
+        "workloadCoverageComplete": true,
+        "alignment": "verified",
+        "rows_original": 480,
+        "rows_protected": 480
+      }
+    }
+  ],
+  "limitations": [
+    "Source-target simulation, not independent external auxiliary-data validation.",
+    "Owner lineage is used only after matching for correctness scoring and is not included here.",
+    "Full fixture enumeration is not a population estimate or release clearance."
+  ]
+}

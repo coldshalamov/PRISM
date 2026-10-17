@@ -1,0 +1,13 @@
+record_id,name,email,birth_date,age,zip,weight,eye_color,mutation,stage,treatment,response
+SYN-000001,Alex Cedar,synthetic-000001@example.invalid,1963-03-09,63,33163,80.5,blue,False,II,B,True
+SYN-000002,Jordan Reed,synthetic-000002@example.invalid,1981-12-26,44,60689,101.6,gray,False,II,A,False
+SYN-000003,Sam Stone,synthetic-000003@example.invalid,1955-11-11,70,98162,77.4,brown,False,II,B,False
+SYN-000004,Riley Lake,synthetic-000004@example.invalid,1953-11-28,72,75298,66.2,brown,False,II,B,False
+SYN-000005,Jordan Stone,synthetic-000005@example.invalid,1993-11-29,32,75255,68.5,blue,False,I,B,False
+SYN-000006,Jordan Vale,synthetic-000006@example.invalid,1984-11-21,41,10083,79.9,hazel,True,II,C,True
+SYN-000007,Riley Reed,synthetic-000007@example.invalid,1965-03-24,61,33103,88.4,brown,False,I,A,True
+SYN-000008,Sam Stone,synthetic-000008@example.invalid,1970-12-22,55,00993,92.4,brown,True,IV,A,True
+SYN-000009,Riley Vale,synthetic-000009@example.invalid,1967-02-28,59,33101,59.8,hazel,False,IV,A,True
+SYN-000010,Jordan Brook,synthetic-000010@example.invalid,1979-08-28,47,90019,90.6,blue,False,II,B,True
+SYN-000011,Riley Brook,synthetic-000011@example.invalid,1955-10-09,71,02173,74.9,hazel,False,I,A,True
+SYN-000012,Alex Meadow,synthetic-000012@example.invalid,1956-09-12,70,00925,62.4,brown,False,I,B,False

@@ -1,0 +1,72 @@
+{
+  "synthetic": true,
+  "seed": 42,
+  "referenceDate": "2026-10-17",
+  "units": {
+    "age": "years",
+    "weight": "kg"
+  },
+  "qi": [
+    "age",
+    "zip",
+    "weight",
+    "eye_color"
+  ],
+  "sensitive": [
+    "mutation"
+  ],
+  "workload": [
+    {
+      "id": "mutation-by-stage",
+      "type": "group_rate",
+      "groupBy": [
+        "stage"
+      ],
+      "target": "mutation",
+      "positiveValue": true,
+      "weight": 2,
+      "tolerance": 0.03,
+      "minCohort": 25
+    },
+    {
+      "id": "response-by-mutation",
+      "type": "group_rate",
+      "groupBy": [
+        "mutation"
+      ],
+      "target": "response",
+      "positiveValue": true,
+      "weight": 3,
+      "tolerance": 0.03,
+      "minCohort": 25
+    },
+    {
+      "id": "age-by-stage",
+      "type": "group_mean",
+      "groupBy": [
+        "stage"
+      ],
+      "target": "age",
+      "weight": 1,
+      "tolerance": 2,
+      "minCohort": 25
+    },
+    {
+      "id": "response-by-stage",
+      "type": "group_rate",
+      "groupBy": [
+        "stage"
+      ],
+      "target": "response",
+      "positiveValue": true,
+      "weight": 2,
+      "tolerance": 0.03,
+      "minCohort": 25
+    }
+  ],
+  "limitations": [
+    "Designed correlations are not clinically accurate.",
+    "Auxiliary fixture is synthetic outside knowledge and contains no direct identifiers.",
+    "No true synthetic-release generator or train/control claim is provided."
+  ]
+}

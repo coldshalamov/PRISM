@@ -1,0 +1,186 @@
+{
+  "recipe": {
+    "label": "5-year / ZIP3 / 5kg",
+    "operations": [
+      {
+        "method": "drop",
+        "columns": [
+          "subject_id",
+          "name"
+        ],
+        "width": 5,
+        "prefix_length": 3,
+        "lower": null,
+        "upper": null,
+        "min_count": 5,
+        "magnitude": 1,
+        "fraction": 1
+      },
+      {
+        "method": "numeric_band",
+        "columns": [
+          "age"
+        ],
+        "width": 5.0,
+        "prefix_length": 3,
+        "lower": null,
+        "upper": null,
+        "min_count": 5,
+        "magnitude": 1,
+        "fraction": 1
+      },
+      {
+        "method": "prefix",
+        "columns": [
+          "zip"
+        ],
+        "width": 5,
+        "prefix_length": 3,
+        "lower": null,
+        "upper": null,
+        "min_count": 5,
+        "magnitude": 1,
+        "fraction": 1
+      },
+      {
+        "method": "numeric_band",
+        "columns": [
+          "weight_kg"
+        ],
+        "width": 5.0,
+        "prefix_length": 3,
+        "lower": null,
+        "upper": null,
+        "min_count": 5,
+        "magnitude": 1,
+        "fraction": 1
+      },
+      {
+        "method": "date_year",
+        "columns": [
+          "diagnosis_date"
+        ],
+        "width": 5,
+        "prefix_length": 3,
+        "lower": null,
+        "upper": null,
+        "min_count": 5,
+        "magnitude": 1,
+        "fraction": 1
+      }
+    ],
+    "suppress_below_k": null,
+    "max_suppression_fraction": 0.2,
+    "shuffle_rows": true
+  },
+  "columns": [
+    {
+      "name": "subject_id",
+      "role": "identifier",
+      "kind": "categorical",
+      "unit": null
+    },
+    {
+      "name": "name",
+      "role": "identifier",
+      "kind": "categorical",
+      "unit": null
+    },
+    {
+      "name": "age",
+      "role": "quasi",
+      "kind": "numeric",
+      "unit": "years"
+    },
+    {
+      "name": "zip",
+      "role": "quasi",
+      "kind": "categorical",
+      "unit": null
+    },
+    {
+      "name": "weight_kg",
+      "role": "quasi",
+      "kind": "numeric",
+      "unit": "kg"
+    },
+    {
+      "name": "liver_metastasis",
+      "role": "sensitive",
+      "kind": "numeric",
+      "unit": null
+    },
+    {
+      "name": "KRAS",
+      "role": "sensitive",
+      "kind": "numeric",
+      "unit": null
+    },
+    {
+      "name": "failure_6m",
+      "role": "sensitive",
+      "kind": "numeric",
+      "unit": null
+    },
+    {
+      "name": "diagnosis_date",
+      "role": "sensitive",
+      "kind": "date",
+      "unit": null
+    }
+  ],
+  "threat": {
+    "known_columns": [
+      "age",
+      "zip",
+      "weight_kg"
+    ],
+    "sensitive_columns": [
+      "liver_metastasis",
+      "KRAS",
+      "failure_6m"
+    ],
+    "membership_known": true,
+    "one_row_per_person_confirmed": true,
+    "entity_column": "subject_id",
+    "context": "collaboration"
+  },
+  "queries": [
+    {
+      "name": "Six-month failure rate (fictional)",
+      "statistic": "rate",
+      "column": "failure_6m",
+      "second_column": null,
+      "positive_value": 1,
+      "filters": [],
+      "tolerance": 0.02,
+      "weight": 1
+    },
+    {
+      "name": "Failure rate: liver subgroup (fictional)",
+      "statistic": "rate",
+      "column": "failure_6m",
+      "second_column": null,
+      "positive_value": 1,
+      "filters": [
+        {
+          "column": "liver_metastasis",
+          "op": "eq",
+          "value": "1"
+        }
+      ],
+      "tolerance": 0.03,
+      "weight": 1
+    },
+    {
+      "name": "Age-weight correlation",
+      "statistic": "correlation",
+      "column": "age",
+      "second_column": "weight_kg",
+      "positive_value": 1,
+      "filters": [],
+      "tolerance": 0.05,
+      "weight": 1
+    }
+  ]
+}

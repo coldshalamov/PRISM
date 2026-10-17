@@ -1,0 +1,16 @@
+PRISM local workbench
+
+New implementation code is licensed under MIT, except where files identify
+their own license. backend/app/linkage.py adapts Apache-2.0 code from the
+user-supplied PRISM hackathon kit. Copied benchmark fixtures, the supplied kit
+catalog, and preserved reference-kit material retain Apache-2.0 and the original
+notice below. See THIRD_PARTY_NOTICES.md and the retained LICENSE files.
+
+Original notice:
+PRISM Privacy Workbench
+Copyright 2026 PRISM contributors
+
+Original PRISM source is distributed under the Apache License, Version 2.0.
+This project is a research prototype and does not certify privacy or legal compliance.
+Third-party dependencies retain their own terms; see THIRD_PARTY_NOTICES.md.
+All bundled datasets and demo screenshots are fictional software test fixtures.

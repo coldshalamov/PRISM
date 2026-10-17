@@ -1,0 +1,1570 @@
+{
+  "format_version": "0.1",
+  "queries": [
+    {
+      "name": "Six-month failure rate (fictional)",
+      "statistic": "rate",
+      "column": "failure_6m",
+      "second_column": null,
+      "positive_value": 1,
+      "filters": [],
+      "tolerance": 0.02,
+      "weight": 1
+    },
+    {
+      "name": "Failure rate: liver subgroup (fictional)",
+      "statistic": "rate",
+      "column": "failure_6m",
+      "second_column": null,
+      "positive_value": 1,
+      "filters": [
+        {
+          "column": "liver_metastasis",
+          "op": "eq",
+          "value": "1"
+        }
+      ],
+      "tolerance": 0.03,
+      "weight": 1
+    },
+    {
+      "name": "Age-weight correlation",
+      "statistic": "correlation",
+      "column": "age",
+      "second_column": "weight_kg",
+      "positive_value": 1,
+      "filters": [],
+      "tolerance": 0.05,
+      "weight": 1
+    }
+  ],
+  "label": "5-year / ZIP3 / 5kg",
+  "recipe": {
+    "label": "5-year / ZIP3 / 5kg",
+    "operations": [
+      {
+        "method": "drop",
+        "columns": [
+          "subject_id",
+          "name"
+        ],
+        "width": 5,
+        "prefix_length": 3,
+        "lower": null,
+        "upper": null,
+        "min_count": 5,
+        "magnitude": 1,
+        "fraction": 1
+      },
+      {
+        "method": "numeric_band",
+        "columns": [
+          "age"
+        ],
+        "width": 5.0,
+        "prefix_length": 3,
+        "lower": null,
+        "upper": null,
+        "min_count": 5,
+        "magnitude": 1,
+        "fraction": 1
+      },
+      {
+        "method": "prefix",
+        "columns": [
+          "zip"
+        ],
+        "width": 5,
+        "prefix_length": 3,
+        "lower": null,
+        "upper": null,
+        "min_count": 5,
+        "magnitude": 1,
+        "fraction": 1
+      },
+      {
+        "method": "numeric_band",
+        "columns": [
+          "weight_kg"
+        ],
+        "width": 5.0,
+        "prefix_length": 3,
+        "lower": null,
+        "upper": null,
+        "min_count": 5,
+        "magnitude": 1,
+        "fraction": 1
+      },
+      {
+        "method": "date_year",
+        "columns": [
+          "diagnosis_date"
+        ],
+        "width": 5,
+        "prefix_length": 3,
+        "lower": null,
+        "upper": null,
+        "min_count": 5,
+        "magnitude": 1,
+        "fraction": 1
+      }
+    ],
+    "suppress_below_k": null,
+    "max_suppression_fraction": 0.2,
+    "shuffle_rows": true
+  },
+  "threat": {
+    "known_columns": [
+      "age",
+      "zip",
+      "weight_kg"
+    ],
+    "sensitive_columns": [
+      "liver_metastasis",
+      "KRAS",
+      "failure_6m"
+    ],
+    "membership_known": true,
+    "one_row_per_person_confirmed": true,
+    "entity_column": "subject_id",
+    "context": "collaboration"
+  },
+  "privacy": {
+    "equality_classes": {
+      "status": "measured",
+      "columns": [
+        "age",
+        "zip",
+        "weight_kg"
+      ],
+      "rows": 480,
+      "classes": 183,
+      "minimum_class_size": 1,
+      "sample_unique_fraction": 0.15625,
+      "rows_in_classes_below_5": 302,
+      "uniform_candidate_guessing_model": 0.38125,
+      "class_size_histogram": [
+        {
+          "class_size": 1,
+          "classes": 75
+        },
+        {
+          "class_size": 2,
+          "classes": 39
+        },
+        {
+          "class_size": 3,
+          "classes": 23
+        },
+        {
+          "class_size": 4,
+          "classes": 20
+        },
+        {
+          "class_size": 5,
+          "classes": 6
+        },
+        {
+          "class_size": 6,
+          "classes": 5
+        },
+        {
+          "class_size": 7,
+          "classes": 8
+        },
+        {
+          "class_size": 8,
+          "classes": 3
+        },
+        {
+          "class_size": 9,
+          "classes": 3
+        },
+        {
+          "class_size": 11,
+          "classes": 1
+        }
+      ],
+      "interpretation": "Sample equality classes only. 1/k assumes known membership, correct matching, and uniform choice within a class; not real-world identity probability."
+    },
+    "source_equality_classes": {
+      "status": "measured",
+      "columns": [
+        "age",
+        "zip",
+        "weight_kg"
+      ],
+      "rows": 480,
+      "classes": 480,
+      "minimum_class_size": 1,
+      "sample_unique_fraction": 1.0,
+      "rows_in_classes_below_5": 480,
+      "uniform_candidate_guessing_model": 1.0,
+      "class_size_histogram": [
+        {
+          "class_size": 1,
+          "classes": 480
+        }
+      ],
+      "interpretation": "Sample equality classes only. 1/k assumes known membership, correct matching, and uniform choice within a class; not real-world identity probability."
+    },
+    "linkage": {
+      "status": "measured",
+      "targets": 480,
+      "matched_targets": 480,
+      "unique_correct_matches": 75,
+      "verified_unique_linkage_fraction": 0.15625,
+      "expected_correct_random_tiebreak_fraction": 0.3812499999999999,
+      "examples": [
+        {
+          "target_position_owner_only": 1,
+          "matching_candidates": 2,
+          "verified_unique_correct_match": false
+        },
+        {
+          "target_position_owner_only": 4,
+          "matching_candidates": 3,
+          "verified_unique_correct_match": false
+        },
+        {
+          "target_position_owner_only": 9,
+          "matching_candidates": 2,
+          "verified_unique_correct_match": false
+        },
+        {
+          "target_position_owner_only": 11,
+          "matching_candidates": 3,
+          "verified_unique_correct_match": false
+        },
+        {
+          "target_position_owner_only": 16,
+          "matching_candidates": 3,
+          "verified_unique_correct_match": false
+        },
+        {
+          "target_position_owner_only": 20,
+          "matching_candidates": 1,
+          "verified_unique_correct_match": true
+        },
+        {
+          "target_position_owner_only": 21,
+          "matching_candidates": 2,
+          "verified_unique_correct_match": false
+        },
+        {
+          "target_position_owner_only": 25,
+          "matching_candidates": 1,
+          "verified_unique_correct_match": true
+        }
+      ],
+      "assumptions": [
+        "Known source membership; attacker knows selected attributes and public generalization codebooks.",
+        "Ground-truth row mapping is used only for scoring, never supplied to the attacker.",
+        "Complete fixture enumeration; no sampling confidence interval or population generalization is claimed.",
+        "Independent external auxiliary-data validation has not been performed."
+      ]
+    },
+    "sensitive_groups": [
+      {
+        "column": "liver_metastasis",
+        "status": "measured",
+        "minimum_distinct_l": 1,
+        "homogeneous_observed_row_fraction": 0.33125,
+        "observed_sensitive_rows": 480,
+        "maximum_group_total_variation": 0.6020833333333333,
+        "limitation": "Distinct-l and distribution-shift diagnostics, not semantic l-diversity or general t-closeness certification. Associations may be genuine population patterns."
+      },
+      {
+        "column": "KRAS",
+        "status": "measured",
+        "minimum_distinct_l": 1,
+        "homogeneous_observed_row_fraction": 0.3541666666666667,
+        "observed_sensitive_rows": 480,
+        "maximum_group_total_variation": 0.6833333333333333,
+        "limitation": "Distinct-l and distribution-shift diagnostics, not semantic l-diversity or general t-closeness certification. Associations may be genuine population patterns."
+      },
+      {
+        "column": "failure_6m",
+        "status": "measured",
+        "minimum_distinct_l": 1,
+        "homogeneous_observed_row_fraction": 0.32083333333333336,
+        "observed_sensitive_rows": 480,
+        "maximum_group_total_variation": 0.6375,
+        "limitation": "Distinct-l and distribution-shift diagnostics, not semantic l-diversity or general t-closeness certification. Associations may be genuine population patterns."
+      }
+    ],
+    "pii": {
+      "status": "measured",
+      "findings": [],
+      "rows_scanned": 480,
+      "limitation": "Heuristics, not comprehensive PII detection. Unlabelled names and clinical narratives may be missed."
+    },
+    "column_ablations": [
+      {
+        "column": "weight_kg",
+        "unique_fraction_without_column": 0.0020833333333333333,
+        "sample_uniqueness_reduction": 0.15416666666666667
+      },
+      {
+        "column": "age",
+        "unique_fraction_without_column": 0.016666666666666666,
+        "sample_uniqueness_reduction": 0.13958333333333334
+      },
+      {
+        "column": "zip",
+        "unique_fraction_without_column": 0.041666666666666664,
+        "sample_uniqueness_reduction": 0.11458333333333334
+      }
+    ],
+    "retained_identifier_columns": [],
+    "unmodeled_quasi_identifiers": [],
+    "unit": "person",
+    "warnings": [],
+    "coverage": {
+      "membership_inference": "not_assessed",
+      "population_uniqueness": "not_assessed",
+      "external_record_linkage": "not_assessed",
+      "longitudinal_trajectory_linkage": "not_assessed",
+      "genomic_and_family_inference": "not_assessed",
+      "aggregate_reconstruction": "demo_only",
+      "cross_release_composition": "demo_only",
+      "semantic_free_text": "not_assessed"
+    },
+    "release_status": "review_required",
+    "formal_privacy_guarantee": null
+  },
+  "utility": {
+    "fields": [
+      {
+        "column": "age",
+        "status": "measured",
+        "missing_delta": 0.0,
+        "candidate_parse_coverage": 1.0,
+        "original_mean": 58.958333333333336,
+        "candidate_mean": 59.552083333333336,
+        "wasserstein_native": 1.3708333333333333,
+        "wasserstein_normalized": 0.026879084967320263
+      },
+      {
+        "column": "zip",
+        "status": "measured",
+        "missing_delta": 0.0,
+        "total_variation": 1.0
+      },
+      {
+        "column": "weight_kg",
+        "status": "measured",
+        "missing_delta": 0.0,
+        "candidate_parse_coverage": 1.0,
+        "original_mean": 71.84666666666666,
+        "candidate_mean": 71.86458333333333,
+        "wasserstein_native": 1.30125,
+        "wasserstein_normalized": 0.03663429054054054
+      },
+      {
+        "column": "liver_metastasis",
+        "status": "measured",
+        "missing_delta": 0.0,
+        "candidate_parse_coverage": 1.0,
+        "original_mean": 0.39791666666666664,
+        "candidate_mean": 0.39791666666666664,
+        "wasserstein_native": 0.0,
+        "wasserstein_normalized": 0.0
+      },
+      {
+        "column": "KRAS",
+        "status": "measured",
+        "missing_delta": 0.0,
+        "candidate_parse_coverage": 1.0,
+        "original_mean": 0.31666666666666665,
+        "candidate_mean": 0.31666666666666665,
+        "wasserstein_native": 0.0,
+        "wasserstein_normalized": 0.0
+      },
+      {
+        "column": "failure_6m",
+        "status": "measured",
+        "missing_delta": 0.0,
+        "candidate_parse_coverage": 1.0,
+        "original_mean": 0.3625,
+        "candidate_mean": 0.3625,
+        "wasserstein_native": 0.0,
+        "wasserstein_normalized": 0.0
+      },
+      {
+        "column": "diagnosis_date",
+        "status": "measured",
+        "missing_delta": 0.0,
+        "total_variation": 1.0
+      }
+    ],
+    "histograms": [
+      {
+        "column": "age",
+        "bins": [
+          {
+            "lo": 30.0,
+            "hi": 33.59375,
+            "original": 31,
+            "candidate": 38
+          },
+          {
+            "lo": 33.59375,
+            "hi": 37.1875,
+            "original": 39,
+            "candidate": 0
+          },
+          {
+            "lo": 37.1875,
+            "hi": 40.78125,
+            "original": 20,
+            "candidate": 45
+          },
+          {
+            "lo": 40.78125,
+            "hi": 44.375,
+            "original": 20,
+            "candidate": 27
+          },
+          {
+            "lo": 44.375,
+            "hi": 47.96875,
+            "original": 28,
+            "candidate": 43
+          },
+          {
+            "lo": 47.96875,
+            "hi": 51.5625,
+            "original": 32,
+            "candidate": 0
+          },
+          {
+            "lo": 51.5625,
+            "hi": 55.15625,
+            "original": 31,
+            "candidate": 40
+          },
+          {
+            "lo": 55.15625,
+            "hi": 58.75,
+            "original": 29,
+            "candidate": 45
+          },
+          {
+            "lo": 58.75,
+            "hi": 62.34375,
+            "original": 33,
+            "candidate": 0
+          },
+          {
+            "lo": 62.34375,
+            "hi": 65.9375,
+            "original": 31,
+            "candidate": 44
+          },
+          {
+            "lo": 65.9375,
+            "hi": 69.53125,
+            "original": 38,
+            "candidate": 50
+          },
+          {
+            "lo": 69.53125,
+            "hi": 73.125,
+            "original": 35,
+            "candidate": 42
+          },
+          {
+            "lo": 73.125,
+            "hi": 76.71875,
+            "original": 23,
+            "candidate": 0
+          },
+          {
+            "lo": 76.71875,
+            "hi": 80.3125,
+            "original": 43,
+            "candidate": 45
+          },
+          {
+            "lo": 80.3125,
+            "hi": 83.90625,
+            "original": 19,
+            "candidate": 42
+          },
+          {
+            "lo": 83.90625,
+            "hi": 87.5,
+            "original": 28,
+            "candidate": 19
+          }
+        ]
+      },
+      {
+        "column": "weight_kg",
+        "bins": [
+          {
+            "lo": 37.5,
+            "hi": 41.875,
+            "original": 1,
+            "candidate": 1
+          },
+          {
+            "lo": 41.875,
+            "hi": 46.25,
+            "original": 5,
+            "candidate": 1
+          },
+          {
+            "lo": 46.25,
+            "hi": 50.625,
+            "original": 11,
+            "candidate": 12
+          },
+          {
+            "lo": 50.625,
+            "hi": 55.0,
+            "original": 14,
+            "candidate": 17
+          },
+          {
+            "lo": 55.0,
+            "hi": 59.375,
+            "original": 35,
+            "candidate": 43
+          },
+          {
+            "lo": 59.375,
+            "hi": 63.75,
+            "original": 47,
+            "candidate": 62
+          },
+          {
+            "lo": 63.75,
+            "hi": 68.125,
+            "original": 70,
+            "candidate": 63
+          },
+          {
+            "lo": 68.125,
+            "hi": 72.5,
+            "original": 49,
+            "candidate": 0
+          },
+          {
+            "lo": 72.5,
+            "hi": 76.875,
+            "original": 82,
+            "candidate": 84
+          },
+          {
+            "lo": 76.875,
+            "hi": 81.25,
+            "original": 72,
+            "candidate": 81
+          },
+          {
+            "lo": 81.25,
+            "hi": 85.625,
+            "original": 44,
+            "candidate": 64
+          },
+          {
+            "lo": 85.625,
+            "hi": 90.0,
+            "original": 29,
+            "candidate": 31
+          },
+          {
+            "lo": 90.0,
+            "hi": 94.375,
+            "original": 14,
+            "candidate": 15
+          },
+          {
+            "lo": 94.375,
+            "hi": 98.75,
+            "original": 3,
+            "candidate": 3
+          },
+          {
+            "lo": 98.75,
+            "hi": 103.125,
+            "original": 3,
+            "candidate": 2
+          },
+          {
+            "lo": 103.125,
+            "hi": 107.5,
+            "original": 1,
+            "candidate": 1
+          }
+        ]
+      },
+      {
+        "column": "liver_metastasis",
+        "bins": [
+          {
+            "lo": 0.0,
+            "hi": 0.0625,
+            "original": 289,
+            "candidate": 289
+          },
+          {
+            "lo": 0.0625,
+            "hi": 0.125,
+            "original": 0,
+            "candidate": 0
+          },
+          {
+            "lo": 0.125,
+            "hi": 0.1875,
+            "original": 0,
+            "candidate": 0
+          },
+          {
+            "lo": 0.1875,
+            "hi": 0.25,
+            "original": 0,
+            "candidate": 0
+          },
+          {
+            "lo": 0.25,
+            "hi": 0.3125,
+            "original": 0,
+            "candidate": 0
+          },
+          {
+            "lo": 0.3125,
+            "hi": 0.375,
+            "original": 0,
+            "candidate": 0
+          },
+          {
+            "lo": 0.375,
+            "hi": 0.4375,
+            "original": 0,
+            "candidate": 0
+          },
+          {
+            "lo": 0.4375,
+            "hi": 0.5,
+            "original": 0,
+            "candidate": 0
+          },
+          {
+            "lo": 0.5,
+            "hi": 0.5625,
+            "original": 0,
+            "candidate": 0
+          },
+          {
+            "lo": 0.5625,
+            "hi": 0.625,
+            "original": 0,
+            "candidate": 0
+          },
+          {
+            "lo": 0.625,
+            "hi": 0.6875,
+            "original": 0,
+            "candidate": 0
+          },
+          {
+            "lo": 0.6875,
+            "hi": 0.75,
+            "original": 0,
+            "candidate": 0
+          },
+          {
+            "lo": 0.75,
+            "hi": 0.8125,
+            "original": 0,
+            "candidate": 0
+          },
+          {
+            "lo": 0.8125,
+            "hi": 0.875,
+            "original": 0,
+            "candidate": 0
+          },
+          {
+            "lo": 0.875,
+            "hi": 0.9375,
+            "original": 0,
+            "candidate": 0
+          },
+          {
+            "lo": 0.9375,
+            "hi": 1.0,
+            "original": 191,
+            "candidate": 191
+          }
+        ]
+      },
+      {
+        "column": "KRAS",
+        "bins": [
+          {
+            "lo": 0.0,
+            "hi": 0.0625,
+            "original": 328,
+            "candidate": 328
+          },
+          {
+            "lo": 0.0625,
+            "hi": 0.125,
+            "original": 0,
+            "candidate": 0
+          },
+          {
+            "lo": 0.125,
+            "hi": 0.1875,
+            "original": 0,
+            "candidate": 0
+          },
+          {
+            "lo": 0.1875,
+            "hi": 0.25,
+            "original": 0,
+            "candidate": 0
+          },
+          {
+            "lo": 0.25,
+            "hi": 0.3125,
+            "original": 0,
+            "candidate": 0
+          },
+          {
+            "lo": 0.3125,
+            "hi": 0.375,
+            "original": 0,
+            "candidate": 0
+          },
+          {
+            "lo": 0.375,
+            "hi": 0.4375,
+            "original": 0,
+            "candidate": 0
+          },
+          {
+            "lo": 0.4375,
+            "hi": 0.5,
+            "original": 0,
+            "candidate": 0
+          },
+          {
+            "lo": 0.5,
+            "hi": 0.5625,
+            "original": 0,
+            "candidate": 0
+          },
+          {
+            "lo": 0.5625,
+            "hi": 0.625,
+            "original": 0,
+            "candidate": 0
+          },
+          {
+            "lo": 0.625,
+            "hi": 0.6875,
+            "original": 0,
+            "candidate": 0
+          },
+          {
+            "lo": 0.6875,
+            "hi": 0.75,
+            "original": 0,
+            "candidate": 0
+          },
+          {
+            "lo": 0.75,
+            "hi": 0.8125,
+            "original": 0,
+            "candidate": 0
+          },
+          {
+            "lo": 0.8125,
+            "hi": 0.875,
+            "original": 0,
+            "candidate": 0
+          },
+          {
+            "lo": 0.875,
+            "hi": 0.9375,
+            "original": 0,
+            "candidate": 0
+          },
+          {
+            "lo": 0.9375,
+            "hi": 1.0,
+            "original": 152,
+            "candidate": 152
+          }
+        ]
+      },
+      {
+        "column": "failure_6m",
+        "bins": [
+          {
+            "lo": 0.0,
+            "hi": 0.0625,
+            "original": 306,
+            "candidate": 306
+          },
+          {
+            "lo": 0.0625,
+            "hi": 0.125,
+            "original": 0,
+            "candidate": 0
+          },
+          {
+            "lo": 0.125,
+            "hi": 0.1875,
+            "original": 0,
+            "candidate": 0
+          },
+          {
+            "lo": 0.1875,
+            "hi": 0.25,
+            "original": 0,
+            "candidate": 0
+          },
+          {
+            "lo": 0.25,
+            "hi": 0.3125,
+            "original": 0,
+            "candidate": 0
+          },
+          {
+            "lo": 0.3125,
+            "hi": 0.375,
+            "original": 0,
+            "candidate": 0
+          },
+          {
+            "lo": 0.375,
+            "hi": 0.4375,
+            "original": 0,
+            "candidate": 0
+          },
+          {
+            "lo": 0.4375,
+            "hi": 0.5,
+            "original": 0,
+            "candidate": 0
+          },
+          {
+            "lo": 0.5,
+            "hi": 0.5625,
+            "original": 0,
+            "candidate": 0
+          },
+          {
+            "lo": 0.5625,
+            "hi": 0.625,
+            "original": 0,
+            "candidate": 0
+          },
+          {
+            "lo": 0.625,
+            "hi": 0.6875,
+            "original": 0,
+            "candidate": 0
+          },
+          {
+            "lo": 0.6875,
+            "hi": 0.75,
+            "original": 0,
+            "candidate": 0
+          },
+          {
+            "lo": 0.75,
+            "hi": 0.8125,
+            "original": 0,
+            "candidate": 0
+          },
+          {
+            "lo": 0.8125,
+            "hi": 0.875,
+            "original": 0,
+            "candidate": 0
+          },
+          {
+            "lo": 0.875,
+            "hi": 0.9375,
+            "original": 0,
+            "candidate": 0
+          },
+          {
+            "lo": 0.9375,
+            "hi": 1.0,
+            "original": 174,
+            "candidate": 174
+          }
+        ]
+      }
+    ],
+    "correlations": [
+      {
+        "a": "age",
+        "b": "weight_kg",
+        "original": 0.6951518368858269,
+        "candidate": 0.6893257140398226,
+        "absolute_change": 0.005826122846004367
+      },
+      {
+        "a": "age",
+        "b": "liver_metastasis",
+        "original": -0.009909457479042169,
+        "candidate": -0.004417332346527852,
+        "absolute_change": 0.005492125132514317
+      },
+      {
+        "a": "age",
+        "b": "KRAS",
+        "original": 0.061762188005335235,
+        "candidate": 0.06392369417423886,
+        "absolute_change": 0.0021615061689036277
+      },
+      {
+        "a": "age",
+        "b": "failure_6m",
+        "original": 0.11888879040837894,
+        "candidate": 0.12020216829399533,
+        "absolute_change": 0.0013133778856163902
+      },
+      {
+        "a": "weight_kg",
+        "b": "liver_metastasis",
+        "original": -0.017242043101020014,
+        "candidate": -0.008999341015416978,
+        "absolute_change": 0.008242702085603036
+      },
+      {
+        "a": "weight_kg",
+        "b": "KRAS",
+        "original": 0.04170588809107113,
+        "candidate": 0.0386951491744613,
+        "absolute_change": 0.0030107389166098356
+      },
+      {
+        "a": "weight_kg",
+        "b": "failure_6m",
+        "original": 0.09673424809151955,
+        "candidate": 0.09520061631267517,
+        "absolute_change": 0.0015336317788443854
+      },
+      {
+        "a": "liver_metastasis",
+        "b": "KRAS",
+        "original": -0.013572369445419018,
+        "candidate": -0.013572369445418992,
+        "absolute_change": 2.6020852139652106e-17
+      },
+      {
+        "a": "liver_metastasis",
+        "b": "failure_6m",
+        "original": 0.14841544065021253,
+        "candidate": 0.14841544065021253,
+        "absolute_change": 0.0
+      },
+      {
+        "a": "KRAS",
+        "b": "failure_6m",
+        "original": 0.1388140587318398,
+        "candidate": 0.1388140587318398,
+        "absolute_change": 0.0
+      }
+    ],
+    "tasks": [
+      {
+        "name": "Six-month failure rate (fictional)",
+        "original": {
+          "value": 0.3625,
+          "n": 480,
+          "status": "measured"
+        },
+        "candidate": {
+          "value": 0.3625,
+          "n": 480,
+          "status": "measured"
+        },
+        "absolute_error": 0.0,
+        "tolerance": 0.02,
+        "within_tolerance": true,
+        "normalized_loss": 0.0,
+        "status": "measured"
+      },
+      {
+        "name": "Failure rate: liver subgroup (fictional)",
+        "original": {
+          "value": 0.450261780104712,
+          "n": 191,
+          "status": "measured"
+        },
+        "candidate": {
+          "value": 0.450261780104712,
+          "n": 191,
+          "status": "measured"
+        },
+        "absolute_error": 0.0,
+        "tolerance": 0.03,
+        "within_tolerance": true,
+        "normalized_loss": 0.0,
+        "status": "measured"
+      },
+      {
+        "name": "Age-weight correlation",
+        "original": {
+          "value": 0.6951518368858254,
+          "n": 480,
+          "status": "measured"
+        },
+        "candidate": {
+          "value": 0.6893257140398218,
+          "n": 480,
+          "status": "measured"
+        },
+        "absolute_error": 0.00582612284600359,
+        "tolerance": 0.05,
+        "within_tolerance": true,
+        "normalized_loss": 0.11652245692007179,
+        "status": "measured"
+      }
+    ],
+    "task_coverage": 1.0,
+    "weighted_task_loss": 0.03884081897335726,
+    "rows_retained_fraction": 1.0,
+    "notes": [
+      "Banded numeric values use midpoint approximations, not measured patient values.",
+      "Task results are descriptive, not causal. Null outcomes are excluded from rate denominators.",
+      "Category-domain changes may inflate total-variation distance.",
+      "Audit statistics are owner-confidential and can themselves disclose information."
+    ]
+  },
+  "columns": [
+    {
+      "name": "subject_id",
+      "role": "identifier",
+      "kind": "categorical",
+      "unit": null
+    },
+    {
+      "name": "name",
+      "role": "identifier",
+      "kind": "categorical",
+      "unit": null
+    },
+    {
+      "name": "age",
+      "role": "quasi",
+      "kind": "numeric",
+      "unit": "years"
+    },
+    {
+      "name": "zip",
+      "role": "quasi",
+      "kind": "categorical",
+      "unit": null
+    },
+    {
+      "name": "weight_kg",
+      "role": "quasi",
+      "kind": "numeric",
+      "unit": "kg"
+    },
+    {
+      "name": "liver_metastasis",
+      "role": "sensitive",
+      "kind": "numeric",
+      "unit": null
+    },
+    {
+      "name": "KRAS",
+      "role": "sensitive",
+      "kind": "numeric",
+      "unit": null
+    },
+    {
+      "name": "failure_6m",
+      "role": "sensitive",
+      "kind": "numeric",
+      "unit": null
+    },
+    {
+      "name": "diagnosis_date",
+      "role": "sensitive",
+      "kind": "date",
+      "unit": null
+    }
+  ],
+  "warnings": [
+    "ZIP prefixes are generalization, not a HIPAA determination. Census population conditions were not checked."
+  ],
+  "candidate_rows": 480,
+  "candidate_columns": [
+    "age",
+    "zip",
+    "weight_kg",
+    "liver_metastasis",
+    "KRAS",
+    "failure_6m",
+    "diagnosis_date"
+  ],
+  "suppressed_rows": 0,
+  "preview": [
+    {
+      "age": "[75, 80)",
+      "zip": "331",
+      "weight_kg": "[65, 70)",
+      "liver_metastasis": "0",
+      "KRAS": "0",
+      "failure_6m": "1",
+      "diagnosis_date": "2024"
+    },
+    {
+      "age": "[65, 70)",
+      "zip": "331",
+      "weight_kg": "[70, 75)",
+      "liver_metastasis": "0",
+      "KRAS": "1",
+      "failure_6m": "0",
+      "diagnosis_date": "2024"
+    },
+    {
+      "age": "[60, 65)",
+      "zip": "331",
+      "weight_kg": "[65, 70)",
+      "liver_metastasis": "1",
+      "KRAS": "1",
+      "failure_6m": "0",
+      "diagnosis_date": "2024"
+    },
+    {
+      "age": "[30, 35)",
+      "zip": "331",
+      "weight_kg": "[45, 50)",
+      "liver_metastasis": "0",
+      "KRAS": "0",
+      "failure_6m": "1",
+      "diagnosis_date": "2024"
+    },
+    {
+      "age": "[45, 50)",
+      "zip": "021",
+      "weight_kg": "[70, 75)",
+      "liver_metastasis": "0",
+      "KRAS": "1",
+      "failure_6m": "1",
+      "diagnosis_date": "2024"
+    },
+    {
+      "age": "[65, 70)",
+      "zip": "331",
+      "weight_kg": "[80, 85)",
+      "liver_metastasis": "0",
+      "KRAS": "0",
+      "failure_6m": "1",
+      "diagnosis_date": "2024"
+    },
+    {
+      "age": "[45, 50)",
+      "zip": "331",
+      "weight_kg": "[65, 70)",
+      "liver_metastasis": "1",
+      "KRAS": "1",
+      "failure_6m": "0",
+      "diagnosis_date": "2024"
+    },
+    {
+      "age": "[75, 80)",
+      "zip": "331",
+      "weight_kg": "[75, 80)",
+      "liver_metastasis": "1",
+      "KRAS": "0",
+      "failure_6m": "0",
+      "diagnosis_date": "2024"
+    },
+    {
+      "age": "[55, 60)",
+      "zip": "330",
+      "weight_kg": "[60, 65)",
+      "liver_metastasis": "0",
+      "KRAS": "0",
+      "failure_6m": "0",
+      "diagnosis_date": "2024"
+    },
+    {
+      "age": "[60, 65)",
+      "zip": "331",
+      "weight_kg": "[70, 75)",
+      "liver_metastasis": "0",
+      "KRAS": "1",
+      "failure_6m": "0",
+      "diagnosis_date": "2024"
+    },
+    {
+      "age": "[30, 35)",
+      "zip": "331",
+      "weight_kg": "[60, 65)",
+      "liver_metastasis": "0",
+      "KRAS": "0",
+      "failure_6m": "1",
+      "diagnosis_date": "2024"
+    },
+    {
+      "age": "[80, 85)",
+      "zip": "331",
+      "weight_kg": "[75, 80)",
+      "liver_metastasis": "0",
+      "KRAS": "1",
+      "failure_6m": "1",
+      "diagnosis_date": "2024"
+    },
+    {
+      "age": "[70, 75)",
+      "zip": "330",
+      "weight_kg": "[85, 90)",
+      "liver_metastasis": "0",
+      "KRAS": "0",
+      "failure_6m": "0",
+      "diagnosis_date": "2024"
+    },
+    {
+      "age": "[30, 35)",
+      "zip": "331",
+      "weight_kg": "[45, 50)",
+      "liver_metastasis": "1",
+      "KRAS": "0",
+      "failure_6m": "1",
+      "diagnosis_date": "2024"
+    },
+    {
+      "age": "[70, 75)",
+      "zip": "021",
+      "weight_kg": "[75, 80)",
+      "liver_metastasis": "0",
+      "KRAS": "1",
+      "failure_6m": "0",
+      "diagnosis_date": "2024"
+    },
+    {
+      "age": "[60, 65)",
+      "zip": "331",
+      "weight_kg": "[80, 85)",
+      "liver_metastasis": "1",
+      "KRAS": "1",
+      "failure_6m": "0",
+      "diagnosis_date": "2024"
+    },
+    {
+      "age": "[70, 75)",
+      "zip": "331",
+      "weight_kg": "[70, 75)",
+      "liver_metastasis": "0",
+      "KRAS": "1",
+      "failure_6m": "0",
+      "diagnosis_date": "2024"
+    },
+    {
+      "age": "[50, 55)",
+      "zip": "331",
+      "weight_kg": "[65, 70)",
+      "liver_metastasis": "0",
+      "KRAS": "0",
+      "failure_6m": "0",
+      "diagnosis_date": "2024"
+    },
+    {
+      "age": "[30, 35)",
+      "zip": "331",
+      "weight_kg": "[50, 55)",
+      "liver_metastasis": "1",
+      "KRAS": "1",
+      "failure_6m": "0",
+      "diagnosis_date": "2024"
+    },
+    {
+      "age": "[70, 75)",
+      "zip": "330",
+      "weight_kg": "[70, 75)",
+      "liver_metastasis": "0",
+      "KRAS": "1",
+      "failure_6m": "1",
+      "diagnosis_date": "2024"
+    },
+    {
+      "age": "[40, 45)",
+      "zip": "331",
+      "weight_kg": "[75, 80)",
+      "liver_metastasis": "1",
+      "KRAS": "1",
+      "failure_6m": "1",
+      "diagnosis_date": "2024"
+    },
+    {
+      "age": "[75, 80)",
+      "zip": "330",
+      "weight_kg": "[85, 90)",
+      "liver_metastasis": "1",
+      "KRAS": "0",
+      "failure_6m": "0",
+      "diagnosis_date": "2024"
+    },
+    {
+      "age": "[65, 70)",
+      "zip": "330",
+      "weight_kg": "[80, 85)",
+      "liver_metastasis": "1",
+      "KRAS": "0",
+      "failure_6m": "0",
+      "diagnosis_date": "2024"
+    },
+    {
+      "age": "[70, 75)",
+      "zip": "331",
+      "weight_kg": "[80, 85)",
+      "liver_metastasis": "0",
+      "KRAS": "1",
+      "failure_6m": "0",
+      "diagnosis_date": "2024"
+    },
+    {
+      "age": "[30, 35)",
+      "zip": "331",
+      "weight_kg": "[45, 50)",
+      "liver_metastasis": "0",
+      "KRAS": "1",
+      "failure_6m": "0",
+      "diagnosis_date": "2024"
+    },
+    {
+      "age": "[50, 55)",
+      "zip": "331",
+      "weight_kg": "[70, 75)",
+      "liver_metastasis": "0",
+      "KRAS": "0",
+      "failure_6m": "0",
+      "diagnosis_date": "2024"
+    },
+    {
+      "age": "[55, 60)",
+      "zip": "331",
+      "weight_kg": "[70, 75)",
+      "liver_metastasis": "1",
+      "KRAS": "0",
+      "failure_6m": "0",
+      "diagnosis_date": "2024"
+    },
+    {
+      "age": "[30, 35)",
+      "zip": "331",
+      "weight_kg": "[50, 55)",
+      "liver_metastasis": "0",
+      "KRAS": "1",
+      "failure_6m": "0",
+      "diagnosis_date": "2024"
+    },
+    {
+      "age": "[70, 75)",
+      "zip": "330",
+      "weight_kg": "[75, 80)",
+      "liver_metastasis": "0",
+      "KRAS": "0",
+      "failure_6m": "0",
+      "diagnosis_date": "2024"
+    },
+    {
+      "age": "[65, 70)",
+      "zip": "330",
+      "weight_kg": "[60, 65)",
+      "liver_metastasis": "1",
+      "KRAS": "0",
+      "failure_6m": "0",
+      "diagnosis_date": "2024"
+    },
+    {
+      "age": "[65, 70)",
+      "zip": "331",
+      "weight_kg": "[80, 85)",
+      "liver_metastasis": "0",
+      "KRAS": "0",
+      "failure_6m": "0",
+      "diagnosis_date": "2024"
+    },
+    {
+      "age": "[60, 65)",
+      "zip": "331",
+      "weight_kg": "[65, 70)",
+      "liver_metastasis": "1",
+      "KRAS": "0",
+      "failure_6m": "0",
+      "diagnosis_date": "2024"
+    },
+    {
+      "age": "[55, 60)",
+      "zip": "331",
+      "weight_kg": "[75, 80)",
+      "liver_metastasis": "1",
+      "KRAS": "0",
+      "failure_6m": "1",
+      "diagnosis_date": "2024"
+    },
+    {
+      "age": "[60, 65)",
+      "zip": "021",
+      "weight_kg": "[55, 60)",
+      "liver_metastasis": "1",
+      "KRAS": "0",
+      "failure_6m": "0",
+      "diagnosis_date": "2024"
+    },
+    {
+      "age": "[50, 55)",
+      "zip": "331",
+      "weight_kg": "[75, 80)",
+      "liver_metastasis": "0",
+      "KRAS": "0",
+      "failure_6m": "0",
+      "diagnosis_date": "2024"
+    },
+    {
+      "age": "[45, 50)",
+      "zip": "330",
+      "weight_kg": "[60, 65)",
+      "liver_metastasis": "0",
+      "KRAS": "0",
+      "failure_6m": "0",
+      "diagnosis_date": "2024"
+    },
+    {
+      "age": "[40, 45)",
+      "zip": "331",
+      "weight_kg": "[60, 65)",
+      "liver_metastasis": "0",
+      "KRAS": "0",
+      "failure_6m": "0",
+      "diagnosis_date": "2024"
+    },
+    {
+      "age": "[70, 75)",
+      "zip": "331",
+      "weight_kg": "[90, 95)",
+      "liver_metastasis": "1",
+      "KRAS": "1",
+      "failure_6m": "0",
+      "diagnosis_date": "2024"
+    },
+    {
+      "age": "[75, 80)",
+      "zip": "330",
+      "weight_kg": "[85, 90)",
+      "liver_metastasis": "1",
+      "KRAS": "0",
+      "failure_6m": "0",
+      "diagnosis_date": "2024"
+    },
+    {
+      "age": "[30, 35)",
+      "zip": "330",
+      "weight_kg": "[55, 60)",
+      "liver_metastasis": "1",
+      "KRAS": "0",
+      "failure_6m": "0",
+      "diagnosis_date": "2024"
+    },
+    {
+      "age": "[80, 85)",
+      "zip": "331",
+      "weight_kg": "[85, 90)",
+      "liver_metastasis": "1",
+      "KRAS": "0",
+      "failure_6m": "0",
+      "diagnosis_date": "2024"
+    },
+    {
+      "age": "[40, 45)",
+      "zip": "331",
+      "weight_kg": "[50, 55)",
+      "liver_metastasis": "0",
+      "KRAS": "0",
+      "failure_6m": "0",
+      "diagnosis_date": "2024"
+    },
+    {
+      "age": "[65, 70)",
+      "zip": "331",
+      "weight_kg": "[70, 75)",
+      "liver_metastasis": "0",
+      "KRAS": "0",
+      "failure_6m": "0",
+      "diagnosis_date": "2024"
+    },
+    {
+      "age": "[75, 80)",
+      "zip": "331",
+      "weight_kg": "[80, 85)",
+      "liver_metastasis": "0",
+      "KRAS": "0",
+      "failure_6m": "0",
+      "diagnosis_date": "2024"
+    },
+    {
+      "age": "[65, 70)",
+      "zip": "331",
+      "weight_kg": "[60, 65)",
+      "liver_metastasis": "1",
+      "KRAS": "1",
+      "failure_6m": "0",
+      "diagnosis_date": "2024"
+    },
+    {
+      "age": "[65, 70)",
+      "zip": "021",
+      "weight_kg": "[80, 85)",
+      "liver_metastasis": "0",
+      "KRAS": "0",
+      "failure_6m": "1",
+      "diagnosis_date": "2024"
+    },
+    {
+      "age": "[55, 60)",
+      "zip": "331",
+      "weight_kg": "[55, 60)",
+      "liver_metastasis": "0",
+      "KRAS": "0",
+      "failure_6m": "0",
+      "diagnosis_date": "2024"
+    },
+    {
+      "age": "[70, 75)",
+      "zip": "331",
+      "weight_kg": "[70, 75)",
+      "liver_metastasis": "0",
+      "KRAS": "1",
+      "failure_6m": "1",
+      "diagnosis_date": "2024"
+    },
+    {
+      "age": "[85, 90)",
+      "zip": "330",
+      "weight_kg": "[75, 80)",
+      "liver_metastasis": "1",
+      "KRAS": "1",
+      "failure_6m": "0",
+      "diagnosis_date": "2024"
+    },
+    {
+      "age": "[35, 40)",
+      "zip": "331",
+      "weight_kg": "[45, 50)",
+      "liver_metastasis": "1",
+      "KRAS": "0",
+      "failure_6m": "0",
+      "diagnosis_date": "2024"
+    }
+  ],
+  "canonical_candidate_sha256": "cf60607c8c62062b6c1fcc760c44e53d122588a35dd331e844f05f83fc2d05ea",
+  "notice": "Owner-confidential diagnostics. No privacy certificate, legal determination, or authorization to transmit."
+}

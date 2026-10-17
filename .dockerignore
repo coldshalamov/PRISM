@@ -1,0 +1,13 @@
+.git
+.venv
+.pytest_cache
+**/__pycache__
+**/*.pyc
+**/*.egg-info
+frontend/node_modules
+frontend/dist
+backend/app/static
+artifacts
+reference-kit
+.env
+.env.*

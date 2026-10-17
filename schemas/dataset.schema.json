@@ -1,0 +1,262 @@
+{
+  "$defs": {
+    "ColumnSpec": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "dtype": {
+          "enum": [
+            "integer",
+            "float",
+            "category",
+            "date",
+            "text",
+            "boolean"
+          ],
+          "title": "Dtype",
+          "type": "string"
+        },
+        "role": {
+          "enum": [
+            "direct_identifier",
+            "quasi_identifier",
+            "sensitive",
+            "research_target",
+            "other"
+          ],
+          "title": "Role",
+          "type": "string"
+        },
+        "unit": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Unit"
+        },
+        "importance": {
+          "default": 1,
+          "maximum": 100,
+          "minimum": 0,
+          "title": "Importance",
+          "type": "number"
+        },
+        "sensitivityReason": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Sensitivityreason"
+        },
+        "generalization": {
+          "anyOf": [
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Generalization"
+        }
+      },
+      "required": [
+        "name",
+        "dtype",
+        "role"
+      ],
+      "title": "ColumnSpec",
+      "type": "object"
+    },
+    "ResearchQuery": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "maxLength": 100,
+          "minLength": 1,
+          "title": "Id",
+          "type": "string"
+        },
+        "type": {
+          "enum": [
+            "group_rate",
+            "group_count",
+            "group_mean",
+            "correlation",
+            "difference_in_rates"
+          ],
+          "title": "Type",
+          "type": "string"
+        },
+        "groupBy": {
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 5,
+          "title": "Groupby",
+          "type": "array"
+        },
+        "target": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Target"
+        },
+        "filter": {
+          "additionalProperties": true,
+          "title": "Filter",
+          "type": "object"
+        },
+        "positiveValue": {
+          "default": 1,
+          "title": "Positivevalue"
+        },
+        "weight": {
+          "default": 1,
+          "exclusiveMinimum": 0,
+          "maximum": 100,
+          "title": "Weight",
+          "type": "number"
+        },
+        "tolerance": {
+          "default": 0.05,
+          "exclusiveMinimum": 0,
+          "maximum": 1000000.0,
+          "title": "Tolerance",
+          "type": "number"
+        },
+        "minCohort": {
+          "default": 5,
+          "maximum": 100000,
+          "minimum": 1,
+          "title": "Mincohort",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "id",
+        "type"
+      ],
+      "title": "ResearchQuery",
+      "type": "object"
+    },
+    "TransformStep": {
+      "additionalProperties": false,
+      "properties": {
+        "method": {
+          "maxLength": 40,
+          "minLength": 1,
+          "title": "Method",
+          "type": "string"
+        },
+        "columns": {
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 80,
+          "title": "Columns",
+          "type": "array"
+        },
+        "params": {
+          "additionalProperties": true,
+          "title": "Params",
+          "type": "object"
+        }
+      },
+      "required": [
+        "method"
+      ],
+      "title": "TransformStep",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "datasetId": {
+      "title": "Datasetid",
+      "type": "string"
+    },
+    "name": {
+      "title": "Name",
+      "type": "string"
+    },
+    "rowCount": {
+      "title": "Rowcount",
+      "type": "integer"
+    },
+    "schema": {
+      "items": {
+        "$ref": "#/$defs/ColumnSpec"
+      },
+      "title": "Schema",
+      "type": "array"
+    },
+    "preview": {
+      "items": {
+        "additionalProperties": true,
+        "type": "object"
+      },
+      "title": "Preview",
+      "type": "array"
+    },
+    "defaultSteps": {
+      "items": {
+        "$ref": "#/$defs/TransformStep"
+      },
+      "title": "Defaultsteps",
+      "type": "array"
+    },
+    "defaultWorkload": {
+      "items": {
+        "$ref": "#/$defs/ResearchQuery"
+      },
+      "title": "Defaultworkload",
+      "type": "array"
+    },
+    "synthetic": {
+      "title": "Synthetic",
+      "type": "boolean"
+    },
+    "rowUnit": {
+      "additionalProperties": true,
+      "title": "Rowunit",
+      "type": "object"
+    }
+  },
+  "required": [
+    "datasetId",
+    "name",
+    "rowCount",
+    "schema",
+    "preview",
+    "defaultSteps",
+    "defaultWorkload",
+    "synthetic",
+    "rowUnit"
+  ],
+  "title": "DatasetSummary",
+  "type": "object"
+}

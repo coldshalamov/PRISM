@@ -1,0 +1,71 @@
+/* PRISM design tokens.
+   Direction: native desktop-style workspace. Graphite shell frames a soft neutral data canvas.
+   Three semantic channels in every chart: graphite = original, violet = protected, orange = exposure.
+   Green is intentionally absent: nothing in PRISM is a "safe" signal. */
+:root {
+  color-scheme: light;
+
+  --font-ui: 'IBM Plex Sans', 'Segoe UI Variable Text', 'Segoe UI', system-ui, sans-serif;
+  --font-mono: 'IBM Plex Mono', 'Cascadia Mono', ui-monospace, Consolas, monospace;
+  --font-doc: 'IBM Plex Serif', Georgia, 'Times New Roman', serif;
+
+  /* graphite shell */
+  --shell-0: #0b0c0f;
+  --shell-1: #111317;
+  --shell-2: #1a1d22;
+  --shell-3: #242830;
+  --shell-line: rgba(255, 255, 255, 0.09);
+  --shell-line-strong: rgba(255, 255, 255, 0.16);
+  --shell-ink: #eef0f4;
+  --shell-ink-2: #a9afba;
+  --shell-ink-3: #868e9b;
+  --shell-accent: #b3a7ff;
+  --shell-risk: #ff8a4c;
+
+  /* neutral canvas */
+  --canvas: #e9ebef;
+  --surface: #ffffff;
+  --surface-2: #f5f6f8;
+  --surface-3: #eceef2;
+  --line: #dcdfe6;
+  --line-strong: #c2c7d1;
+  --ink: #0f1218;
+  --ink-2: #363d4a;
+  --ink-3: #565f6d;
+  --ink-4: #646d7b;
+
+  /* channels */
+  --accent: #5b3df5;
+  --accent-ink: #4a2de0;
+  --accent-soft: #eeeaff;
+  --accent-wash: rgba(91, 61, 245, 0.08);
+  --accent-line: rgba(91, 61, 245, 0.38);
+  --original: #4b5362;
+  --original-soft: #c7ccd6;
+  --risk: #d9480f;
+  --risk-ink: #b83a08;
+  --risk-soft: #fff1e8;
+  --risk-wash: rgba(217, 72, 15, 0.1);
+  --alert: #c92a2a;
+  --uncovered: #6a7280;
+
+  /* geometry */
+  --r-1: 2px;
+  --r-2: 4px;
+  --r-3: 8px;
+  --rail-w: 244px;
+  --rail-w-compact: 60px;
+  --inspector-w: 336px;
+  --topbar-h: 46px;
+  --toolbar-h: 44px;
+
+  --ease: cubic-bezier(0.2, 0.7, 0.2, 1);
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --shadow-pop: 0 1px 0 rgba(15, 18, 24, 0.04), 0 12px 32px -8px rgba(15, 18, 24, 0.28), 0 0 0 1px rgba(15, 18, 24, 0.1);
+  --shadow-paper: 0 1px 2px rgba(15, 18, 24, 0.08), 0 10px 30px -12px rgba(15, 18, 24, 0.22);
+  --focus: 0 0 0 2px var(--surface), 0 0 0 4px var(--accent);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root { --motion: 0; }
+}
