@@ -5,7 +5,7 @@ import { useDialogs } from '../../dialogs';
 import { BorderBeam } from '../../ui/magic/BorderBeam';
 import { useWorkspace } from '../../workspace';
 import { Journey } from './Journey';
-import { measuresFor } from './Ledger';
+import { glanceFor } from './glance';
 import { MeasureTiles } from './MeasureTiles';
 import { Refraction } from './Refraction';
 import { ProtectionPreference } from './SemanticPanel';
@@ -20,21 +20,8 @@ export function Hero({ recipeEdited }: { recipeEdited: boolean }) {
   const evaluating = busy.apply || busy.assess || busy.search;
   if (!dataset) return null;
 
-  const membershipKnown = (active?.threatContext ?? active?.risk.threat_context)?.membershipKnown ?? null;
   const base = baselineUsable ? baseline : null;
-  const measures = active ? measuresFor(active, base, dataset.rowCount, membershipKnown) : [];
-  const metric = (id: string) => measures.find(measure => measure.id === id);
-  const values = {
-    before: base && typeof base.risk.metrics.sample_unique === 'number' ? base.risk.metrics.sample_unique : null,
-    after: metric('sample_unique')?.to ?? null,
-    loss: metric('loss')?.to ?? null,
-  };
-  /* An unavailable figure keeps its stated reason in plain sight, exactly as the ledger table words it. */
-  const reasons = [
-    values.after === null && active ? `Rows unique on known fields: ${metric('sample_unique')?.naText ?? 'not measured'}` : null,
-    values.loss === null && active ? `Research-query loss: ${metric('loss')?.naText ?? 'unavailable'}` : null,
-    values.before === null && active ? 'Unprotected baseline unavailable, so nothing can be compared with it' : null,
-  ].filter((reason): reason is string => reason !== null);
+  const glance = active ? glanceFor(active, base, dataset.rowCount) : null;
 
   return (
     <section className="hero dot-field" aria-label="Measured summary">
@@ -42,8 +29,8 @@ export function Hero({ recipeEdited }: { recipeEdited: boolean }) {
       <Journey recipeEdited={recipeEdited} />
       {active ? (
         <div className="hero-body">
-          <Refraction values={values} label={ws.labelOf(active.candidateId)} external={isAudit(active)} reasons={reasons} />
-          <MeasureTiles measures={measures} />
+          <Refraction values={glance!.values} label={ws.labelOf(active.candidateId)} external={isAudit(active)} reasons={glance!.reasons} />
+          <MeasureTiles measures={glance!.measures} />
         </div>
       ) : null}
       {active ? (
