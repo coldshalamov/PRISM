@@ -27,5 +27,9 @@ Public JS/CSS/font assets allow anonymous cross-origin loading. This does not
 expose API responses. Python runs on Vercel and durable fictional-session
 configuration remains in Archie Core. This is not an all-Archie runtime.
 
-Actual Archie publishing and browser acceptance must be recorded in the
-deployment document before this adapter is described as deployed.
+Archie assigned `https://41d0bdfd-0065-4b0b-a973-efbe1c1a9c5e.archie.site/`
+during publishing. The preview already rendered the real 5,000-row fixture
+through the bridge. Both that public origin and the exact project preview
+origin are configured in `PUBLIC_ARCHIE_ORIGINS`; the public route still needs
+its final live acceptance check at this checkpoint. See the deployment document
+for the final outcome.
