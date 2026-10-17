@@ -14,6 +14,10 @@ import { Status } from '../ui/Status';
 import { useWorkspace } from '../workspace';
 import type { Candidate, ExportFormat, Finding, RegistryEntry } from '../types';
 import { QueryResults } from './intent/QueryResults';
+import { glanceFor } from './workbench/glance';
+import { MeasureTiles } from './workbench/MeasureTiles';
+import { Refraction } from './workbench/Refraction';
+import './workbench/hero.css';
 import './intent/research-intent.css';
 import './report/owner-report.css';
 
@@ -112,6 +116,7 @@ export default function Report() {
     if (!success) setExportError(`The ${format === 'csv' ? 'protected CSV' : 'owner file'} could not be downloaded. The service message explains the block; your candidate remains intact.`);
     else { setLastExport(`${format === 'csv' ? 'Protected CSV' : format === 'html' ? 'Confidential owner HTML' : format === 'json' ? 'Confidential owner JSON' : 'Confidential recipe'} downloaded for ${label}.`); if (format === 'csv') { setReviewId(null); setAcknowledgments([]); csvButton.current?.focus(); } }
   };
+  const glance = glanceFor(candidate, baseline, ws.dataset?.rowCount ?? candidate.utility.rows_original ?? candidate.rowCount);
   const measuredRisk = Object.entries(candidate.risk.metrics);
   const unavailableQueries = candidate.utility.queries.filter(query => queryOutcome(query) === 'uncovered').length;
   const outsideQueries = candidate.utility.queries.filter(query => queryOutcome(query) === 'outside').length;
@@ -136,6 +141,11 @@ export default function Report() {
         <header className="report-document-head"><div className="report-document-mark"><Fingerprint size={28} strokeWidth={1.2} /><span>PRISM <small>{ws.deployment.hosted ? 'Hosted demo assessment record' : 'Local assessment record'}</small></span></div><h1>Candidate audit</h1><p className="report-deck">{label} · {deckSummary}</p><div className="report-date-line"><span>{dateLabel(candidate.createdAt)}</span><span>{isFictional(ws.deployment, ws.dataset) ? 'Fictional demonstration data' : 'Imported data · owner evidence'}</span></div></header>
         <EvidenceBanner compact />
         <div className="report-decision"><strong>No automatic release clearance.</strong><p>These measurements describe this dataset, recipe and declared attacker. They do not establish anonymity, differential privacy, legal compliance or permission to publish.{assessmentNote ? ` ${assessmentNote}` : ''}</p></div>
+
+        <section className={`report-glance${ws.stale.length || evaluating ? ' is-stale' : ''}`} aria-label="Measured at a glance">
+          <Refraction values={glance.values} label={label} external={isAudit(candidate)} reasons={glance.reasons} />
+          <MeasureTiles measures={glance.measures} />
+        </section>
 
         <section id="report-snapshot" className="report-section"><header><span>01</span><h2>The evaluated snapshot</h2></header>
           <dl className="report-facts"><div><dt>Candidate</dt><dd><strong>{label}</strong><code>{candidate.candidateId}</code></dd></div><div><dt>Source</dt><dd>{ws.dataset?.name ?? 'Source name unavailable'}<code>{candidate.datasetId}</code></dd></div><div><dt>Released rows / fields</dt><dd>{num(candidate.rowCount, 0)} / {candidate.columns.length}{ws.dataset ? <small>Source: {num(ws.dataset.rowCount, 0)} rows · {ws.dataset.schema.length} fields</small> : null}</dd></div><div><dt>Release mode</dt><dd>{title(candidate.recipe.releaseMode)}{isAudit(candidate) ? <small>External audit · {title(candidate.auditMode ?? 'unknown mechanism')}</small> : null}</dd></div><div><dt>Recipe identity</dt><dd>Seed {num(candidate.recipe.seed, 0)} · engine {candidate.recipe.version}<code>{candidate.recipeHash ?? (isAudit(candidate) ? 'External mechanism unknown' : 'Recipe identity unavailable')}</code></dd></div><div><dt>Owner row alignment</dt><dd>{candidate.alignment === 'verified' ? 'Verified owner correspondence' : 'Unpaired · retention correspondence unknown'}<small>Owner lineage is private evidence; it is not attacker alignment or an export join key.</small></dd></div></dl>
