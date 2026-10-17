@@ -4,6 +4,14 @@
 
 PRISM is a local privacy engineering workbench for structured research datasets. It compares what a candidate row release reveals within its sample with what its transformations change in the research questions you care about.
 
+Built for the **eMerge AI Hackathon, October 17, 2026**, Enterprise AI track: **AI safety, trust and governance**. Oncology is an independently generated fictional example; no sponsor or patient dataset is used.
+
+## Background material and AI-tool disclosure
+
+This submission incorporates a supplied PRISM research architecture and Apache-2.0 starter kit. The adapted exact-linkage module, catalogue, benchmark fixtures and selected original documentation retain their attribution in [NOTICE](NOTICE), [the baseline reconciliation](docs/KIT_BASELINE.md) and [the original kit notices](docs/reference-kit/NOTICE). They are pre-existing material, not a claim of event-day authorship. The new application, integration and evaluation work is recorded in this repository.
+
+OpenAI Codex and parallel coding agents, Claude Sonnet5.5 through Claude Code and Devin, and OpenCode coding-agent tooling assisted implementation and review. The requested Gemini4 Argon improvement pass is in progress; its actual final result is recorded in [the delivery status](artifacts/DELIVERY_STATUS.json). These are development tools. The application runs deterministic Python privacy/utility calculations and an explicitly scoped statistical inference diagnostic; it does not call a generative AI model at runtime. Dependency names, versions and licenses are disclosed in [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md) and the lockfiles. The frontend distribution includes full runtime license texts at `/THIRD_PARTY_LICENSES.txt`.
+
 The demonstration is a deterministic, fictional 5,000-person oncology table. PRISM calculates sample uniqueness, exact-match QI class sizes, subset exposure, categorical sensitive-value inference and research-query differences. Its bounded search evaluates actual transformation recipes and marks their measured Pareto frontier. A frontier point or a passing constraint is **not release clearance**.
 
 ## Run locally

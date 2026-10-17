@@ -22,7 +22,7 @@ EXCLUDED_DIRECTORIES = {"node_modules", ".venv", "__pycache__", ".pytest_cache",
                         "private", "secrets", "credentials"}
 EXCLUDED_SUFFIXES = {".pyc", ".log", ".jsonl", ".tsbuildinfo", ".pem", ".key", ".p12", ".pfx", ".jks", ".keystore"}
 EXCLUDED_FILES = {".envrc", ".npmrc", ".pypirc", ".netrc", ".git-credentials", ".ds_store", "thumbs.db",
-                  "id_rsa", "id_dsa", "id_ecdsa", "id_ed25519", "token.json", "tokens.json"}
+                  "id_rsa", "id_dsa", "id_ecdsa", "id_ed25519", "token.json", "tokens.json", "worker_brief.md"}
 
 
 def source_name_allowed(relative: Path) -> bool:
