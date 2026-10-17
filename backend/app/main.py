@@ -21,7 +21,7 @@ from . import datasets, lab, linkage, optimizer, registry, reports, risk, semant
 from .models import AssessmentRequest, AuditRequest, CandidateRequest, ReportRequest, SchemaRequest, SearchRequest, SemanticRequest
 from .security import BoundedBodyMiddleware
 
-app = FastAPI(title="PRISM local workbench", version="0.1.0")
+app = FastAPI(title="PRISM local workbench", version="0.1.1")
 ORIGINS = {"http://127.0.0.1:8000", "http://localhost:8000", "http://127.0.0.1:5173", "http://localhost:5173"}
 app.add_middleware(CORSMiddleware, allow_origins=list(ORIGINS), allow_methods=["GET", "POST", "PATCH", "DELETE"], allow_headers=["Content-Type"])
 DATASETS: dict[str, dict] = {}
@@ -280,7 +280,7 @@ def make_candidate(data, frame, recipe, qi, sensitive, workload, lineage=None, n
 
 @app.get("/health")
 def health():
-    return {"status": "ok", "version": "0.1.0"}
+    return {"status": "ok", "version": "0.1.1"}
 
 
 @app.get("/v1/demo")
@@ -357,8 +357,33 @@ def semantic_ontology():
     return {**semantics.ontology(), "attackRules": semantic_rules.registry()}
 
 
+def preview_semantics(dataset_id: str, body: SemanticRequest):
+    data = get_dataset(dataset_id)
+    if any(column not in data["frame"].columns for column in body.overrides):
+        raise Problem("unknown_semantic_column", "Corrections must refer to columns in the current dataset.", 422)
+    overrides = {**data.get("_semanticOverrides", {}), **body.overrides}
+    preview = semantics.remote_metadata_preview(data["frame"], data["schema"], overrides)
+    preview.update(datasetId=dataset_id, semanticRevision=data.get("semantic", {}).get("revision", ""))
+    binding = {**preview, "schema": data["schema"], "overrides": overrides}
+    preview["metadataDigest"] = hashlib.sha256(json.dumps(binding, sort_keys=True, separators=(",", ":"), allow_nan=False).encode()).hexdigest()
+    return preview
+
+
+def validate_semantic_input(dataset_id: str, body: SemanticRequest):
+    preview = preview_semantics(dataset_id, body)
+    if not body.metadataDigest or not secrets.compare_digest(body.metadataDigest, preview["metadataDigest"]):
+        raise Problem("metadata_changed", "Field metadata changed. Refresh and retry interpretation.", 409)
+    return preview
+
+
 @app.post("/v1/datasets/{dataset_id}/semantics")
 def classify_semantics(dataset_id: str, body: SemanticRequest):
+    if body.previewOnly:
+        if body.allowRemote:
+            raise Problem("invalid_metadata_preview", "A metadata preview cannot request remote interpretation.", 422)
+        return preview_semantics(dataset_id, body)
+    if body.allowRemote:
+        validate_semantic_input(dataset_id, body)
     data = get_dataset(dataset_id)
     if any(column not in data["frame"].columns for column in body.overrides):
         raise Problem("unknown_semantic_column", "Corrections must refer to columns in the current dataset.", 422)
@@ -487,8 +512,6 @@ def export(body: ReportRequest):
     data = dict(get_dataset(candidate["datasetId"]))
     data["schema"] = candidate["schema"]
     if body.format == "csv":
-        if not {"authority", "limitations", "reviewed"} <= set(body.acknowledgments):
-            raise Problem("export_review_required", "Confirm authority, limitations, and review of this measured candidate before exporting its protected CSV.", 409)
         direct = [c["name"] for c in candidate["schema"] if c["role"] == "direct_identifier" and c["name"] in candidate["columns"]]
         # Also scan unexpected external columns by profiler, independently of original schema.
         direct += [c["name"] for c in datasets.profile(candidate["_frame"]) if c["role"] == "direct_identifier"]

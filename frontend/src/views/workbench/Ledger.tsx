@@ -1,6 +1,7 @@
 import { useState } from 'react';
-import { ChevronDown, ChevronUp, ShieldAlert } from 'lucide-react';
+import { ChevronDown, ChevronUp, ClipboardCheck, Play, ShieldAlert } from 'lucide-react';
 import { findingCoverage, isAudit, isLinkageFinding, linkageOf, queryOutcome, rowCountNote, STALE_LABEL } from '../../analysis';
+import { useDialogs } from '../../dialogs';
 import { num, numDelta, pct, pointsDelta } from '../../format';
 import { queryValue, resultUnit } from '../intent/QueryResults';
 import { Empty, Notice } from '../../ui/Feedback';
@@ -172,6 +173,30 @@ function FindingRow({ finding }: { finding: Finding }) {
   );
 }
 
+const IDLE_TEXT: Record<LedgerTab, string> = {
+  measures: 'No candidate evaluated yet. Measurements appear after the first evaluation.',
+  queries: 'No candidate evaluated yet. Research-question results appear after the first evaluation.',
+  findings: 'No candidate evaluated yet. Findings and coverage appear after the first evaluation.',
+};
+
+/* One truthful line with the one action that produces a snapshot; it states no source metric and no favourable zero. */
+function LedgerIdle({ tab, hasDataset }: { tab: LedgerTab; hasDataset: boolean }) {
+  const ws = useWorkspace();
+  const dialogs = useDialogs();
+  const evaluating = ws.busy.apply || ws.busy.assess;
+  const sessionBusy = Object.values(ws.busy).some(Boolean);
+  return (
+    <div className="ledger-idle" role="status">
+      <p>{!hasDataset ? 'No dataset in this session.' : evaluating ? 'Evaluating on the full dataset… no snapshot to show yet.' : IDLE_TEXT[tab]}</p>
+      {!hasDataset || evaluating ? null : ws.reviewed ? (
+        <button type="button" className="btn small primary" disabled={sessionBusy} onClick={() => void ws.apply()}><Play size={12} fill="currentColor" />Apply and evaluate</button>
+      ) : (
+        <button type="button" className="btn small" disabled={sessionBusy} onClick={() => dialogs.open('review')}><ClipboardCheck size={14} />Review classifications</button>
+      )}
+    </div>
+  );
+}
+
 export function Ledger({ onShowSubgroups }: { onShowSubgroups: () => void }) {
   const ws = useWorkspace();
   const { active, baseline, baselineUsable, dataset, prefs, setPrefs, stale, busy } = ws;
@@ -201,16 +226,16 @@ export function Ledger({ onShowSubgroups }: { onShowSubgroups: () => void }) {
             { id: 'findings', label: 'Findings and coverage', badge: findings.length ? (uncoveredFindings ? `${uncoveredFindings} uncovered` : findings.length) : undefined },
           ]}
         />
-        {pending ? <span className="ledger-stale">Evaluating… previous snapshot</span> : stale.length ? <span className="ledger-stale">Stale · {stale.map(reason => STALE_LABEL[reason]).join(', ')} changed</span> : null}
+        {pending ? <span className="ledger-stale">{active ? 'Evaluating… previous snapshot' : 'Evaluating…'}</span> : stale.length ? <span className="ledger-stale">Stale · {stale.map(reason => STALE_LABEL[reason]).join(', ')} changed</span> : null}
         <span className="ledger-gate"><ShieldAlert size={14} aria-hidden="true" />Not cleared for release · sample measurements</span>
         <button type="button" className="icon-btn" aria-label={open ? 'Collapse ledger' : 'Expand ledger'} aria-expanded={open} onClick={() => setPrefs({ ledger: !open })}>
           {open ? <ChevronDown size={17} /> : <ChevronUp size={17} />}
         </button>
       </header>
       {open ? (
-        <div className="ledger-body" {...panelProps('ledger', tab)}>
+        <div className={`ledger-body${!active || !dataset ? ' idle' : ''}`} {...panelProps('ledger', tab)}>
           {!active || !dataset ? (
-            <Empty title="No candidate evaluated yet">Create a candidate to measure uniqueness, linkage, inference and research-question changes on the full dataset.</Empty>
+            <LedgerIdle tab={tab} hasDataset={Boolean(dataset)} />
           ) : tab === 'measures' ? (
             <>
               <table className="data-table ledger-table">

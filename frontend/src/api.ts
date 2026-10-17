@@ -1,7 +1,7 @@
 import { isLocalHost } from './deployment';
 import type {
   ApiHealth, AuditMode, Candidate, ColumnSpec, Dataset, DatasetSemantics, ExportFormat, LabResult, Registry,
-  ResearchQuery, SearchResult, SemanticOntology, SemanticOverrides, TransformStep,
+  ResearchQuery, SearchResult, SemanticMetadataPreview, SemanticOntology, SemanticOverrides, TransformStep,
 } from './types';
 
 export class ApiError extends Error {
@@ -52,7 +52,7 @@ const unreachableMessage = (): string => (isLocalHost(window.location.hostname) 
 
 // Archie serves the exact production module from our public asset CDN. Its
 // static host cannot proxy Python, so that one fixed module origin uses the
-// explicitly allowlisted, fictional-only bridge. Local and same-origin runs
+// explicitly allowlisted hosted-workbench bridge. Local and same-origin runs
 // keep their existing transport. No credential is placed in URLs or storage.
 const PUBLIC_COMPUTE_ORIGIN = 'https://prism-healthcare-taupe.vercel.app';
 const moduleOrigin = new URL(import.meta.url).origin;
@@ -187,8 +187,10 @@ export const api = {
       }),
     }),
   /** `allowRemote: false` is a purely local inspection; `true` lets the service send column metadata (never row values) to its model provider. */
-  inspectSemantics: (datasetId: string, allowRemote: boolean, overrides: SemanticOverrides, signal?: AbortSignal) =>
-    post<DatasetSemantics>(`/v1/datasets/${encodeURIComponent(datasetId)}/semantics`, { allowRemote, overrides }, signal),
+  previewSemantics: (datasetId: string, signal?: AbortSignal) =>
+    post<SemanticMetadataPreview>(`/v1/datasets/${encodeURIComponent(datasetId)}/semantics`, { previewOnly: true }, signal),
+  inspectSemantics: (datasetId: string, allowRemote: boolean, overrides: SemanticOverrides, signal?: AbortSignal, metadataDigest?: string) =>
+    post<DatasetSemantics>(`/v1/datasets/${encodeURIComponent(datasetId)}/semantics`, { allowRemote, overrides, ...(metadataDigest ? { metadataDigest } : {}) }, signal),
   createCandidate: (datasetId: string, steps: RecipeStep[], threat: ThreatRequest, workload: ResearchQuery[], name?: string, signal?: AbortSignal) =>
     post<Candidate>('/v1/candidates', { datasetId, steps: cleanSteps(steps), ...threat, workload: cleanWorkload(workload), seed: 42, ...(name ? { name } : {}) }, signal),
   assess: (candidateId: string, threat: ThreatRequest, workload: ResearchQuery[], signal?: AbortSignal) =>

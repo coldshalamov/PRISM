@@ -1,37 +1,31 @@
-# Release limitations
+# PRISM 0.1.1 capability boundaries
 
-**Not cleared for release.** PRISM is a synthetic-data demonstration and a scoped privacy/utility diagnostic prototype. Sample metrics, constraint passes, frontier membership, a report download and successful CSV export do not establish anonymity, HIPAA compliance or publication approval.
+PRISM is a working desktop-style privacy/utility proof of concept. The hosted Archie application accepts real CSV, JSON and single-sheet XLSX tables, supports external protected-file audit, and runs actual deterministic calculations. Labeled fictional examples are optional. Its results describe measured table behavior under stated assumptions; they do not constitute an anonymity certificate or an approval to publish.
 
-## Interpretation limits
+## Operational scope
 
-- Exact-match risk assumes one row per person, known target membership, correct observed QI and a uniform prior. It is not a population re-identification probability.
-- k limits distinguishability under the chosen retained QI. A k≥5 group may still reveal one sensitive value for every member. Omitted fields and outside knowledge can change the result.
-- Primary inference is categorical, in-sample and unsmoothed. Rare groups can overstate apparent predictive accuracy. A separate train/test split diagnostic uses training-only class majorities with a five-observation minimum and global fallback, then scores held-out rows in the same release. It does not establish independent population accuracy or incremental disclosure; optimizer split reuse can overfit. Continuous numeric sensitive targets with more than 20 distinct values are unsupported.
-- Categorical t-distance is total variation, not continuous EMD or a universal confidentiality guarantee. l/t auditing is available; l/t enforcement is not.
-- Beyond ten QI, subset coverage is bounded and order-dependent. The displayed smallest distinguishing subset is only among tested combinations.
-- Workload loss depends on user-chosen questions, tolerances and cohort minima. Midpoints approximate binned numeric data. Preserved marginals do not establish preserved scientific relationships.
-- Search explores a finite deterministic library, not all mechanisms or all attacks. Protected analytical targets are preserved by automated search, but manually supplied recipes can alter them. No held-out population attacks, universal optimality or additive information-value attribution is claimed.
+Archie serves the public entry and Core stores uploaded original file bytes plus visitor session configuration. Vercel serves assets and Python computation. Hosted intake is 3 MiB per file, 100,000 rows and 80 columns, with eight datasets, 40 candidates, four searches and 24 evaluated recipes per search. Local loopback intake is 50 MB. This is a bounded interactive application, not a distributed large-data service.
 
-## Operational and data limits
+Clear session deletes the visitor's session and owned uploaded records. Thirty minutes of inactivity expires the session; cleanup occurs when the expired visitor returns. Abandoned records are not claimed to be proactively purged. The main workflow has no account/login or permission checklist. The legacy Docker fictional-only adapter has a separate purpose and does not describe the current public product.
 
-Use fictional/synthetic demonstration data on a trusted local computer. The service binds loopback, restricts browser origins and keeps its working tables in process memory; it has no authentication, per-user isolation, encrypted database, secure memory erasure, machine-wide egress policy or production health-data deployment controls. Public hosting/tunnels are outside this design.
+JSON record tables and single-visible-sheet, values-only XLSX are supported; formula cells and unsupported workbook structures are rejected. ZIP leading zeroes are preserved. Units still require review: weight is kilograms or explicitly converted pounds. There is no document-container, DICOM, genomic or general embedded-metadata scanner.
 
-CSV, JSON record tables and single-sheet values-only XLSX are supported. Formula cells and multi-sheet workbooks are rejected; no hidden-sheet, arbitrary embedded metadata, document attachment or genomic/sequence scanner is supplied. Intake is bounded to 50 MB, 100,000 rows and 80 API columns. The local process session holds at most eight datasets and 160 candidates. Large exact subset maps and searches are synchronous and may take time; this is not a distributed compute service.
+## Scientific interpretation
 
-Role and type suggestions require owner review. ZIP leading zeroes are preserved, but imported CSV does not carry trusted unit metadata. Weight must be reviewed as kg or explicitly converted from lb before kg bands. The default three-digit ZIP operation does not evaluate population exceptions or establish Safe Harbor.
+- Sample uniqueness and group sizes use declared retained fields and record grain. They are not population re-identification probabilities; repeated visits are not distinct people.
+- A large group can still reveal a homogeneous sensitive value. Current categorical inference, diversity and total-variation diagnostics have declared finite-table scope; l/t enforcement and independent population calibration are not provided.
+- Subset exploration and recipe optimization are bounded. Search evaluates real candidates but does not establish a global optimum or test every possible attack.
+- Utility follows selected questions, tolerances, units and cohort support. Interval midpoints approximate numeric output. Preserved means or marginal distributions do not prove preserved scientific relationships.
+- Centered integer intervals preserve the exact source midpoint and earn no coarsening credit. Shared fixed bands are a different representation. Seeded noise/permutation are experimental, not differential privacy; no DP accountant is supplied.
 
-Pattern redaction misses unstructured identifiers. Reviewed direct-identifier columns block CSV export even after masking/tokenization. Unknown or misclassified identifiers may escape heuristic checks. Pseudonyms remain linkable within the same key/namespace. Session clearing rotates that key; the secret is intentionally absent from recipes, so a downloaded HMAC recipe alone cannot reproduce the same tokens in a fresh session.
+## Semantics, audits and exports
 
-Seeded noise, date offsets and permutation are experimental non-DP demonstrations. They may create outliers, implausible values, changed chronology or false person-level associations. There is no secure DP randomness protocol or privacy accountant.
+Optional Jev interprets schema metadata. Its primary action prepares a current metadata digest and makes the requested call; View model input is read-only and optional. Source rows are not sent. Suggestions can abstain or be wrong, so deterministic identifier checks stay independent and confirmed user corrections take precedence. Probability metadata is not a privacy probability. Slider changes and replay do not call Jev. The configured budget ceiling is per process, with additional durable visitor attempt limits.
 
-## External comparisons and exported evidence
+External files remain unpaired unless the owner supplies valid correspondence. Such correspondence is an owner assertion, not an inferred attacker resource. Column mapping does not establish units, row identity or the producing protection algorithm. The unknown external mechanism stays unknown; descriptive and executable query comparisons remain useful without pairing.
 
-Separately imported files are unpaired unless the owner explicitly supplies unique valid original row offsets in paired mode. Validating that shape does not independently prove the owner's provenance claim. Utility remains an aggregate comparison; no patient-level causal change is asserted. Column mapping does not prove algorithm provenance, unit equivalence or row identity. Review both files' actual units and encodings before comparing them.
+Direct CSV download uses the selected current frozen candidate with recognized-identifier and version guards, without the former three-box acknowledgment flow. Reports exclude table previews, private correspondence and HMAC keys; recipes and aggregate findings remain inspectable. Heuristic pattern scans do not identify every free-text disclosure, and pseudonyms preserve joins within their key/namespace.
 
-Synthetic audit mode runs descriptive diagnostics and marks unimplemented attacks unsupported. It does not execute Anonymeter or prove train/control disjointness. Learned synthetic generation, membership/memorization evaluation and DP synthetic release are not provided.
+Specialist auxiliary-record, longitudinal/genomic, trained synthetic membership/inversion, prior-release composition and query-history attacks require artifacts and implementations not supplied here. They remain explicit coverage gaps, not passes. Educational Attack Lab examples are labeled demonstrations. ARX/R bridges, production enclave services, synthetic generation and formal DP accounting are not installed features.
 
-Reports exclude raw table previews, internal row alignment and HMAC keys. The API rejects research target/group/filter references to reviewed direct identifiers. Dataset display names, schema, other query definitions, cohort labels and aggregate values remain. Small cohorts, filters and misclassified identifying labels can themselves disclose information; review reports before sharing. Reports do not include a complete audit trail, input-file fingerprint, independent expert determination or general prior-release analysis. Downloaded files persist until the user removes them.
-
-When the proposed sharing is unjustified by the evidence, use a governed enclave or a separately reviewed aggregate-query mechanism instead. Those are governance alternatives, not systems supplied by this prototype.
-
-Optional Jev interprets approved schema metadata using a constrained ontology. It can misclassify or abstain; probabilities are interpretation metadata, not privacy probabilities. Provider failure leaves local rules and all core computations available. The configured cost ceiling is per process, with additional durable hosted per-visitor attempt limits; it is not a global cross-worker spend promise.
+The final shipped revision, focused test results and public-browser outcomes are in [delivery status](../artifacts/DELIVERY_STATUS.json), [verification](../artifacts/verification.md), [v3 reconciliation](V3_RECONCILIATION.md) and the release checklist. Earlier test/review totals are historical checkpoints, not automatic approval of later code.

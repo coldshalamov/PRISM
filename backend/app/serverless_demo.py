@@ -1,11 +1,14 @@
-"""Fictional-only public demo with durable Archie specs and stateless compute.
+"""Hosted workbench with visitor-isolated Archie files and stateless compute.
 
-Only validated configuration is persisted. Pandas source/candidate frames are
-rebuilt from bundled fixtures for each request using the existing real engine.
+Validated configuration and compressed source files live in separate Archie
+records. Pandas frames are rebuilt for each request using the real engine.
 """
 from __future__ import annotations
 
 import copy
+import base64
+import gzip
+import io
 import hashlib
 import hmac
 import importlib.util
@@ -22,18 +25,23 @@ from pydantic import ValidationError
 from starlette.concurrency import run_in_threadpool
 from starlette.datastructures import Headers
 from starlette.requests import Request
+from starlette.exceptions import HTTPException
 from starlette.responses import JSONResponse, Response
 
 from . import lab, registry
 from .archie_store import ArchieStore, StoreConflict, StoreUnavailable
 from .hosted_demo import BODY_LIMIT, COOKIE, ROUTES, SECURITY_HEADERS, _authority
-from .models import AssessmentRequest, CandidateRequest, ReportRequest, SchemaRequest, SearchRequest, SemanticRequest
+from .models import AuditRequest, AssessmentRequest, CandidateRequest, ReportRequest, SchemaRequest, SearchRequest, SemanticRequest
 
 TTL = 1800
 MAX_CANDIDATES = 40
 MAX_SEARCH = 24
 MAX_JOBS = 4
 STATE_LIMIT = 64 * 1024
+MAX_UPLOAD_BYTES = 3 * 1024 * 1024
+MAX_DATASETS = 8
+UPLOAD_ROUTES = (("POST", re.compile(r"/v1/datasets/import")), ("POST", re.compile(r"/v1/audits/import-pair")))
+HOSTED_ROUTES = ROUTES + UPLOAD_ROUTES
 BROWSER_SESSION_HEADER = "x-prism-demo-session"
 CORS_METHODS = {"GET", "HEAD", "POST", "PATCH", "DELETE", "OPTIONS"}
 CORS_HEADERS = {"content-type", BROWSER_SESSION_HEADER}
@@ -114,19 +122,19 @@ class ServerlessDemo:
         if browser:
             values = headers.getlist(BROWSER_SESSION_HEADER)
             if len(values) != 1 or not re.fullmatch(r"[A-Za-z0-9_-]{43}", values[0]):
-                raise DemoProblem("browser_session_required", "Start a fresh fictional browser session before using this bridge.", 403)
+                raise DemoProblem("browser_session_required", "Start a fresh browser session before using this bridge.", 403)
             token = values[0]
         else:
             token = self._identity(headers)
         record = self.store.get(hashlib.sha256(token.encode()).hexdigest()) if token else None
         if record and record.expires <= self.clock():
-            self.store.delete(record)
+            self._clear_record(record)
             record = None
         if record:
             return token, record, record.state()
         if browser:
             # A forged, cleared, or expired header must never allocate a visitor.
-            raise DemoProblem("session_expired", "This fictional browser session ended. Start a fresh session to continue.", 403)
+            raise DemoProblem("session_expired", "This browser session ended. Start a fresh session to continue.", 403)
         return self._new()
 
     def _browser_session(self):
@@ -138,13 +146,39 @@ class ServerlessDemo:
     def _engine(self, token):
         module = self._module()
         module.SESSION_SECRET = hmac.new(self.secret.encode(), token.encode(), hashlib.sha256).digest()
+        module._upload_visitor = hashlib.sha256(token.encode()).hexdigest()
+        module._upload_cache = {}
         return module
 
-    @staticmethod
-    def _dataset(module, identifier, spec, state=None):
-        request = Request({"type": "http", "state": {"session_epoch": 0}})
-        result = module.demo(request, spec["fixture"])
-        data = module.DATASETS.pop(result["datasetId"])
+    def _clear_record(self, record):
+        state = record.state()
+        refs = {item["blob"] for item in list(state.get("datasets", {}).values()) + list(state.get("snapshots", {}).values()) if item.get("blob")}
+        for reference in refs:
+            self.store.delete_blob(record.visitor, reference)
+        self.store.delete(record)
+
+    def _dataset(self, module, identifier, spec, state=None):
+        if spec.get("blob"):
+            reference = spec["blob"]
+            if reference not in module._upload_cache:
+                blob = self.store.get_blob(module._upload_visitor, reference)
+                if blob is None:
+                    raise DemoProblem("dataset_not_found", "This uploaded dataset is no longer available. Reimport it to continue.", 404)
+                payload = blob.state()
+                compressed = base64.b64decode(payload["gzipBase64"], validate=True)
+                with gzip.GzipFile(fileobj=io.BytesIO(compressed)) as stream:
+                    content = stream.read(MAX_UPLOAD_BYTES + 1)
+                if len(content) > MAX_UPLOAD_BYTES:
+                    raise StoreUnavailable()
+                module._upload_cache[reference] = (content, payload["filename"])
+            content, filename = module._upload_cache[reference]
+            from .structured_intake import read_table_bytes
+            data = module.add_dataset(read_table_bytes(content, filename), spec["name"])
+            module.DATASETS.pop(data["id"])
+        else:
+            request = Request({"type": "http", "state": {"session_epoch": 0}})
+            result = module.demo(request, spec["fixture"])
+            data = module.DATASETS.pop(result["datasetId"])
         data["id"] = identifier
         module.DATASETS[identifier] = data
         if spec.get("schema"):
@@ -161,9 +195,20 @@ class ServerlessDemo:
         context = state["contexts"][spec["context"]]
         body = {**context, "datasetId": spec["datasetId"], "steps": spec["recipe"]["steps"],
                 "seed": spec["recipe"].get("seed", 42)}
-        result = module.create_candidate(CandidateRequest.model_validate(body))
+        if spec.get("audit"):
+            audit = spec["audit"]
+            self._dataset(module, audit["protectedDatasetId"], state["snapshots"][audit["protectedSnapshot"]], state)
+            result = module.audit_pair(AuditRequest.model_validate({**context, "originalDatasetId": spec["datasetId"],
+                "protectedDatasetId": audit["protectedDatasetId"], "mode": audit["mode"],
+                "columnMapping": audit["columnMapping"], "lineage": audit.get("lineage")}))
+        else:
+            result = module.create_candidate(CandidateRequest.model_validate(body))
         item = module.CANDIDATES.pop(result["candidateId"])
         item.update(candidateId=identifier, createdAt=spec["createdAt"], name=spec["name"], recipe=spec["recipe"])
+        if spec["recipe"].get("version") != "external":
+            # Search recipes carry version 1.0; ordinary candidates use 1.
+            # Hash the actual frozen recipe after restoring it, not the replay constructor's default.
+            item["recipeHash"] = hashlib.sha256(json.dumps(spec["recipe"], sort_keys=True, separators=(",", ":"), allow_nan=False).encode()).hexdigest()
         item["workload"] = context["workload"]
         item.update(spec.get("meta", {}))
         if not spec.get("transformReport", True):
@@ -193,23 +238,45 @@ class ServerlessDemo:
     def _dispatch(self, method, path, query, body, headers, browser=False, session=None):
         token, record, state = session if session is not None else self._session(headers, browser)
         if method == "DELETE":
-            self.store.delete(record)
+            self._clear_record(record)
             return JSONResponse({"cleared": True}), ""
         module = self._engine(token)
-        payload = json.loads(body) if body else {}
+        payload = body if isinstance(body, dict) else json.loads(body) if body else {}
         state.setdefault("semanticResults", {})
         state.setdefault("remoteSemanticAttempts", 0)
-        if path == "/v1/demo":
+        created_blob = None
+        if path == "/v1/datasets/import":
+            if len(state["datasets"]) >= MAX_DATASETS:
+                raise DemoProblem("session_capacity", "This session holds eight datasets. Clear it before importing another.", 409)
+            from .structured_intake import read_table_bytes, TableIntakeError
+            content, filename = payload["content"], payload["filename"]
+            try:
+                frame = read_table_bytes(content, filename)
+                data = module.add_dataset(frame, filename)
+            except TableIntakeError as exc:
+                raise DemoProblem("invalid_table", str(exc), 422) from exc
+            result = module.dataset_response(data)
+            identifier = data["id"]
+            # Parse, profile and validate the bounded config before writing source bytes.
+            spec = {"name": filename}
+            spec["semantic"] = self._save_semantic(state, data["semantic"])
+            state["datasets"][identifier] = spec
+            self._dump(state)
+            created_blob = self.store.create_blob(record.visitor, content, filename, self.clock() + TTL)
+            spec["blob"] = created_blob.id
+        elif path == "/v1/demo":
             fixture = parse_qs(query).get("fixture", ["architecture"])[0]
             if fixture not in {"architecture", "kit", "semantic"}:
                 raise DemoProblem("unknown_fixture", "Choose architecture, kit or semantic demo data.")
-            existing = next(((k, v) for k, v in state["datasets"].items() if v["fixture"] == fixture), None)
+            existing = next(((k, v) for k, v in state["datasets"].items() if v.get("fixture") == fixture), None)
             identifier, spec = existing or (secrets.token_urlsafe(18), {"fixture": fixture})
             data = self._dataset(module, identifier, spec, state)
             semantic = data.get("semantic")
             if semantic:
                 spec["semantic"] = self._save_semantic(state, semantic)
             if not existing:
+                if len(state["datasets"]) >= MAX_DATASETS:
+                    raise DemoProblem("session_capacity", "This session holds eight datasets. Clear it before loading another.", 409)
                 state["datasets"][identifier] = spec
             result = module.dataset_response(data)
         elif path.startswith("/v1/datasets/"):
@@ -222,7 +289,11 @@ class ServerlessDemo:
                 spec["schema"] = validated.model_dump(by_alias=True, exclude_unset=True)
             elif action == "semantics":
                 validated = SemanticRequest.model_validate(payload)
+                if validated.previewOnly:
+                    # The preview is read-only: no provider request, budget reservation or durable mutation.
+                    return JSONResponse(module.classify_semantics(identifier, validated)), token
                 if validated.allowRemote:
+                    module.validate_semantic_input(identifier, validated)
                     if state["remoteSemanticAttempts"] >= 2:
                         raise DemoProblem("semantic_budget", "This visitor's two remote interpretation attempts are used. Deterministic classification and corrections remain available.", 429)
                     # Reserve the bounded attempt durably before sending any
@@ -240,6 +311,23 @@ class ServerlessDemo:
             else:
                 limit = int(parse_qs(query).get("limit", ["30"])[0])
                 result = module.preview(identifier, limit)
+        elif path == "/v1/audits/import-pair":
+            if len(state["candidates"]) >= MAX_CANDIDATES:
+                raise DemoProblem("session_capacity", "This session reached its 40-candidate limit. Clear it before continuing.", 409)
+            request = AuditRequest.model_validate(payload)
+            original = self._find(state["datasets"], request.originalDatasetId, "dataset")
+            protected = self._find(state["datasets"], request.protectedDatasetId, "dataset")
+            if request.originalDatasetId == request.protectedDatasetId:
+                raise DemoProblem("invalid_pair", "Choose distinct original and protected datasets.", 422)
+            self._dataset(module, request.originalDatasetId, original, state)
+            self._dataset(module, request.protectedDatasetId, protected, state)
+            result = module.audit_pair(request)
+            spec = self._spec(result, original, state)
+            protected_key = hashlib.sha256(json.dumps(protected, sort_keys=True).encode()).hexdigest()[:24]
+            state["snapshots"][protected_key] = copy.deepcopy(protected)
+            spec["audit"] = {"protectedDatasetId": request.protectedDatasetId, "protectedSnapshot": protected_key,
+                            "mode": request.mode, "columnMapping": request.columnMapping, "lineage": request.lineage}
+            state["candidates"][result["candidateId"]] = spec
         elif path in {"/v1/candidates", "/v1/assessments", "/v1/search"}:
             budget = payload.get("maxCandidates", MAX_SEARCH) if path == "/v1/search" else 1
             if type(budget) is not int or not 1 <= budget <= MAX_SEARCH:
@@ -262,6 +350,12 @@ class ServerlessDemo:
                     else:
                         assessed_ds.pop(key, None)
                 spec = self._spec(result, assessed_ds, state)
+                if old.get("audit"):
+                    spec["audit"] = copy.deepcopy(old["audit"])
+                    # Replay through the external-audit adapter, never an empty transform recipe.
+                    identifier = result["candidateId"]
+                    state["candidates"][identifier] = spec
+                    result = self._candidate(module, identifier, spec, state)
             else:
                 request = (SearchRequest if path == "/v1/search" else CandidateRequest).model_validate(payload)
                 ds = self._find(state["datasets"], request.datasetId, "dataset")
@@ -296,7 +390,12 @@ class ServerlessDemo:
         # after an explicit correction or approved remote interpretation.
         referenced = {item.get("semantic") for item in list(state["datasets"].values()) + list(state["snapshots"].values())}
         state["semanticResults"] = {k: v for k, v in state["semanticResults"].items() if k in referenced}
-        self.store.save(record, self._dump(state), self.clock() + TTL)
+        try:
+            self.store.save(record, self._dump(state), self.clock() + TTL)
+        except Exception:
+            if created_blob is not None:
+                self.store.delete_blob(record.visitor, created_blob.id)
+            raise
         return result if isinstance(result, Response) else JSONResponse(module.clean(result)), token
 
     async def _send(self, scope, receive, send, response, token=None, cors_origin=None):
@@ -343,15 +442,13 @@ class ServerlessDemo:
             if not browser and headers.get("sec-fetch-site") not in {None, "same-origin", "none"}:
                 raise DemoProblem("cross_site_denied", "Use the demo's own origin.", 403)
             method, path = scope["method"], scope["path"].rstrip("/") or "/"
-            if path.startswith("/v1/datasets/import") or path.startswith("/v1/audits"):
-                raise DemoProblem("fictional_only", "The public demo accepts bundled fictional fixtures only. Uploads and external audits are disabled.", 403)
             if browser and method == "OPTIONS":
                 requested_method = headers.get("access-control-request-method", "")
                 requested_headers = {value.strip().lower() for value in headers.get("access-control-request-headers", "").split(",") if value.strip()}
                 known_route = ((path == "/health" and requested_method in {"GET", "HEAD"})
                                or (path == "/v1/browser-session" and requested_method == "POST")
                                or (path in {"/v1/registry", "/v1/lab"} and requested_method == "GET")
-                               or any(requested_method == verb and pattern.fullmatch(path) for verb, pattern in ROUTES))
+                               or any(requested_method == verb and pattern.fullmatch(path) for verb, pattern in HOSTED_ROUTES))
                 if requested_method not in CORS_METHODS or not requested_headers <= CORS_HEADERS or not known_route:
                     raise DemoProblem("preflight_denied", "This bridge request method, route, or header is not allowed.", 403)
                 response = Response(status_code=204, headers={
@@ -363,7 +460,7 @@ class ServerlessDemo:
             if not browser and method not in {"GET", "HEAD", "OPTIONS"} and origins != [origin]:
                 raise DemoProblem("origin_required", "Changing demo state requires its exact same-origin Origin header.", 403)
             if path == "/health" and method in {"GET", "HEAD"}:
-                return await self._send(scope, receive, send, JSONResponse({"status": "ok", "version": "0.1.0", "deploymentMode": "synthetic_demo", "uploadsAllowed": False, "backendProvider": "Archie", "sessionTtlSeconds": TTL, "maxSearchCandidates": MAX_SEARCH, "maxCandidates": MAX_CANDIDATES}), cors_origin=cors_origin)
+                return await self._send(scope, receive, send, JSONResponse({"status": "ok", "version": "0.1.1", "deploymentMode": "hosted_workbench", "uploadsAllowed": True, "maxUploadBytes": MAX_UPLOAD_BYTES, "maxRows": 100000, "maxColumns": 80, "backendProvider": "Archie", "sessionTtlSeconds": TTL, "maxSearchCandidates": MAX_SEARCH, "maxCandidates": MAX_CANDIDATES}), cors_origin=cors_origin)
             handshake = browser and path == "/v1/browser-session" and method == "POST"
             # Authenticate before parsing any cross-origin configuration. Reuse
             # this record for dispatch so authentication needs only one lookup.
@@ -375,10 +472,12 @@ class ServerlessDemo:
             if path == "/v1/semantics/ontology" and method == "GET":
                 from . import semantics, semantic_rules
                 return await self._send(scope, receive, send, JSONResponse({**semantics.ontology(), "attackRules": semantic_rules.registry()}), cors_origin=cors_origin)
-            if not handshake and not any(method == verb and pattern.fullmatch(path) for verb, pattern in ROUTES):
-                raise DemoProblem("fictional_only", "This route is not available in the fictional-only demo.", 403)
+            if not handshake and not any(method == verb and pattern.fullmatch(path) for verb, pattern in HOSTED_ROUTES):
+                raise DemoProblem("fictional_only", "This route is not available in the hosted workbench.", 403)
+            is_upload = path == "/v1/datasets/import" and method == "POST"
+            body_limit = MAX_UPLOAD_BYTES + BODY_LIMIT if is_upload else BODY_LIMIT
             length = headers.get("content-length")
-            if length and (not length.isdigit() or int(length) > BODY_LIMIT):
+            if length and (not length.isdigit() or int(length) > body_limit):
                 raise DemoProblem("request_too_large", "Demo configuration is limited to 64 KiB.", 413)
             body = bytearray()
             while True:
@@ -386,20 +485,39 @@ class ServerlessDemo:
                 if message["type"] == "http.disconnect":
                     return
                 body.extend(message.get("body", b""))
-                if len(body) > BODY_LIMIT:
+                if len(body) > body_limit:
                     raise DemoProblem("request_too_large", "Demo configuration is limited to 64 KiB.", 413)
                 if not message.get("more_body", False):
                     break
             # Parse before allocating durable storage; never persist invalid or
             # arbitrary JSON bodies even transiently.
-            if body and not isinstance(json.loads(body), dict):
+            if is_upload:
+                async def upload_receive():
+                    return {"type": "http.request", "body": bytes(body), "more_body": False}
+                upload_request = Request(scope, upload_receive)
+                async with upload_request.form(max_files=1, max_fields=0, max_part_size=MAX_UPLOAD_BYTES) as form:
+                    file = form.get("file")
+                    if file is None or not hasattr(file, "read") or len(form) != 1:
+                        raise DemoProblem("invalid_upload", "Choose one CSV, JSON or XLSX file.", 422)
+                    content = await file.read(MAX_UPLOAD_BYTES + 1)
+                    if len(content) > MAX_UPLOAD_BYTES:
+                        raise DemoProblem("file_too_large", "Hosted uploads support files up to 3 MiB.", 413)
+                    filename = (file.filename or "table.csv").replace("\\", "/").split("/")[-1]
+                    suffix = Path(filename).suffix.lower()
+                    if suffix not in {".csv", ".json", ".xlsx"}:
+                        raise DemoProblem("unsupported_file", "Choose a CSV, JSON or XLSX file.", 422)
+                    filename = filename[:max(1, 100 - len(suffix))] + suffix if len(filename) > 100 else filename
+                    body = {"content": content, "filename": filename}
+            elif body and not isinstance(json.loads(body), dict):
                 raise ValueError()
+            if path == "/v1/audits/import-pair":
+                AuditRequest.model_validate(json.loads(body) if body else {})
             if handshake:
                 if body and json.loads(body) != {}:
                     raise ValueError()
                 response = await run_in_threadpool(self._browser_session)
                 return await self._send(scope, receive, send, response, cors_origin=cors_origin)
-            response, token = await run_in_threadpool(self._dispatch, method, path, scope.get("query_string", b"").decode(), bytes(body), headers, browser, session)
+            response, token = await run_in_threadpool(self._dispatch, method, path, scope.get("query_string", b"").decode(), body if is_upload else bytes(body), headers, browser, session)
             return await self._send(scope, receive, send, response, token, cors_origin)
         except StoreUnavailable:
             response = JSONResponse({"code": "backend_unavailable", "message": "Archie storage is temporarily unavailable. Retry shortly; no local fallback is used.", "details": {}}, status_code=503)
@@ -407,8 +525,10 @@ class ServerlessDemo:
             response = JSONResponse({"code": "session_changed", "message": "This visitor session changed in another request. Refresh and retry.", "details": {}}, status_code=409)
         except DemoProblem as exc:
             response = JSONResponse({"code": exc.code, "message": exc.message, "details": {}}, status_code=exc.status)
+        except HTTPException:
+            response = JSONResponse({"code": "invalid_upload", "message": "Choose exactly one valid CSV, JSON or XLSX file.", "details": {}}, status_code=422)
         except (ValidationError, ValueError, UnicodeDecodeError):
-            response = JSONResponse({"code": "invalid_configuration", "message": "Check the fictional demo configuration fields and limits.", "details": {}}, status_code=422)
+            response = JSONResponse({"code": "invalid_configuration", "message": "Check the dataset configuration fields and limits.", "details": {}}, status_code=422)
         except Exception as exc:
             # main.py's per-request Problem class is dynamically loaded.
             if all(hasattr(exc, key) for key in ("code", "message", "status")):

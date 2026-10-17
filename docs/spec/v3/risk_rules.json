@@ -1,0 +1,1016 @@
+[
+  {
+    "id": "R01",
+    "title": "Direct identifying column",
+    "implementation_target": "Core",
+    "trigger": "Released reviewed name/contact/identifier field with corroborated nonplaceholder values",
+    "detectors": [
+      "D01"
+    ],
+    "severity_policy": "DIRECT",
+    "message_template": "{count} released records still contain {identifier_kind}; a recipient can read or match those values.",
+    "mitigations": [
+      "T01",
+      "T02",
+      "T03"
+    ],
+    "external_prerequisites": "No auxiliary data needed to read the values; naming an opaque ID may need a reference."
+  },
+  {
+    "id": "R02",
+    "title": "Identifiers inside ordinary text",
+    "implementation_target": "Core",
+    "trigger": "Narrative or string cells regardless of column label",
+    "detectors": [
+      "D02"
+    ],
+    "severity_policy": "DIRECT",
+    "message_template": "Local scanning found {count} potential or confirmed identifier spans in {fields}; coverage is {coverage}.",
+    "mitigations": [
+      "T02",
+      "T01"
+    ],
+    "external_prerequisites": "No auxiliary data needed for exposed names/contact values; contextual detections can require review."
+  },
+  {
+    "id": "R03",
+    "title": "Government or account identifier",
+    "implementation_target": "Core",
+    "trigger": "Validated format plus reviewed person/account context",
+    "detectors": [
+      "D01"
+    ],
+    "severity_policy": "DIRECT",
+    "message_template": "{identifier_kind} remains in the proposed output; format validation is not a claim about ownership.",
+    "mitigations": [
+      "T01",
+      "T03"
+    ],
+    "external_prerequisites": "An account/identity reference may be needed to name the owner."
+  },
+  {
+    "id": "R04",
+    "title": "Credential exposed",
+    "implementation_target": "Core",
+    "trigger": "Confirmed or strongly patterned credential in released cells",
+    "detectors": [
+      "D01"
+    ],
+    "severity_policy": "DIRECT",
+    "message_template": "The proposed output includes a possible active credential. PRISM did not test it against any service.",
+    "mitigations": [
+      "T01",
+      "T02"
+    ],
+    "external_prerequisites": "No online testing; rotate/revoke through the owner's normal procedure when confirmed."
+  },
+  {
+    "id": "R05",
+    "title": "Unclassified highly distinguishing field",
+    "implementation_target": "Core",
+    "trigger": "Unknown semantics with cardinality/unique-count signal",
+    "detectors": [
+      "D03",
+      "D22"
+    ],
+    "severity_policy": "GAP",
+    "message_template": "{field} distinguishes {count} rows but its meaning is unresolved; privacy interpretation needs review.",
+    "mitigations": [
+      "review",
+      "T01"
+    ],
+    "external_prerequisites": "No real identity implication established."
+  },
+  {
+    "id": "R06",
+    "title": "Birth date and geography",
+    "implementation_target": "Core",
+    "trigger": "birth_date plus residence/postal geography for same subject",
+    "detectors": [
+      "D04"
+    ],
+    "severity_policy": "QI_CLASS",
+    "message_template": "Knowing {fields} leaves one candidate for {unique_count} {unit} in this release.",
+    "mitigations": [
+      "T05",
+      "T08",
+      "T01"
+    ],
+    "external_prerequisites": "Knowledge of these attributes and target participation; identified reference needed for naming."
+  },
+  {
+    "id": "R07",
+    "title": "Demographic and physical combination",
+    "implementation_target": "Core",
+    "trigger": "Age or demographic plus height/weight/other physical attribute, optionally geography",
+    "detectors": [
+      "D04"
+    ],
+    "severity_policy": "QI_CLASS",
+    "message_template": "The combination {fields} narrows candidates more than the individual fields; {small_count} {unit} have fewer than five candidates.",
+    "mitigations": [
+      "T07",
+      "T08",
+      "T10",
+      "T01"
+    ],
+    "external_prerequisites": "Correct approximate attributes at their released resolution."
+  },
+  {
+    "id": "R08",
+    "title": "Generic identifying combination",
+    "implementation_target": "Core",
+    "trigger": "Any supported structural QI subset, independent of Jev",
+    "detectors": [
+      "D03",
+      "D04"
+    ],
+    "severity_policy": "QI_CLASS",
+    "message_template": "{fields} produces {groups} distinct groups; {unique_count} {unit} are unique under this matching model.",
+    "mitigations": [
+      "T07",
+      "T10",
+      "T01",
+      "T22"
+    ],
+    "external_prerequisites": "The selected known attributes; sample rather than population matching."
+  },
+  {
+    "id": "R09",
+    "title": "Workplace and occupation",
+    "implementation_target": "Core",
+    "trigger": "Employer/workplace plus job title/demographics for same person",
+    "detectors": [
+      "D04"
+    ],
+    "severity_policy": "QI_CLASS",
+    "message_template": "Work-related details distinguish {count} {unit}; public staff information is a possible source, not verified here.",
+    "mitigations": [
+      "T10",
+      "T08",
+      "T01"
+    ],
+    "external_prerequisites": "An identified employment reference, not assumed public."
+  },
+  {
+    "id": "R10",
+    "title": "Birthplace and temporal detail",
+    "implementation_target": "Core",
+    "trigger": "Origin location plus birth date/age for same subject",
+    "detectors": [
+      "D04"
+    ],
+    "severity_policy": "QI_CLASS",
+    "message_template": "Origin and temporal details yield {min_candidates} minimum candidates in this release.",
+    "mitigations": [
+      "T05",
+      "T07",
+      "T08"
+    ],
+    "external_prerequisites": "Correct origin and age/date knowledge."
+  },
+  {
+    "id": "R11",
+    "title": "Missingness fingerprint",
+    "implementation_target": "Core",
+    "trigger": "Distinct missing/suppression patterns across released columns",
+    "detectors": [
+      "D20",
+      "D04"
+    ],
+    "severity_policy": "QI_CLASS",
+    "message_template": "The pattern of blank or suppressed fields itself distinguishes {count} {unit}.",
+    "mitigations": [
+      "T01",
+      "T10",
+      "review"
+    ],
+    "external_prerequisites": "Knowledge of the person's observed/missing pattern."
+  },
+  {
+    "id": "R12",
+    "title": "Appointment linkage opportunity",
+    "implementation_target": "Core",
+    "trigger": "Encounter/appointment time plus facility/location with supported same-event relation",
+    "detectors": [
+      "D09"
+    ],
+    "severity_policy": "QI_CLASS",
+    "message_template": "Someone who knows the visit time and place would have {candidate_summary}; {unique_count} {unit} have one candidate.",
+    "mitigations": [
+      "T05",
+      "T06",
+      "T08",
+      "T01"
+    ],
+    "external_prerequisites": "External appointment knowledge; no appointment database presumed available."
+  },
+  {
+    "id": "R13",
+    "title": "Position and timestamp",
+    "implementation_target": "Core",
+    "trigger": "Physical coordinates plus observation time for same event",
+    "detectors": [
+      "D09"
+    ],
+    "severity_policy": "QI_CLASS",
+    "message_template": "The current space-time precision creates {unique_count} unique event signatures; subject counts are {subject_scope}.",
+    "mitigations": [
+      "T09",
+      "T05",
+      "T06",
+      "T19"
+    ],
+    "external_prerequisites": "Known positions/times and subject association."
+  },
+  {
+    "id": "R14",
+    "title": "Home and work combination",
+    "implementation_target": "Core",
+    "trigger": "Supported same-person residence and workplace",
+    "detectors": [
+      "D04"
+    ],
+    "severity_policy": "QI_CLASS",
+    "message_template": "The home/work combination narrows candidate groups to {candidate_summary}.",
+    "mitigations": [
+      "T08",
+      "T01"
+    ],
+    "external_prerequisites": "An external source connecting both locations to a person."
+  },
+  {
+    "id": "R15",
+    "title": "Death or notable event linkage",
+    "implementation_target": "Core",
+    "trigger": "Death/notable event date plus person-associated geography",
+    "detectors": [
+      "D09"
+    ],
+    "severity_policy": "QI_CLASS",
+    "message_template": "The date/location combination distinguishes {count} {unit}; an identified public report would supply a linkage route if available.",
+    "mitigations": [
+      "T05",
+      "T08"
+    ],
+    "external_prerequisites": "Relevant identified event reports must be supplied or explicitly assumed."
+  },
+  {
+    "id": "R16",
+    "title": "Sensitive cohort context",
+    "implementation_target": "Core",
+    "trigger": "File title/approved metadata/constant condition or facility defines sensitive membership",
+    "detectors": [
+      "D05",
+      "D22"
+    ],
+    "severity_policy": "CONTEXT",
+    "message_template": "Even with indistinguishable rows, learning someone belongs to this cohort could reveal {sensitive_category}; membership exposure is a separate question.",
+    "mitigations": [
+      "T19",
+      "review"
+    ],
+    "external_prerequisites": "Evidence someone participated; unknown unless supplied or demonstrated."
+  },
+  {
+    "id": "R17",
+    "title": "Homogeneous sensitive group",
+    "implementation_target": "Core",
+    "trigger": "Released sensitive target and Q group containing one nonmissing sensitive category",
+    "detectors": [
+      "D05"
+    ],
+    "severity_policy": "HOMOGENEITY",
+    "message_template": "All {group_count} candidates in this group share {sensitive_category}; identifying one row is unnecessary under known membership.",
+    "mitigations": [
+      "T10",
+      "T01",
+      "T19"
+    ],
+    "external_prerequisites": "Target is known to belong to this matching group; group values must be observable."
+  },
+  {
+    "id": "R18",
+    "title": "Strong sensitive concentration",
+    "implementation_target": "Core",
+    "trigger": "Group modal frequency >=0.90 and lift over release baseline >=0.20, with >=5 valid target records",
+    "detectors": [
+      "D05"
+    ],
+    "severity_policy": "HOMOGENEITY",
+    "message_template": "Within {fields}, one outcome accounts for {group_rate}, versus {baseline_rate} across this release. This is an observed association, not a population prediction.",
+    "mitigations": [
+      "T10",
+      "T01",
+      "T19"
+    ],
+    "external_prerequisites": "Applicable target membership and known group attributes."
+  },
+  {
+    "id": "R19",
+    "title": "Sensitive distribution divergence",
+    "implementation_target": "Core",
+    "trigger": "Nominal t distance exceeds configured 0.20 review threshold",
+    "detectors": [
+      "D06"
+    ],
+    "severity_policy": "DISTRIBUTION",
+    "message_template": "This group's sensitive-value distribution differs from the release distribution by {distance} under {distance_name}.",
+    "mitigations": [
+      "T10",
+      "T22",
+      "T19"
+    ],
+    "external_prerequisites": "No real attack success claimed by the distance alone."
+  },
+  {
+    "id": "R20",
+    "title": "Identity connected to sensitive target",
+    "implementation_target": "Core",
+    "trigger": "Corroborated direct person identifier released with same-subject restricted target",
+    "detectors": [
+      "D01",
+      "D05"
+    ],
+    "severity_policy": "DIRECT",
+    "message_template": "The release connects {identifier_kind} to {sensitive_category}; blurring unrelated fields does not remove that link.",
+    "mitigations": [
+      "T01",
+      "T02",
+      "T03"
+    ],
+    "external_prerequisites": "Readability of direct identity or available identifier reference."
+  },
+  {
+    "id": "R21",
+    "title": "Evaluated attribute inference gain",
+    "implementation_target": "Adapter",
+    "trigger": "Valid baseline and disjoint evaluation design with release-informed attacker",
+    "detectors": [
+      "D07"
+    ],
+    "severity_policy": "LINK",
+    "message_template": "The specified attacker improved by {advantage} on {n_targets} held-out targets, compared with the same prior knowledge without this release.",
+    "mitigations": [
+      "T10",
+      "T01",
+      "T19"
+    ],
+    "external_prerequisites": "Exact evaluation design and reference distribution stated in evidence."
+  },
+  {
+    "id": "R22",
+    "title": "Observed cohort membership linkage",
+    "implementation_target": "Core",
+    "trigger": "Supplied identified reference has verified matches into a sensitive cohort",
+    "detectors": [
+      "D21"
+    ],
+    "severity_policy": "LINK",
+    "message_template": "The supplied reference linked {correct_count} known people to membership in this cohort under the tested matching rule.",
+    "mitigations": [
+      "T01",
+      "T07",
+      "T08",
+      "T19"
+    ],
+    "external_prerequisites": "The actual supplied identified reference; success validated with private ground truth."
+  },
+  {
+    "id": "R23",
+    "title": "Date reconstructed from another field",
+    "implementation_target": "Core",
+    "trigger": "Declared anchor and duration/end-date dependency reconstructs suppressed exact date",
+    "detectors": [
+      "D12"
+    ],
+    "severity_policy": "RECOVERY",
+    "message_template": "{fields} recover the hidden date to {resolution}, despite its removal from {hidden_field}.",
+    "mitigations": [
+      "T05",
+      "T07",
+      "T17",
+      "T01"
+    ],
+    "external_prerequisites": "Public released anchor and dependency; private audit data used only to validate."
+  },
+  {
+    "id": "R24",
+    "title": "Centered-range inversion",
+    "implementation_target": "Core",
+    "trigger": "Output intervals centered on source with public symmetric encoding and verified midpoint recovery",
+    "detectors": [
+      "D12"
+    ],
+    "severity_policy": "RECOVERY",
+    "message_template": "The displayed range still reveals its center exactly. Shared bins remove this reversible encoding.",
+    "mitigations": [
+      "T07"
+    ],
+    "external_prerequisites": "Only the output range and its declared encoding are needed."
+  },
+  {
+    "id": "R25",
+    "title": "Duplicate field defeats scrubbing",
+    "implementation_target": "Core",
+    "trigger": "Source identifiers or precise values remain in an alias/duplicate/string column",
+    "detectors": [
+      "D25",
+      "D12"
+    ],
+    "severity_policy": "RECOVERY",
+    "message_template": "{field} was protected, but equivalent source information remains in {alias_fields}.",
+    "mitigations": [
+      "T01",
+      "T02",
+      "T05",
+      "T07"
+    ],
+    "external_prerequisites": "Equivalence must be declared or verified, not inferred solely from correlation."
+  },
+  {
+    "id": "R26",
+    "title": "One-to-one relabeling preserves distinctions",
+    "implementation_target": "Core",
+    "trigger": "Reviewed transformation is injective over observed categories",
+    "detectors": [
+      "D12",
+      "D03"
+    ],
+    "severity_policy": "TOKEN",
+    "message_template": "Every original category still maps to a distinct output category; {metric} is unchanged. This is pseudonymization, not coarsening.",
+    "mitigations": [
+      "T10",
+      "T01",
+      "T22"
+    ],
+    "external_prerequisites": "Public decoding is not assumed; distinctiveness itself survives."
+  },
+  {
+    "id": "R27",
+    "title": "Hidden raw precision in export",
+    "implementation_target": "Core",
+    "trigger": "Serialized file retains raw values behind generalized display or extra column",
+    "detectors": [
+      "D17",
+      "D12"
+    ],
+    "severity_policy": "RECOVERY",
+    "message_template": "The actual exported artifact retains {raw_representation}; the visual blur did not remove it.",
+    "mitigations": [
+      "T01",
+      "T20",
+      "review"
+    ],
+    "external_prerequisites": "Inspect the exported artifact; no auxiliary data required."
+  },
+  {
+    "id": "R28",
+    "title": "Crosswalk/key exported with data",
+    "implementation_target": "Core",
+    "trigger": "Export bundle contains source-to-token mapping or reversible key material",
+    "detectors": [
+      "D17",
+      "D08"
+    ],
+    "severity_policy": "RECOVERY",
+    "message_template": "The export includes the information needed to reverse {transformation}; keep it in the owner-only workspace.",
+    "mitigations": [
+      "T20",
+      "review"
+    ],
+    "external_prerequisites": "The mapping/key accompanies the release."
+  },
+  {
+    "id": "R29",
+    "title": "Row order or exported index linkage",
+    "implementation_target": "Core",
+    "trigger": "Source index preserved or matching order known across supplied releases",
+    "detectors": [
+      "D08",
+      "D13"
+    ],
+    "severity_policy": "TOKEN",
+    "message_template": "The retained {ordering_key} can align these releases; order is not harmless metadata when another file supplies identities.",
+    "mitigations": [
+      "T21",
+      "T01"
+    ],
+    "external_prerequisites": "Earlier order/index must be accessible; absent reference means hypothesis only."
+  },
+  {
+    "id": "R30",
+    "title": "Stable pseudonym across releases",
+    "implementation_target": "Core",
+    "trigger": "Exact token intersections in supplied releases",
+    "detectors": [
+      "D08"
+    ],
+    "severity_policy": "TOKEN",
+    "message_template": "{matched_tokens} persistent tokens connect records across releases, including {connected_categories}.",
+    "mitigations": [
+      "T03",
+      "T01"
+    ],
+    "external_prerequisites": "Possession of both releases; naming a person requires additional evidence."
+  },
+  {
+    "id": "R31",
+    "title": "Declared weak identifier hash",
+    "implementation_target": "Adapter",
+    "trigger": "Known algorithm/domain plus authorized candidate dictionary, or missing key evidence",
+    "detectors": [
+      "D19",
+      "D21"
+    ],
+    "severity_policy": "RECOVERY",
+    "message_template": "The declared transformation {scheme} is {assessment}; hash appearance alone cannot establish security.",
+    "mitigations": [
+      "T03",
+      "T01"
+    ],
+    "external_prerequisites": "Actual scheme and authorized dictionary required for demonstrated reversal; otherwise Needs assessment."
+  },
+  {
+    "id": "R32",
+    "title": "Unexpected token namespace reuse",
+    "implementation_target": "Core",
+    "trigger": "Same identifier namespace used where release isolation was requested",
+    "detectors": [
+      "D08",
+      "D19"
+    ],
+    "severity_policy": "TOKEN",
+    "message_template": "The configured token namespace permits cross-project joins contrary to the selected isolation policy.",
+    "mitigations": [
+      "T03",
+      "review"
+    ],
+    "external_prerequisites": "Observed namespace/configuration evidence; no key recovery claimed."
+  },
+  {
+    "id": "R33",
+    "title": "Distinctive event sequence",
+    "implementation_target": "Adapter",
+    "trigger": "Repeated-subject events with reliable ordering and supported subject mapping",
+    "detectors": [
+      "D10"
+    ],
+    "severity_policy": "QI_CLASS",
+    "message_template": "{count} subjects have unique tested sequences; this covers {window_definition}, not every possible trajectory attack.",
+    "mitigations": [
+      "T05",
+      "T06",
+      "T19"
+    ],
+    "external_prerequisites": "Knowledge of the tested event sequence and its subject association."
+  },
+  {
+    "id": "R34",
+    "title": "Shifted dates retain intervals",
+    "implementation_target": "Adapter",
+    "trigger": "Per-subject shift plus interval pattern or a supplied true anchor",
+    "detectors": [
+      "D10",
+      "D12"
+    ],
+    "severity_policy": "RECOVERY",
+    "message_template": "Date shifting preserves intervals; {recovery_statement} under the supplied anchor scenario.",
+    "mitigations": [
+      "T05",
+      "T17",
+      "T19"
+    ],
+    "external_prerequisites": "No exact-date recovery claim without an actual anchor/dependency."
+  },
+  {
+    "id": "R35",
+    "title": "Transaction receipt linkage",
+    "implementation_target": "Core",
+    "trigger": "Amount plus merchant/counterparty and transaction time for same event",
+    "detectors": [
+      "D09"
+    ],
+    "severity_policy": "QI_CLASS",
+    "message_template": "A receipt-like combination leaves {candidate_summary} matching transactions in the release.",
+    "mitigations": [
+      "T07",
+      "T05",
+      "T06",
+      "T10"
+    ],
+    "external_prerequisites": "An identified transaction/receipt with the selected fields."
+  },
+  {
+    "id": "R36",
+    "title": "Device or account history linkage",
+    "implementation_target": "Core",
+    "trigger": "Persistent device/account key plus behavior/timing content",
+    "detectors": [
+      "D08"
+    ],
+    "severity_policy": "TOKEN",
+    "message_template": "The key groups {events} events into histories; ownership is {ownership_status}.",
+    "mitigations": [
+      "T03",
+      "T19",
+      "T01"
+    ],
+    "external_prerequisites": "An external ownership record is needed to attach a name."
+  },
+  {
+    "id": "R37",
+    "title": "Related-person disclosure",
+    "implementation_target": "Adapter",
+    "trigger": "Explicit family/household/caregiver edges with identifiers or sensitive facts",
+    "detectors": [
+      "D11"
+    ],
+    "severity_policy": "LINK",
+    "message_template": "The release links related subjects and {sensitive_category}; {verified_relationship_scope}.",
+    "mitigations": [
+      "T01",
+      "T03",
+      "T19"
+    ],
+    "external_prerequisites": "Declared edges and supported inference; never infer real kinship from appearance."
+  },
+  {
+    "id": "R38",
+    "title": "Selected genetic-marker combination",
+    "implementation_target": "Core",
+    "trigger": "Scalar mutation/variant categories with demographics",
+    "detectors": [
+      "D04",
+      "D23"
+    ],
+    "severity_policy": "QI_CLASS",
+    "message_template": "The selected scalar marker combination distinguishes {count} {unit}; full genomic linkage is not assessed.",
+    "mitigations": [
+      "T10",
+      "T01",
+      "T19"
+    ],
+    "external_prerequisites": "Compatible externally known marker information."
+  },
+  {
+    "id": "R39",
+    "title": "High-dimensional biological/biometric data",
+    "implementation_target": "Core",
+    "trigger": "Genome/embedding/voice/image-like content outside enabled format adapters",
+    "detectors": [
+      "D23"
+    ],
+    "severity_policy": "GAP",
+    "message_template": "This content requires specialized privacy testing beyond the enabled tabular checks.",
+    "mitigations": [
+      "T01",
+      "T19",
+      "review"
+    ],
+    "external_prerequisites": "No safety conclusion from the ordinary CSV scan."
+  },
+  {
+    "id": "R40",
+    "title": "Contextual narrative identification",
+    "implementation_target": "Core",
+    "trigger": "Narrative person/relationship descriptions without a conclusive local span detector",
+    "detectors": [
+      "D02",
+      "D22"
+    ],
+    "severity_policy": "GAP",
+    "message_template": "Narrative descriptions may identify someone without a name; current coverage does not evaluate that fully.",
+    "mitigations": [
+      "T02",
+      "T01",
+      "review"
+    ],
+    "external_prerequisites": "Manual or specialized review; no invented specific person."
+  },
+  {
+    "id": "R41",
+    "title": "Protection by deleting a subgroup",
+    "implementation_target": "Core",
+    "trigger": "Suppression removes people disproportionately or loses a required query cohort",
+    "detectors": [
+      "D20",
+      "D24"
+    ],
+    "severity_policy": "UTILITY",
+    "message_template": "The risk metric improved after removing {count} records, but {query_or_group} changed by {loss}.",
+    "mitigations": [
+      "T22",
+      "review"
+    ],
+    "external_prerequisites": "Owner-only source comparison; no privacy improvement inferred from denominator alone."
+  },
+  {
+    "id": "R42",
+    "title": "Duplicate rows inflate apparent k",
+    "implementation_target": "Core",
+    "trigger": "Repeated subject IDs or duplicate events inflate row group size above person group size",
+    "detectors": [
+      "D20",
+      "D03"
+    ],
+    "severity_policy": "METHOD",
+    "message_template": "The group has {rows} rows but only {subjects} confirmed people; report person-based candidates instead.",
+    "mitigations": [
+      "review"
+    ],
+    "external_prerequisites": "Reliable private subject mapping required; otherwise Needs assessment."
+  },
+  {
+    "id": "R43",
+    "title": "Multiple interval releases narrow identities",
+    "implementation_target": "Core",
+    "trigger": "Supplied linked releases publish different intervals for same attributes",
+    "detectors": [
+      "D13"
+    ],
+    "severity_policy": "RECOVERY",
+    "message_template": "Combining released intervals narrows {count} values to {intersection_summary}, although each looked broad separately.",
+    "mitigations": [
+      "T07",
+      "T19",
+      "review"
+    ],
+    "external_prerequisites": "Both releases plus valid linkage; do not align by guessed row order."
+  },
+  {
+    "id": "R44",
+    "title": "Suppressed aggregate recoverable from margins",
+    "implementation_target": "Adapter",
+    "trigger": "Exact totals and complementary cells determine a suppressed cell",
+    "detectors": [
+      "D14"
+    ],
+    "severity_policy": "AGGREGATE",
+    "message_template": "Published totals recover the supposedly suppressed value under this query workload.",
+    "mitigations": [
+      "T19",
+      "T23",
+      "review"
+    ],
+    "external_prerequisites": "Access to all enumerated totals/cells and their definitions."
+  },
+  {
+    "id": "R45",
+    "title": "Neighboring cohort differencing",
+    "implementation_target": "Adapter",
+    "trigger": "Permitted exact queries differ by one protected person's bounded contribution",
+    "detectors": [
+      "D14"
+    ],
+    "severity_policy": "AGGREGATE",
+    "message_template": "Subtracting {query_b} from {query_a} exposes one person's contribution in the demonstrated scenario.",
+    "mitigations": [
+      "T19",
+      "T23",
+      "review"
+    ],
+    "external_prerequisites": "Known nested cohorts and contribution interpretation."
+  },
+  {
+    "id": "R46",
+    "title": "Aggregate reconstruction feasibility",
+    "implementation_target": "Adapter",
+    "trigger": "Specified linear query system with valid domains and solver evidence",
+    "detectors": [
+      "D15"
+    ],
+    "severity_policy": "AGGREGATE",
+    "message_template": "{count} protected values are fixed across all feasible solutions of the supplied query system.",
+    "mitigations": [
+      "T19",
+      "T23",
+      "review"
+    ],
+    "external_prerequisites": "Known query equations/domains; rank alone is insufficient."
+  },
+  {
+    "id": "R47",
+    "title": "Original identifiers copied into synthetic output",
+    "implementation_target": "Core",
+    "trigger": "Exact contextual source-identifier matches in claimed synthetic release",
+    "detectors": [
+      "D25"
+    ],
+    "severity_policy": "DIRECT",
+    "message_template": "The proposed synthetic output contains {count} source-identifier matches; generation alone did not remove them.",
+    "mitigations": [
+      "T01",
+      "T02",
+      "review"
+    ],
+    "external_prerequisites": "Original used locally to validate residual identifiers."
+  },
+  {
+    "id": "R48",
+    "title": "Synthetic attack evaluation",
+    "implementation_target": "Adapter",
+    "trigger": "Valid train/synthetic/control inputs and enabled Anonymeter adapter",
+    "detectors": [
+      "D16"
+    ],
+    "severity_policy": "SYNTHETIC",
+    "message_template": "{attack_name} produced {result} relative to its baseline/control, within the stated synthetic-data evaluation.",
+    "mitigations": [
+      "review",
+      "T19",
+      "T23"
+    ],
+    "external_prerequisites": "Control data must not have been used in generation."
+  },
+  {
+    "id": "R49",
+    "title": "Unsupported formal privacy claim",
+    "implementation_target": "Core",
+    "trigger": "A release is labeled DP or certified but mechanism evidence is absent/incomplete",
+    "detectors": [
+      "D19"
+    ],
+    "severity_policy": "METHOD",
+    "message_template": "The supplied output does not establish the claimed mechanism guarantee; missing evidence: {missing}.",
+    "mitigations": [
+      "review"
+    ],
+    "external_prerequisites": "Mechanism configuration and proof/accounting evidence required."
+  },
+  {
+    "id": "R50",
+    "title": "Incomplete or failed analysis",
+    "implementation_target": "Core",
+    "trigger": "Scan error, capped coverage, unresolved critical interpretation or unavailable engine",
+    "detectors": [
+      "D22"
+    ],
+    "severity_policy": "GAP",
+    "message_template": "{tests} were not completed. Their absence is not evidence of protection.",
+    "mitigations": [
+      "review"
+    ],
+    "external_prerequisites": "Complete or explicitly narrow the assessment."
+  },
+  {
+    "id": "R51",
+    "title": "Metadata identifies a subject",
+    "implementation_target": "Core",
+    "trigger": "Supported export metadata contains corroborated person identifiers",
+    "detectors": [
+      "D17"
+    ],
+    "severity_policy": "DIRECT",
+    "message_template": "Identifying information remains in {artifact_part}, outside the visible table.",
+    "mitigations": [
+      "T20",
+      "T01"
+    ],
+    "external_prerequisites": "Read the artifact metadata; no external source required."
+  },
+  {
+    "id": "R52",
+    "title": "Evidence report leaks source details",
+    "implementation_target": "Core",
+    "trigger": "Public report includes source identifiers, exact rare values, raw examples or private crosswalk",
+    "detectors": [
+      "D17",
+      "D25"
+    ],
+    "severity_policy": "RECOVERY",
+    "message_template": "The report exposes owner-only information that the protected dataset omitted.",
+    "mitigations": [
+      "T20",
+      "review"
+    ],
+    "external_prerequisites": "Report must be treated as a separate data release."
+  },
+  {
+    "id": "R53",
+    "title": "External schema correspondence unresolved",
+    "implementation_target": "Core",
+    "trigger": "Original/protected fields cannot be reliably mapped",
+    "detectors": [
+      "D22"
+    ],
+    "severity_policy": "GAP",
+    "message_template": "The field comparison for {fields} is unresolved; PRISM will not invent row or column correspondence.",
+    "mitigations": [
+      "review"
+    ],
+    "external_prerequisites": "Reviewed schema mapping; source pairing remains owner-only."
+  },
+  {
+    "id": "R54",
+    "title": "Invalid source/control split",
+    "implementation_target": "Core",
+    "trigger": "Synthetic/inference evaluator's control overlaps training subjects",
+    "detectors": [
+      "D22"
+    ],
+    "severity_policy": "METHOD",
+    "message_template": "The comparison would reuse training subjects as controls and cannot support the intended privacy claim.",
+    "mitigations": [
+      "review"
+    ],
+    "external_prerequisites": "Independent control evidence; subject-disjointness rather than row-disjointness."
+  },
+  {
+    "id": "R55",
+    "title": "Unit confusion threatens protection",
+    "implementation_target": "Core",
+    "trigger": "Body mass versus sampling weight ambiguity or incompatible measured units",
+    "detectors": [
+      "D24",
+      "D22"
+    ],
+    "severity_policy": "METHOD",
+    "message_template": "{field} cannot safely use {transform} until meaning and units are confirmed.",
+    "mitigations": [
+      "review"
+    ],
+    "external_prerequisites": "Do not guess kilograms from plausible magnitude."
+  },
+  {
+    "id": "R56",
+    "title": "Unresolved event timezone or pairing",
+    "implementation_target": "Core",
+    "trigger": "Time/facility combination cannot be interpreted consistently",
+    "detectors": [
+      "D22",
+      "D09"
+    ],
+    "severity_policy": "GAP",
+    "message_template": "The event linkage test needs {missing_relation}; structural row uniqueness is still available.",
+    "mitigations": [
+      "review"
+    ],
+    "external_prerequisites": "Same-event and timezone/reference interpretation."
+  },
+  {
+    "id": "R57",
+    "title": "Stale or mismatched assessment",
+    "implementation_target": "Core",
+    "trigger": "Evidence version differs from active candidate/semantics/workload",
+    "detectors": [
+      "D22"
+    ],
+    "severity_policy": "METHOD",
+    "message_template": "These results belong to a different candidate. Recalculation is required before exporting the current assessment.",
+    "mitigations": [
+      "review"
+    ],
+    "external_prerequisites": "Exact version identity."
+  },
+  {
+    "id": "R58",
+    "title": "Semantic drift across reuse",
+    "implementation_target": "Core",
+    "trigger": "Cached mapping applied outside confirmed domain/schema",
+    "detectors": [
+      "D22"
+    ],
+    "severity_policy": "METHOD",
+    "message_template": "The saved interpretation of {field} is not confirmed for this dataset context.",
+    "mitigations": [
+      "review"
+    ],
+    "external_prerequisites": "Scoped reviewed dictionary and current schema."
+  },
+  {
+    "id": "R59",
+    "title": "Verified auxiliary identity linkage",
+    "implementation_target": "Core",
+    "trigger": "Authorized reference matching with separate private truth validates identity assignments",
+    "detectors": [
+      "D21"
+    ],
+    "severity_policy": "LINK",
+    "message_template": "The specified reference linked {correct} of {eligible} eligible targets; {incorrect} asserted links were wrong.",
+    "mitigations": [
+      "T07",
+      "T08",
+      "T05",
+      "T01"
+    ],
+    "external_prerequisites": "Only supplied reference features, never private audit alignment as attack input."
+  },
+  {
+    "id": "R60",
+    "title": "Marginals preserved but relationships destroyed",
+    "implementation_target": "Core",
+    "trigger": "Specified joint/correlation query fails while marginal distributions remain unchanged",
+    "detectors": [
+      "D24"
+    ],
+    "severity_policy": "UTILITY",
+    "message_template": "The individual distributions survived, but {query} changed from {before} to {after}.",
+    "mitigations": [
+      "review",
+      "T10",
+      "T22"
+    ],
+    "external_prerequisites": "A defined research query; not every future analysis."
+  }
+]

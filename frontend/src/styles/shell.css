@@ -3,7 +3,7 @@
   display: grid;
   height: 100dvh;
   grid-template-columns: var(--rail-w) minmax(0, 1fr) var(--inspector-w);
-  grid-template-rows: var(--topbar-h) var(--toolbar-h) minmax(0, 1fr);
+  grid-template-rows: var(--topbar-h) auto minmax(0, 1fr);
   grid-template-areas: 'rail top top' 'rail tool insp' 'rail main insp';
   background: var(--canvas);
 }
@@ -117,13 +117,23 @@
 
 /* ---------- toolbar ---------- */
 .toolbar {
-  grid-area: tool; display: flex; align-items: center; gap: 8px; min-width: 0; padding: 0 12px; overflow-x: auto; overflow-y: hidden;
+  grid-area: tool; display: flex; flex-wrap: wrap; align-items: center; gap: 6px; min-width: 0; min-height: var(--toolbar-h); padding: 6px 12px; overflow: visible;
   background: var(--surface); border-bottom: 1px solid var(--line); border-right: 0;
 }
 .toolbar > * { flex: none; }
 .toolbar-spacer { flex: 1 0 8px; }
+/* Keep every action in normal flow so a wrapped primary action cannot cover its neighbours.
+   The app's auto toolbar track grows with these rows and leaves the remaining height to the canvas. */
+.app .toolbar > .btn.primary:last-child { position: static; box-shadow: none; }
 .tool-select { display: inline-flex; align-items: center; gap: 6px; font-size: 12.5px; color: var(--ink-3); }
 .tool-select select { height: 28px; }
+/* Tighten desktop tools before wrapping into another complete row. */
+@media (min-width: 1000px) and (max-width: 1559px) {
+  .toolbar { gap: 6px; }
+  .toolbar > .btn { padding-inline: 9px; gap: 5px; }
+  .toolbar .tabs.segment button { padding-inline: 8px; }
+  .toolbar > .btn.tool-demo > svg { display: none; }
+}
 
 /* ---------- canvas ---------- */
 .canvas { grid-area: main; min-height: 0; overflow: auto; position: relative; background: var(--canvas); outline: none; }
@@ -132,6 +142,12 @@
 .view-loading { padding: 24px; }
 .origin-warning, .boot-error { margin: 12px; padding: 10px 14px; border-left: 3px solid var(--risk); background: var(--risk-soft); color: var(--ink); display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
 .start { min-height: 100%; display: grid; place-items: center; padding: 24px; }
+/* Compact hosted summary keeps the source table visible without dismissing the notice. */
+.deploy-banner.hosted { align-items: center; gap: 10px; margin: 8px 12px 0; padding: 4px 6px 4px 12px; font-size: 12.5px; line-height: 1.4; }
+.deploy-banner.hosted > svg { margin-top: 0; }
+.deploy-banner.hosted .deploy-text p { max-width: none; }
+.deploy-banner.hosted .deploy-text b { color: var(--ink); }
+@media (max-width: 719px) { .deploy-banner.hosted { margin: 6px 8px 0; padding: 6px 6px 6px 10px; } }
 
 /* ---------- inspector ---------- */
 .inspector {

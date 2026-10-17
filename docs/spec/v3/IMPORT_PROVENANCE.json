@@ -1,0 +1,13 @@
+{
+  "sourceZip": "PRISM_Agent_Handoff_v3.zip",
+  "sourceZipSha256": "4a6889470ae6d631b285816979c391822c82f26580c96408df0f41ee1dae667a",
+  "separateMarkdownMatchesZip": true,
+  "files": {
+    "PRISM_Complete_Specification_v3.md": "6558db387123ee2e9f91f6f4593a08f1ad05a9b192cb39895efbf7bd0e8694b1",
+    "README.md": "0d8ce6681af86aa608e69d84c675c72afd128a888e49f26da230287ab54e7369",
+    "risk_rules.json": "7cf5d251c992cc780c6749bfeee0e801214892016c1f48beca2e42c27e1e42f5",
+    "semantic_types.json": "7ce84ee97c2e93eabbf7ae6cef406b2525cb627b444b4bc8003326bc5be584c4",
+    "spec_validation.json": "71af183e9a1e3849ff109d8be8d2260e10f8ae75affd2f8ceed533f33b5ee635",
+    "validate_spec.py": "e14fefed057d10a354963511ca90bec67c5358a53af4ec31b349f6ef45012187"
+  }
+}

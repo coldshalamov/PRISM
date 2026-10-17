@@ -13,13 +13,13 @@ import { threatFromSchema } from './threat';
 import type { Threat } from './threat';
 import type {
   ApiHealth, AuditMode, Candidate, ColumnSpec, Dataset, DatasetSemantics, ExportFormat, LabResult, Registry, ResearchQuery,
-  RowUnit, SearchResult, SemanticOverrides, ViewId,
+  RowUnit, SearchResult, SemanticMetadataPreview, SemanticOverrides, ViewId,
 } from './types';
 
-/* One in-memory workspace. Raw rows never leave component state: nothing here is written to
-   localStorage except harmless layout preferences, and "Clear session" also asks the service
-   to drop every dataset and candidate it holds. In a local run the service is on this computer;
-   in the hosted demo every record is fictional and uploads are refused (see `deployment`).
+/* One browser workspace. Only harmless layout preferences are written to localStorage.
+   The service owns tables and candidate evidence; "Clear session" asks it to delete them.
+   Local runs keep files on this computer. Hosted uploads use Archie Core and Vercel
+   according to service-reported capabilities (see `deployment`).
 
    Evidence discipline: a candidate is an immutable snapshot. The current controls (recipe, attacker
    assumptions, research questions, field classifications) can drift from it; `stale` names exactly
@@ -67,7 +67,7 @@ export interface Workspace {
   health: 'checking' | 'ok' | 'down';
   healthInfo: ApiHealth | null;
   origin: { local: boolean; host: string };
-  /** Local run versus hosted fictional demo: decides upload availability and where computation is said to happen. */
+  /** Service-reported deployment capabilities decide uploads and computation descriptions. */
   deployment: Deployment;
   prefs: UiPrefs;
   setPrefs: (change: Partial<UiPrefs>) => void;
@@ -138,9 +138,11 @@ export interface Workspace {
   loadDemo: (fixture?: Fixture) => Promise<void>;
   recoverSession: (clearExisting?: boolean) => Promise<void>;
   importOriginal: (dataset: Dataset) => void;
+  importFile: (file: File) => Promise<Dataset | null>;
   saveSchema: (schema: ColumnSpec[], rowUnit?: { entityColumn?: string | null; oneRowPerPersonConfirmed?: boolean }, thenApply?: boolean) => Promise<boolean>;
   /** Runs through the same single-flight `schema` gate as saveSchema. Updates only `dataset.semantic`, and only for the dataset that was inspected. */
-  inspectSemantics: (allowRemote: boolean, overrides?: SemanticOverrides) => Promise<DatasetSemantics | null>;
+  previewSemantics: () => Promise<SemanticMetadataPreview | null>;
+  inspectSemantics: (allowRemote: boolean, overrides?: SemanticOverrides, metadataDigest?: string) => Promise<DatasetSemantics | null>;
   apply: (options?: { steps?: RecipeStep[] }) => Promise<Candidate | null>;
   assess: () => Promise<boolean>;
   runSearch: (maxCandidates: number) => Promise<boolean>;
@@ -465,6 +467,14 @@ export function WorkspaceProvider({ children }: { children: ReactNode }) {
     if (!dataset && bootError && !busy.boot) void loadDemo('architecture');
   }, [bootError, busy.boot, dataset, health, loadDemo, loadReference]);
 
+  const importFile = useCallback(async (file: File) => {
+    if (!deployment.uploadsAllowed) {
+      notify(deployment.uploadsNote, 'warn');
+      return null;
+    }
+    return run('import', 'The file could not be imported.', signal => api.importDataset(file, signal));
+  }, [deployment.uploadsAllowed, deployment.uploadsNote, notify, run]);
+
   const importOriginal = useCallback((next: Dataset) => {
     if (!deployment.uploadsAllowed) {
       notify(deployment.uploadsNote, 'warn');
@@ -517,10 +527,14 @@ export function WorkspaceProvider({ children }: { children: ReactNode }) {
   /* The run callback only talks to the service. The dataset is touched afterwards, and only when `run` hands back the
      latest, same-session result; the functional update re-checks the id so a replaced dataset can never receive it.
      Semantics describe columns: schema, steps, threat, workload and every frozen candidate are left exactly as they are. */
-  const inspectSemantics = useCallback(async (allowRemote: boolean, overrides: SemanticOverrides = {}) => {
+  const previewSemantics = useCallback(async () => {
+    if (!dataset) return null;
+    return run('schema', 'The Jev metadata preview could not be prepared.', signal => api.previewSemantics(dataset.datasetId, signal));
+  }, [dataset, run]);
+  const inspectSemantics = useCallback(async (allowRemote: boolean, overrides: SemanticOverrides = {}, metadataDigest?: string) => {
     if (!dataset) return null;
     const datasetId = dataset.datasetId;
-    const semantic = await run('schema', 'Field semantics could not be inspected.', signal => api.inspectSemantics(datasetId, allowRemote, overrides, signal));
+    const semantic = await run('schema', 'Field semantics could not be inspected.', signal => api.inspectSemantics(datasetId, allowRemote, overrides, signal, metadataDigest));
     if (!semantic) return null;
     setDataset(current => (current && current.datasetId === datasetId ? { ...current, semantic } : current));
     return semantic;
@@ -715,7 +729,7 @@ export function WorkspaceProvider({ children }: { children: ReactNode }) {
     return candidate;
   }, [dataset, deployment.uploadsAllowed, deployment.uploadsNote, notify, rememberCandidates, run, threatRequest, workload]);
 
-  const exportCandidate = useCallback(async (id: string, format: ExportFormat, acknowledgments?: Acknowledgment[]) => {
+  const exportCandidate = useCallback(async (id: string, format: ExportFormat) => {
     const candidate = findCandidate(id);
     if (workloadDirty) {
       notify('Save or discard your unsaved research question edits in Research Intent before downloading.', 'warn');
@@ -726,12 +740,7 @@ export function WorkspaceProvider({ children }: { children: ReactNode }) {
       notify('Export is unavailable until the selected snapshot matches the reviewed controls and the service is ready.', 'warn');
       return false;
     }
-    if (format === 'csv' && !['authority', 'limitations', 'reviewed'].every(item => acknowledgments?.includes(item as Acknowledgment))) {
-      setView('report');
-      notify('Review the protected CSV and its three acknowledgments in Report before downloading.', 'info');
-      return false;
-    }
-    const name = await run('export', 'Export failed.', () => api.exportReport(id, format, acknowledgments));
+    const name = await run('export', 'Export failed.', () => api.exportReport(id, format));
     if (name) notify(`Downloaded ${name}`);
     return Boolean(name);
   }, [findCandidate, workloadDirty, reviewed, sessionLost, health, staleFor, busy, notify, run, setView]);
@@ -747,7 +756,7 @@ export function WorkspaceProvider({ children }: { children: ReactNode }) {
     setRegistry(null);
     setLab(null);
     try { localStorage.removeItem(UI_KEY); } catch { /* ignore */ }
-    notify(`${deployment.hosted ? 'Session' : 'Local session'} cleared. Datasets, candidates and any uploads were removed from the service memory and from this page.`);
+    notify(`${deployment.hosted ? 'Session' : 'Local session'} cleared. Datasets, candidates and any uploads were deleted from the service and removed from this page.`);
     api.registry().then(setRegistry).catch(() => undefined);
     api.lab().then(setLab).catch(() => undefined);
     return true;
@@ -780,7 +789,7 @@ export function WorkspaceProvider({ children }: { children: ReactNode }) {
     baseline, baselineUsable, candidates, active, select, meta, labelOf, findCandidate, stale, staleFor,
     search, compare, toggleCompare, registry, lab,
     busy, cancel, toasts, notify, dismissToast,
-    loadDemo, recoverSession, importOriginal, saveSchema, inspectSemantics, apply, assess, runSearch, adopt, runAudit, exportCandidate, clearSession,
+    loadDemo, recoverSession, importOriginal, importFile, saveSchema, previewSemantics, inspectSemantics, apply, assess, runSearch, adopt, runAudit, exportCandidate, clearSession,
   };
   return <Context.Provider value={value}>{children}</Context.Provider>;
 }

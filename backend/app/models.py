@@ -63,6 +63,8 @@ class SchemaRequest(StrictModel):
 
 class SemanticRequest(StrictModel):
     allowRemote: bool = False
+    previewOnly: bool = False
+    metadataDigest: str | None = Field(default=None, pattern=r"^[a-f0-9]{64}$")
     overrides: dict[str, str | dict[str, Any]] = Field(default_factory=dict, max_length=80)
 
 

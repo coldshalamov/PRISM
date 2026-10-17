@@ -39,7 +39,7 @@ function useAppMenus(): { id: string; label: string; items: MenuItem[] }[] {
   const dialogs = useDialogs();
   const { dataset, active, prefs, setPrefs, busy, deployment } = ws;
   const sessionBusy = Object.values(busy).some(Boolean);
-  const uploadHint = deployment.uploadsAllowed ? undefined : 'Not available in this demo; run locally';
+  const uploadHint = deployment.uploadsAllowed ? undefined : deployment.uploadsNote;
   const exportItem = (id: string, label: string, format: 'html' | 'json' | 'recipe' | 'csv', hint: string): MenuItem => ({
     id, label, hint, icon: <Download size={15} />, disabled: !active || sessionBusy || ws.stale.length > 0 || !ws.reviewed || ws.sessionLost,
     onSelect: () => { if (format === 'csv') ws.setView('report'); else if (active) void ws.exportCandidate(active.candidateId, format); },
@@ -49,8 +49,8 @@ function useAppMenus(): { id: string; label: string; items: MenuItem[] }[] {
       id: 'file', label: 'File', items: [
         { id: 'demo', label: 'Open fictional oncology demo', hint: '5,000 records', icon: <Database size={15} />, onSelect: () => ws.requestReplace('the fictional oncology demo', () => void ws.loadDemo('architecture')) },
         { id: 'kit', label: 'Open fictional benchmark', hint: '480 records with exact-linkage replay', icon: <Beaker size={15} />, onSelect: () => ws.requestReplace('the fictional benchmark', () => void ws.loadDemo('kit')) },
-        { id: 'import', label: 'Import original CSV…', hint: uploadHint, icon: <FileUp size={15} />, disabled: !deployment.uploadsAllowed, onSelect: () => dialogs.open('import') },
-        { id: 'audit', label: 'Audit a protected CSV…', hint: uploadHint, icon: <ScanSearch size={15} />, disabled: !dataset || !deployment.uploadsAllowed, onSelect: () => dialogs.open('audit') },
+        { id: 'import', label: 'Import data…', hint: uploadHint, icon: <FileUp size={15} />, disabled: sessionBusy || !deployment.uploadsAllowed, onSelect: () => dialogs.open('import') },
+        { id: 'audit', label: 'Audit protected table…', hint: uploadHint, icon: <ScanSearch size={15} />, disabled: sessionBusy || !dataset || !deployment.uploadsAllowed, onSelect: () => dialogs.open('audit') },
         { id: 's1', separator: true },
         exportItem('x-html', 'Download evidence report (HTML)', 'html', 'Measured results, coverage and limits'),
         exportItem('x-json', 'Download evidence report (JSON)', 'json', 'Machine-readable'),
@@ -94,6 +94,7 @@ function useAppMenus(): { id: string; label: string; items: MenuItem[] }[] {
 function ModeSelector() {
   const ws = useWorkspace();
   const dialogs = useDialogs();
+  const sessionBusy = Object.values(ws.busy).some(Boolean);
   const mode = ws.active && isAudit(ws.active) ? 'audit' : 'create';
   const lastAudit = [...ws.candidates].reverse().find(candidate => isAudit(candidate));
   const auditBlocked = !lastAudit && !ws.deployment.uploadsAllowed;
@@ -109,10 +110,10 @@ function ModeSelector() {
   };
   return (
     <div className="seg dark mode-seg" role="radiogroup" aria-label="Workflow mode">
-      <button type="button" role="radio" aria-checked={mode === 'create'} className={mode === 'create' ? 'active' : ''} disabled={!ws.dataset} onClick={() => choose('create')}>Prepare</button>
+      <button type="button" role="radio" aria-checked={mode === 'create'} className={mode === 'create' ? 'active' : ''} disabled={sessionBusy || !ws.dataset} onClick={() => choose('create')}>Prepare</button>
       <button
         type="button" role="radio" aria-checked={mode === 'audit'} className={mode === 'audit' ? 'active' : ''}
-        disabled={!ws.dataset || auditBlocked} title={auditBlocked ? ws.deployment.uploadsNote : undefined} onClick={() => choose('audit')}
+        disabled={sessionBusy || !ws.dataset || auditBlocked} title={auditBlocked ? ws.deployment.uploadsNote : undefined} onClick={() => choose('audit')}
       >Audit</button>
     </div>
   );
@@ -131,7 +132,7 @@ function SessionBanner() {
           </div>
           <span className="session-actions">
             <button type="button" className="btn small primary" onClick={() => ws.recoverSession()}>Start over with the demo</button>
-            {ws.deployment.uploadsAllowed ? <button type="button" className="btn small" onClick={() => dialogs.open('import')}>Import a CSV</button> : null}
+            {ws.deployment.uploadsAllowed ? <button type="button" className="btn small" disabled={Object.values(ws.busy).some(Boolean)} onClick={() => dialogs.open('import')}>Import data…</button> : null}
           </span>
         </div>
       ) : null}
@@ -169,9 +170,9 @@ function TopBar({ small, onLibrary, onInspector }: { small: boolean; onLibrary: 
   const menus = useAppMenus();
   const flat = menus.flatMap(menu => [...menu.items, { id: `sep-${menu.id}`, separator: true }]).slice(0, -1) as MenuItem[];
   const fictional = isFictional(deployment, dataset);
-  const modeText = health === 'checking' ? (deployment.hosted ? 'Hosted demo · connecting' : 'Connecting')
+  const modeText = health === 'checking' ? (deployment.hosted ? 'Hosted workbench · connecting' : 'Connecting')
     : health === 'down' ? 'Offline'
-      : deployment.kind === 'hosted' ? 'Hosted demo' : deployment.kind === 'remote' ? 'Remote origin' : 'Local';
+      : deployment.kind === 'hosted' ? deployment.label : deployment.kind === 'remote' ? 'Remote origin' : 'Local';
   return (
     <header className="topbar">
       {small ? <Logo size={26} /> : null}
@@ -317,10 +318,10 @@ export default function Shell() {
   const viewLabel = NAV.find(item => item.id === view)?.label ?? 'Workbench';
   const [announcement, setAnnouncement] = useState('');
   useEffect(() => {
-    document.title = `${viewLabel} · PRISM${deployment.hosted ? ' · Hosted fictional demo' : ''}`;
+    document.title = `${viewLabel} · PRISM${deployment.hosted ? ` · ${deployment.label}` : ''}`;
     main.current?.scrollTo({ top: 0 });
     setAnnouncement(`${viewLabel} view`);
-  }, [deployment.hosted, view, viewLabel]);
+  }, [deployment.hosted, deployment.label, view, viewLabel]);
 
   /* Long evaluations and their results are spoken, not only drawn: pending state, the snapshot now shown, and a finished search. */
   const evaluating = busy.apply || busy.assess || busy.search;

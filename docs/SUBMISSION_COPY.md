@@ -12,9 +12,9 @@
 
 **Project description:**
 
-Built for eMerge AI Hackathon 2026, PRISM helps enterprise teams understand research data before sharing it. Local recognition and optional Jev 1.14 typed decisions map approved schema metadata to 145 semantic types; record cells stay out of model requests. Deterministic tests then measure actual candidates, scientific-query changes and unresolved exposure. In a fictional 480-record benchmark, removing ZIP reduced verified unique correct matches from 75 to 20, while three selected protected answers stayed identical between recipes. A separate appointment fixture reduced combination-unique rows from 480 to 96 with no change to its selected response query. Field controls, bounded recipe search and reproducible exports connect meaning to evidence. Archie hosts the public entry and durable state; Vercel serves UI assets and Python compute. Public uploads are blocked. No automatic release clearance. Background material and AI-tool use are disclosed in the README.
+Built for eMerge AI Hackathon 2026, PRISM is a desktop-style privacy workbench you can try on Archie. Upload CSV, JSON or XLSX, compare source and protected tables, adjust protections and inspect real Python measurements. Optional Jev 1.14 typed decisions interpret schema metadata using 145 semantic types; record cells stay out of model requests. Findings explain exposure, assumptions and changes to selected research questions. A fictional 480-record benchmark reduced verified unique correct matches from 75 to 20 after ZIP removal, while three selected protected answers stayed identical. A separate appointment example reduced combination-unique rows from 480 to 96. Audit an externally protected file, explore evaluated alternatives and export data, recipes and evidence. Archie hosts the entry and session tables; Vercel serves assets and compute. No automatic release clearance. Background material and AI-tool use are disclosed in the README.
 
-**Technologies:** React, TypeScript, Vite, Python, FastAPI, pandas, NumPy, SciPy, OpenRouter, Typesafe Jev 1.14, Archie Core, PostgreSQL, GraphQL, Vercel, openpyxl. Optional pyCANON cross-checks. Jev uses OpenRouter's typed Decisions API for explicitly approved minimized schema metadata. Scientific tests and transformations remain deterministic. Archie hosts the public HTML entry and durable fictional state; Vercel serves immutable UI assets and Python compute. The full engine also runs locally for CSV, JSON and XLSX tables. Coding agents assisted development; runtime Jev is a separate optional capability.
+**Technologies:** React, TypeScript, Vite, Python, FastAPI, pandas, NumPy, SciPy, OpenRouter, Typesafe Jev 1.14, Archie Core, PostgreSQL, GraphQL, Vercel, openpyxl. Optional pyCANON cross-checks. Jev uses OpenRouter's typed Decisions API for explicitly approved minimized schema metadata. Scientific tests and transformations remain deterministic. Archie hosts the public HTML entry and session tables and recipes; Vercel serves immutable UI assets and Python compute. The full engine also runs locally for CSV, JSON and XLSX tables. Coding agents assisted development; runtime Jev is a separate optional capability.
 
 **PitchDeckURL:** https://prism-healthcare-taupe.vercel.app/pitch/
 
@@ -24,7 +24,7 @@ Built for eMerge AI Hackathon 2026, PRISM helps enterprise teams understand rese
 
 **PublicRepo:** https://github.com/coldshalamov/PRISM
 
-The canonical demo opens the reviewed UI at the published Archie origin. Archie serves its HTML entry and Archie Core stores durable fictional state; immutable UI assets and Python compute run on Vercel. This is a split deployment. The pitch and PDF remain at the Vercel URLs above; Archie does not serve the pitch path. The demo serves fictional fixtures and blocks uploads. The repository README contains local setup instructions and scope. The Enterprise AI entry addresses purpose-aware privacy and utility review for enterprise research and data-sharing teams, including regulated research teams. Oncology is a fictional demonstration, not a claim to a sponsored healthcare challenge. The existing URL slug does not determine the track. Do not submit the entry until the user explicitly asks.
+The canonical demo opens the reviewed UI at the published Archie origin. Archie serves its HTML entry and Archie Core stores session tables and recipes; immutable UI assets and Python compute run on Vercel. This is a split deployment. The pitch and PDF remain at the Vercel URLs above; Archie does not serve the pitch path. The hosted app accepts CSV, JSON and XLSX uploads and includes labeled fictional examples. The repository README contains local setup instructions and scope. The Enterprise AI entry addresses purpose-aware privacy and utility review for enterprise research and data-sharing teams, including regulated research teams. Oncology is a fictional demonstration, not a claim to a sponsored healthcare challenge. The existing URL slug does not determine the track. Do not submit the entry until the user explicitly asks.
 
 ## Two-minute speaker flow
 
@@ -50,11 +50,11 @@ The canonical demo opens the reviewed UI at the published Archie origin. Archie 
 
 **1:31–1:45 · Slide 6**
 
-“The semantic registry contains 145 types and 24 attack categories, with unsupported tests clearly unassessed. In a separate fictional appointment fixture, combination-unique rows fall from 480 to 96 while its selected response query stays identical. That is sample distinguishability, not an identity probability.”
+“The semantic registry contains 145 types and 25 attack categories, with unsupported tests clearly unassessed. In a separate fictional appointment fixture, combination-unique rows fall from 480 to 96 while its selected response query stays identical. That is sample distinguishability, not an identity probability.”
 
 **1:45–2:00 · Slide 7**
 
-“Archie hosts the public entry and durable state; Vercel serves assets and compute. The public demo blocks uploads. Private tables use the local workflow, with only approved metadata going to Jev. Evidence supports human review, without automatic release clearance.”
+“Archie hosts the public entry and durable state; Vercel serves assets and compute. The hosted app supports real uploads and external-file comparison. Private tables use the local workflow, with only approved metadata going to Jev. Evidence supports human review, without automatic release clearance.”
 
 ## Short live demo route
 
@@ -82,12 +82,12 @@ Use actual captured screens from the deployed fictional demo. The pitch uses an 
 - The 75/480 and 20/480 values are verified unique correct matches in the supplied fictional benchmark under known membership, correct known QI and replayable public rules. Owner lineage scores correctness only after matching. They are not general re-identification probabilities.
 - “Three answers stay identical” compares the **protected outputs of two recipes**. It does not claim that all source values or every study result remain unchanged. The protected age–weight correlation is approximately 0.6893 versus source 0.6952 and uses interval midpoints.
 - The 26/17 counts describe the registry catalogue. They do not mean 26 implemented attacks or 17 protections passed an assessment.
-- The semantic ontology has 145 leaf types across 13 families. The semantic attack catalog has 24 categories with explicit prerequisites and coverage states. These counts do not claim 145 trained detectors or 24 executed attacks.
+- The semantic ontology has 145 leaf types across 13 families. The semantic attack catalog has 25 categories with explicit prerequisites and coverage states. These counts do not claim 145 trained detectors or 25 executed attacks.
 - The separate 480-to-96 result counts rows unique on a released date/facility/demographic combination in the fictional semantic appointment fixture. It is not the 75-to-20 verified-linkage benchmark. Its selected diagnosis-response query has zero error under the tested recipe; no claim of universal utility preservation follows.
 - Jev 1.14 supplies optional metadata interpretation through OpenRouter Decisions. Approved inputs contain labels, types, units, structural format names and neighboring labels, without record cells. Its probabilities concern field meaning; ambiguous and unsupported interpretations remain reviewable. Core scans are independent.
 - A nondominated candidate can fail user constraints. Search uses a finite grammar and can finish before the requested count on constrained inputs.
 - Unavailable results and unsupported methods do not count as zero risk. pyCANON is an optional categorical diagnostic cross-check, not privacy certification.
-- Public hosting serves fictional fixtures and blocks private-file import. Local intake supports CSV, JSON record arrays and one visible XLSX worksheet, with explicit rejection of unsupported workbook constructs. Optional remote semantics still requires approved minimized metadata.
+- Public hosting supports CSV, JSON and XLSX uploads and external-file comparison. Local intake supports CSV, JSON record arrays and one visible XLSX worksheet, with explicit rejection of unsupported workbook constructs. Optional remote semantics still requires approved minimized metadata.
 - Enterprise AI is the selected track. Runtime Jev interprets metadata; deterministic code computes privacy and utility evidence. Coding-agent use during development is separately disclosed.
 - The fictional oncology example demonstrates a general enterprise research-sharing workflow. It does not establish fit to a specific sponsored healthcare challenge or clinical validation.
 - No claim of HIPAA compliance, clinical validation, automatic release clearance or guaranteed patient protection. No claim that a numbered hackathon challenge is implemented without checking its actual requirements.

@@ -1,0 +1,2193 @@
+[
+  {
+    "id": "identity.legal_name",
+    "family": "identity",
+    "meaning": "Legal name of the indicated subject",
+    "alias_hints": [
+      "NAME",
+      "FULL_NM"
+    ],
+    "distinction": "Do not assume subject is the patient.",
+    "default_detectors": [
+      "D01",
+      "D03",
+      "D08"
+    ]
+  },
+  {
+    "id": "identity.preferred_name",
+    "family": "identity",
+    "meaning": "Alias or preferred name",
+    "alias_hints": [
+      "ALIAS",
+      "NICKNAME"
+    ],
+    "distinction": "Not necessarily anonymous.",
+    "default_detectors": [
+      "D01",
+      "D03",
+      "D08"
+    ]
+  },
+  {
+    "id": "identity.government_id",
+    "family": "identity",
+    "meaning": "Government-issued person identifier",
+    "alias_hints": [
+      "SSN",
+      "NINO",
+      "PASSPORT"
+    ],
+    "distinction": "Country and format must be checked locally.",
+    "default_detectors": [
+      "D01",
+      "D03",
+      "D08"
+    ]
+  },
+  {
+    "id": "identity.patient_id",
+    "family": "identity",
+    "meaning": "Patient or medical-record identifier",
+    "alias_hints": [
+      "MRN",
+      "PAT_ID",
+      "PT_NUM"
+    ],
+    "distinction": "Opaque values can remain joinable.",
+    "default_detectors": [
+      "D01",
+      "D03",
+      "D08"
+    ]
+  },
+  {
+    "id": "identity.participant_id",
+    "family": "identity",
+    "meaning": "Study participant key",
+    "alias_hints": [
+      "SUBJID",
+      "SUBJECT_ID"
+    ],
+    "distinction": "May persist across study releases.",
+    "default_detectors": [
+      "D01",
+      "D03",
+      "D08"
+    ]
+  },
+  {
+    "id": "identity.customer_id",
+    "family": "identity",
+    "meaning": "Customer-bound identifier",
+    "alias_hints": [
+      "CUST_ID",
+      "CLIENT_ID"
+    ],
+    "distinction": "Separate organization from individual.",
+    "default_detectors": [
+      "D01",
+      "D03",
+      "D08"
+    ]
+  },
+  {
+    "id": "identity.employee_id",
+    "family": "identity",
+    "meaning": "Employee-bound identifier",
+    "alias_hints": [
+      "EMP_ID",
+      "STAFF_NO"
+    ],
+    "distinction": "Not necessarily a patient identifier.",
+    "default_detectors": [
+      "D01",
+      "D03",
+      "D08"
+    ]
+  },
+  {
+    "id": "identity.account_id",
+    "family": "identity",
+    "meaning": "Account-bound identifier",
+    "alias_hints": [
+      "ACCT",
+      "ACCOUNT_ID"
+    ],
+    "distinction": "Accounts may have multiple people.",
+    "default_detectors": [
+      "D01",
+      "D03",
+      "D08"
+    ]
+  },
+  {
+    "id": "identity.username",
+    "family": "identity",
+    "meaning": "Login name or public handle",
+    "alias_hints": [
+      "USER",
+      "HANDLE"
+    ],
+    "distinction": "A public handle can connect to identity.",
+    "default_detectors": [
+      "D01",
+      "D03",
+      "D08"
+    ]
+  },
+  {
+    "id": "identity.pseudonym",
+    "family": "identity",
+    "meaning": "Declared replacement identifier",
+    "alias_hints": [
+      "TOKEN",
+      "PSEUDO_ID"
+    ],
+    "distinction": "Do not infer protection from appearance.",
+    "default_detectors": [
+      "D01",
+      "D03",
+      "D08"
+    ]
+  },
+  {
+    "id": "identity.hashed_identifier",
+    "family": "identity",
+    "meaning": "Declared digest of an identifier",
+    "alias_hints": [
+      "ID_HASH",
+      "HASHED_MRN"
+    ],
+    "distinction": "A hex-looking string alone is insufficient.",
+    "default_detectors": [
+      "D01",
+      "D03",
+      "D08"
+    ]
+  },
+  {
+    "id": "identity.biometric_template",
+    "family": "identity",
+    "meaning": "Person recognition template",
+    "alias_hints": [
+      "FACE_EMBED",
+      "FINGERPRINT"
+    ],
+    "distinction": "Requires specialized coverage.",
+    "default_detectors": [
+      "D01",
+      "D03",
+      "D08"
+    ]
+  },
+  {
+    "id": "identity.specimen_key",
+    "family": "identity",
+    "meaning": "Sample or specimen key",
+    "alias_hints": [
+      "SPECIMEN_ID",
+      "SAMPLE_ID"
+    ],
+    "distinction": "Links through biobank or patient tables.",
+    "default_detectors": [
+      "D01",
+      "D03",
+      "D08"
+    ]
+  },
+  {
+    "id": "contact.email",
+    "family": "contact",
+    "meaning": "Electronic mail address",
+    "alias_hints": [
+      "EMAIL",
+      "E_MAIL"
+    ],
+    "distinction": "Local format evidence is not proof of ownership.",
+    "default_detectors": [
+      "D01",
+      "D02",
+      "D08"
+    ]
+  },
+  {
+    "id": "contact.telephone",
+    "family": "contact",
+    "meaning": "Telephone or fax number",
+    "alias_hints": [
+      "PHONE",
+      "MOBILE",
+      "FAX"
+    ],
+    "distinction": "Use locale; avoid treating all long numbers as phones.",
+    "default_detectors": [
+      "D01",
+      "D02",
+      "D08"
+    ]
+  },
+  {
+    "id": "contact.contact_uri",
+    "family": "contact",
+    "meaning": "Contact/profile URI",
+    "alias_hints": [
+      "PROFILE_URL",
+      "CONTACT_LINK"
+    ],
+    "distinction": "Inspect query parameters locally.",
+    "default_detectors": [
+      "D01",
+      "D02",
+      "D08"
+    ]
+  },
+  {
+    "id": "contact.postal_address",
+    "family": "contact",
+    "meaning": "Mailing or residential contact address",
+    "alias_hints": [
+      "ADDRESS",
+      "ADDR"
+    ],
+    "distinction": "Keep residence/facility subject separate.",
+    "default_detectors": [
+      "D01",
+      "D02",
+      "D08"
+    ]
+  },
+  {
+    "id": "geography.residence",
+    "family": "geography",
+    "meaning": "Home location",
+    "alias_hints": [
+      "HOME_LOC",
+      "RESIDENCE"
+    ],
+    "distinction": "Not the treating facility.",
+    "default_detectors": [
+      "D03",
+      "D04",
+      "D09"
+    ]
+  },
+  {
+    "id": "geography.workplace",
+    "family": "geography",
+    "meaning": "Work location",
+    "alias_hints": [
+      "WORK_LOC"
+    ],
+    "distinction": "May be shared by many people.",
+    "default_detectors": [
+      "D03",
+      "D04",
+      "D09"
+    ]
+  },
+  {
+    "id": "geography.street",
+    "family": "geography",
+    "meaning": "Street or block",
+    "alias_hints": [
+      "STREET",
+      "ROAD"
+    ],
+    "distinction": "May remain identifying with house number.",
+    "default_detectors": [
+      "D03",
+      "D04",
+      "D09"
+    ]
+  },
+  {
+    "id": "geography.city",
+    "family": "geography",
+    "meaning": "City/municipality",
+    "alias_hints": [
+      "CITY",
+      "MUNICIPALITY"
+    ],
+    "distinction": "Does not imply geographic population data exist.",
+    "default_detectors": [
+      "D03",
+      "D04",
+      "D09"
+    ]
+  },
+  {
+    "id": "geography.region",
+    "family": "geography",
+    "meaning": "State/province/region",
+    "alias_hints": [
+      "STATE",
+      "REGION"
+    ],
+    "distinction": "TX can be a state or treatment.",
+    "default_detectors": [
+      "D03",
+      "D04",
+      "D09"
+    ]
+  },
+  {
+    "id": "geography.country",
+    "family": "geography",
+    "meaning": "Country",
+    "alias_hints": [
+      "COUNTRY",
+      "NATION"
+    ],
+    "distinction": "Country alone does not define the sampling frame.",
+    "default_detectors": [
+      "D03",
+      "D04",
+      "D09"
+    ]
+  },
+  {
+    "id": "geography.postal_code",
+    "family": "geography",
+    "meaning": "Full postal code",
+    "alias_hints": [
+      "ZIP",
+      "POSTCODE"
+    ],
+    "distinction": "Preserve leading zeros and country.",
+    "default_detectors": [
+      "D03",
+      "D04",
+      "D09"
+    ]
+  },
+  {
+    "id": "geography.postal_prefix",
+    "family": "geography",
+    "meaning": "Reduced postal precision",
+    "alias_hints": [
+      "ZIP3",
+      "POSTAL_PREFIX"
+    ],
+    "distinction": "Prefix length does not certify de-identification.",
+    "default_detectors": [
+      "D03",
+      "D04",
+      "D09"
+    ]
+  },
+  {
+    "id": "geography.latitude",
+    "family": "geography",
+    "meaning": "Physical latitude coordinate",
+    "alias_hints": [
+      "LAT",
+      "LATITUDE"
+    ],
+    "distinction": "LAT can mean latency or lateral.",
+    "default_detectors": [
+      "D03",
+      "D04",
+      "D09"
+    ]
+  },
+  {
+    "id": "geography.longitude",
+    "family": "geography",
+    "meaning": "Physical longitude coordinate",
+    "alias_hints": [
+      "LON",
+      "LNG"
+    ],
+    "distinction": "Check coordinate reference system.",
+    "default_detectors": [
+      "D03",
+      "D04",
+      "D09"
+    ]
+  },
+  {
+    "id": "geography.coordinate_pair",
+    "family": "geography",
+    "meaning": "Combined coordinates",
+    "alias_hints": [
+      "GPS",
+      "LATLON"
+    ],
+    "distinction": "Do not send coordinate values to Jev.",
+    "default_detectors": [
+      "D03",
+      "D04",
+      "D09"
+    ]
+  },
+  {
+    "id": "geography.healthcare_facility",
+    "family": "geography",
+    "meaning": "Hospital/clinic identifier or location",
+    "alias_hints": [
+      "HOSP_SITE",
+      "CLINIC"
+    ],
+    "distinction": "Different from anatomical site.",
+    "default_detectors": [
+      "D03",
+      "D04",
+      "D09"
+    ]
+  },
+  {
+    "id": "geography.recruitment_site",
+    "family": "geography",
+    "meaning": "Study recruitment center",
+    "alias_hints": [
+      "CENTER",
+      "RECRUIT_SITE"
+    ],
+    "distinction": "Could refer to a hospital or study code.",
+    "default_detectors": [
+      "D03",
+      "D04",
+      "D09"
+    ]
+  },
+  {
+    "id": "geography.event_location",
+    "family": "geography",
+    "meaning": "Location of an event",
+    "alias_hints": [
+      "EVENT_LOC",
+      "LOC"
+    ],
+    "distinction": "Confirm same event as timestamp.",
+    "default_detectors": [
+      "D03",
+      "D04",
+      "D09"
+    ]
+  },
+  {
+    "id": "geography.origin_location",
+    "family": "geography",
+    "meaning": "Birthplace or place of origin",
+    "alias_hints": [
+      "BIRTHPLACE",
+      "ORIGIN"
+    ],
+    "distinction": "Not current residence.",
+    "default_detectors": [
+      "D03",
+      "D04",
+      "D09"
+    ]
+  },
+  {
+    "id": "geography.mobility_path",
+    "family": "geography",
+    "meaning": "Ordered physical locations",
+    "alias_hints": [
+      "PATH",
+      "TRAJECTORY"
+    ],
+    "distinction": "Sequence analysis is not ordinary row grouping.",
+    "default_detectors": [
+      "D03",
+      "D04",
+      "D09"
+    ]
+  },
+  {
+    "id": "temporal.birth_date",
+    "family": "temporal",
+    "meaning": "Date of birth",
+    "alias_hints": [
+      "DOB",
+      "BIRTH_DT",
+      "BDAY"
+    ],
+    "distinction": "Birthday without year has lower precision.",
+    "default_detectors": [
+      "D03",
+      "D04",
+      "D09",
+      "D10",
+      "D12"
+    ]
+  },
+  {
+    "id": "temporal.death_date",
+    "family": "temporal",
+    "meaning": "Date of death",
+    "alias_hints": [
+      "DOD",
+      "DEATH_DT"
+    ],
+    "distinction": "Cohort membership can itself be sensitive.",
+    "default_detectors": [
+      "D03",
+      "D04",
+      "D09",
+      "D10",
+      "D12"
+    ]
+  },
+  {
+    "id": "temporal.encounter_date",
+    "family": "temporal",
+    "meaning": "Clinical encounter date",
+    "alias_hints": [
+      "DOS",
+      "VISIT_DATE"
+    ],
+    "distinction": "DOS has other meanings outside healthcare.",
+    "default_detectors": [
+      "D03",
+      "D04",
+      "D09",
+      "D10",
+      "D12"
+    ]
+  },
+  {
+    "id": "temporal.appointment_time",
+    "family": "temporal",
+    "meaning": "Appointment time of day",
+    "alias_hints": [
+      "APPT_TIME",
+      "VISIT_TIME"
+    ],
+    "distinction": "Timezone and date linkage require confirmation.",
+    "default_detectors": [
+      "D03",
+      "D04",
+      "D09",
+      "D10",
+      "D12"
+    ]
+  },
+  {
+    "id": "temporal.admission_date",
+    "family": "temporal",
+    "meaning": "Admission date/time",
+    "alias_hints": [
+      "ADM_DT",
+      "ADMISSION"
+    ],
+    "distinction": "Not necessarily first diagnosis.",
+    "default_detectors": [
+      "D03",
+      "D04",
+      "D09",
+      "D10",
+      "D12"
+    ]
+  },
+  {
+    "id": "temporal.discharge_date",
+    "family": "temporal",
+    "meaning": "Discharge date/time",
+    "alias_hints": [
+      "DISCH_DT"
+    ],
+    "distinction": "May combine with stay length to recover admission.",
+    "default_detectors": [
+      "D03",
+      "D04",
+      "D09",
+      "D10",
+      "D12"
+    ]
+  },
+  {
+    "id": "temporal.treatment_date",
+    "family": "temporal",
+    "meaning": "Treatment start/change date",
+    "alias_hints": [
+      "TX_START",
+      "TREAT_DT"
+    ],
+    "distinction": "TX is context-dependent.",
+    "default_detectors": [
+      "D03",
+      "D04",
+      "D09",
+      "D10",
+      "D12"
+    ]
+  },
+  {
+    "id": "temporal.transaction_time",
+    "family": "temporal",
+    "meaning": "Financial or purchase timestamp",
+    "alias_hints": [
+      "TX_TIME",
+      "TRANS_DT"
+    ],
+    "distinction": "Amount and merchant can act as event anchors.",
+    "default_detectors": [
+      "D03",
+      "D04",
+      "D09",
+      "D10",
+      "D12"
+    ]
+  },
+  {
+    "id": "temporal.observation_time",
+    "family": "temporal",
+    "meaning": "Measurement timestamp",
+    "alias_hints": [
+      "OBS_TS",
+      "MEAS_TIME"
+    ],
+    "distinction": "Separate event time from upload time.",
+    "default_detectors": [
+      "D03",
+      "D04",
+      "D09",
+      "D10",
+      "D12"
+    ]
+  },
+  {
+    "id": "temporal.administrative_time",
+    "family": "temporal",
+    "meaning": "Processing/export/upload time",
+    "alias_hints": [
+      "LOAD_TS",
+      "CREATED_AT"
+    ],
+    "distinction": "May describe file, not participant.",
+    "default_detectors": [
+      "D03",
+      "D04",
+      "D09",
+      "D10",
+      "D12"
+    ]
+  },
+  {
+    "id": "temporal.elapsed_time",
+    "family": "temporal",
+    "meaning": "Duration from a stated anchor",
+    "alias_hints": [
+      "DAYS_SINCE",
+      "ELAPSED"
+    ],
+    "distinction": "An exposed anchor can reveal calendar dates.",
+    "default_detectors": [
+      "D03",
+      "D04",
+      "D09",
+      "D10",
+      "D12"
+    ]
+  },
+  {
+    "id": "temporal.duration",
+    "family": "temporal",
+    "meaning": "Length of interval",
+    "alias_hints": [
+      "LOS",
+      "DURATION"
+    ],
+    "distinction": "Units and endpoints matter.",
+    "default_detectors": [
+      "D03",
+      "D04",
+      "D09",
+      "D10",
+      "D12"
+    ]
+  },
+  {
+    "id": "temporal.sequence_index",
+    "family": "temporal",
+    "meaning": "Event order index",
+    "alias_hints": [
+      "VISIT_NO",
+      "SEQ"
+    ],
+    "distinction": "Order can leak a distinctive pattern.",
+    "default_detectors": [
+      "D03",
+      "D04",
+      "D09",
+      "D10",
+      "D12"
+    ]
+  },
+  {
+    "id": "temporal.observation_window",
+    "family": "temporal",
+    "meaning": "Start/end of observation",
+    "alias_hints": [
+      "FOLLOWUP_WINDOW"
+    ],
+    "distinction": "Includes interval endpoints and censoring metadata.",
+    "default_detectors": [
+      "D03",
+      "D04",
+      "D09",
+      "D10",
+      "D12"
+    ]
+  },
+  {
+    "id": "temporal.calendar_period",
+    "family": "temporal",
+    "meaning": "Month/year/coarse date",
+    "alias_hints": [
+      "VISIT_MONTH",
+      "YEAR"
+    ],
+    "distinction": "Do not reconstruct original dates.",
+    "default_detectors": [
+      "D03",
+      "D04",
+      "D09",
+      "D10",
+      "D12"
+    ]
+  },
+  {
+    "id": "demographic.age",
+    "family": "demographic",
+    "meaning": "Age as a numeric measurement",
+    "alias_hints": [
+      "AGE",
+      "AGE_YRS"
+    ],
+    "distinction": "Not birth date unless an anchor is known.",
+    "default_detectors": [
+      "D03",
+      "D04",
+      "D05"
+    ]
+  },
+  {
+    "id": "demographic.age_group",
+    "family": "demographic",
+    "meaning": "Age interval or category",
+    "alias_hints": [
+      "AGE_BAND",
+      "AGE_CAT"
+    ],
+    "distinction": "Inspect actual interval boundaries for invertibility.",
+    "default_detectors": [
+      "D03",
+      "D04",
+      "D05"
+    ]
+  },
+  {
+    "id": "demographic.sex_attribute",
+    "family": "demographic",
+    "meaning": "Sex-related recorded attribute",
+    "alias_hints": [
+      "SEX",
+      "BIO_SEX"
+    ],
+    "distinction": "Do not infer from names or anatomy.",
+    "default_detectors": [
+      "D03",
+      "D04",
+      "D05"
+    ]
+  },
+  {
+    "id": "demographic.gender_attribute",
+    "family": "demographic",
+    "meaning": "Gender-related self-report or record",
+    "alias_hints": [
+      "GENDER",
+      "GENDER_ID"
+    ],
+    "distinction": "Distinct from sex; preserve supplied meaning.",
+    "default_detectors": [
+      "D03",
+      "D04",
+      "D05"
+    ]
+  },
+  {
+    "id": "demographic.occupation",
+    "family": "demographic",
+    "meaning": "Occupation/job title",
+    "alias_hints": [
+      "JOB",
+      "OCCUPATION"
+    ],
+    "distinction": "Rare titles may be linkable.",
+    "default_detectors": [
+      "D03",
+      "D04",
+      "D05"
+    ]
+  },
+  {
+    "id": "demographic.employer",
+    "family": "demographic",
+    "meaning": "Employing organization",
+    "alias_hints": [
+      "EMPLOYER",
+      "COMPANY"
+    ],
+    "distinction": "Organization name may be publicly known.",
+    "default_detectors": [
+      "D03",
+      "D04",
+      "D05"
+    ]
+  },
+  {
+    "id": "demographic.education",
+    "family": "demographic",
+    "meaning": "Educational attainment",
+    "alias_hints": [
+      "EDU",
+      "QUALIFICATION"
+    ],
+    "distinction": "Not institution name by default.",
+    "default_detectors": [
+      "D03",
+      "D04",
+      "D05"
+    ]
+  },
+  {
+    "id": "demographic.school",
+    "family": "demographic",
+    "meaning": "Attended educational institution",
+    "alias_hints": [
+      "SCHOOL",
+      "UNIVERSITY"
+    ],
+    "distinction": "May combine with graduation date.",
+    "default_detectors": [
+      "D03",
+      "D04",
+      "D05"
+    ]
+  },
+  {
+    "id": "demographic.household_structure",
+    "family": "demographic",
+    "meaning": "Household size/composition",
+    "alias_hints": [
+      "HH_SIZE",
+      "HOUSEHOLD_TYPE"
+    ],
+    "distinction": "Population unit may be household.",
+    "default_detectors": [
+      "D03",
+      "D04",
+      "D05"
+    ]
+  },
+  {
+    "id": "demographic.marital_status",
+    "family": "demographic",
+    "meaning": "Marital/partnership status",
+    "alias_hints": [
+      "MARITAL"
+    ],
+    "distinction": "Context-specific sensitivity.",
+    "default_detectors": [
+      "D03",
+      "D04",
+      "D05"
+    ]
+  },
+  {
+    "id": "demographic.nationality",
+    "family": "demographic",
+    "meaning": "Nationality/citizenship",
+    "alias_hints": [
+      "NATIONALITY",
+      "CITIZEN"
+    ],
+    "distinction": "Not residence or ancestry.",
+    "default_detectors": [
+      "D03",
+      "D04",
+      "D05"
+    ]
+  },
+  {
+    "id": "demographic.language",
+    "family": "demographic",
+    "meaning": "Language use",
+    "alias_hints": [
+      "LANG",
+      "LANGUAGE"
+    ],
+    "distinction": "Rare combination can distinguish records.",
+    "default_detectors": [
+      "D03",
+      "D04",
+      "D05"
+    ]
+  },
+  {
+    "id": "demographic.socioeconomic",
+    "family": "demographic",
+    "meaning": "Socioeconomic status/category",
+    "alias_hints": [
+      "SES",
+      "DEPRIVATION"
+    ],
+    "distinction": "Not necessarily income.",
+    "default_detectors": [
+      "D03",
+      "D04",
+      "D05"
+    ]
+  },
+  {
+    "id": "demographic.race_ethnicity",
+    "family": "demographic",
+    "meaning": "Recorded race or ethnicity",
+    "alias_hints": [
+      "RACE",
+      "ETHNICITY"
+    ],
+    "distinction": "Never infer actual values from names.",
+    "default_detectors": [
+      "D03",
+      "D04",
+      "D05"
+    ]
+  },
+  {
+    "id": "physical.height",
+    "family": "physical",
+    "meaning": "Height/length of a person",
+    "alias_hints": [
+      "HT",
+      "HEIGHT",
+      "HT_CM"
+    ],
+    "distinction": "Could instead be tumor length; subject matters.",
+    "default_detectors": [
+      "D03",
+      "D04"
+    ]
+  },
+  {
+    "id": "physical.weight",
+    "family": "physical",
+    "meaning": "Body mass",
+    "alias_hints": [
+      "WT",
+      "WEIGHT_KG"
+    ],
+    "distinction": "Could be statistical weight; do not confuse.",
+    "default_detectors": [
+      "D03",
+      "D04"
+    ]
+  },
+  {
+    "id": "physical.eye_color",
+    "family": "physical",
+    "meaning": "Recorded eye color",
+    "alias_hints": [
+      "EYE_COLOR"
+    ],
+    "distinction": "Potential QI, not automatically sensitive.",
+    "default_detectors": [
+      "D03",
+      "D04"
+    ]
+  },
+  {
+    "id": "physical.hair_characteristic",
+    "family": "physical",
+    "meaning": "Hair color/characteristic",
+    "alias_hints": [
+      "HAIR",
+      "HAIR_COLOR"
+    ],
+    "distinction": "Context and subject matter.",
+    "default_detectors": [
+      "D03",
+      "D04"
+    ]
+  },
+  {
+    "id": "physical.body_measurement",
+    "family": "physical",
+    "meaning": "Other body dimensions",
+    "alias_hints": [
+      "WAIST",
+      "BMI",
+      "BSA"
+    ],
+    "distinction": "BMI plus height can reconstruct weight approximately.",
+    "default_detectors": [
+      "D03",
+      "D04"
+    ]
+  },
+  {
+    "id": "physical.distinguishing_trait",
+    "family": "physical",
+    "meaning": "Distinctive physical description",
+    "alias_hints": [
+      "SCAR",
+      "TATTOO"
+    ],
+    "distinction": "Often free text requiring local span scan.",
+    "default_detectors": [
+      "D03",
+      "D04"
+    ]
+  },
+  {
+    "id": "physical.physiology",
+    "family": "physical",
+    "meaning": "Physiological observation",
+    "alias_hints": [
+      "HR",
+      "BP",
+      "GLUCOSE"
+    ],
+    "distinction": "Transient observation differs from stable identity.",
+    "default_detectors": [
+      "D03",
+      "D04"
+    ]
+  },
+  {
+    "id": "physical.biometric_signal",
+    "family": "physical",
+    "meaning": "Voice/gait/other identifying signal",
+    "alias_hints": [
+      "VOICE",
+      "GAIT"
+    ],
+    "distinction": "Specialized format is not covered by CSV metrics.",
+    "default_detectors": [
+      "D03",
+      "D04"
+    ]
+  },
+  {
+    "id": "clinical.diagnosis",
+    "family": "clinical",
+    "meaning": "Diagnosis label",
+    "alias_hints": [
+      "DX",
+      "CONDITION"
+    ],
+    "distinction": "Rarity is measured, not a semantic label.",
+    "default_detectors": [
+      "D03",
+      "D05",
+      "D06",
+      "D12"
+    ]
+  },
+  {
+    "id": "clinical.diagnosis_code",
+    "family": "clinical",
+    "meaning": "Coded diagnosis",
+    "alias_hints": [
+      "ICD",
+      "DX_CODE"
+    ],
+    "distinction": "Verify coding system and edition locally.",
+    "default_detectors": [
+      "D03",
+      "D05",
+      "D06",
+      "D12"
+    ]
+  },
+  {
+    "id": "clinical.medical_history",
+    "family": "clinical",
+    "meaning": "Past clinical conditions",
+    "alias_hints": [
+      "PMH",
+      "HISTORY"
+    ],
+    "distinction": "May be a set or narrative.",
+    "default_detectors": [
+      "D03",
+      "D05",
+      "D06",
+      "D12"
+    ]
+  },
+  {
+    "id": "clinical.procedure",
+    "family": "clinical",
+    "meaning": "Clinical intervention/procedure",
+    "alias_hints": [
+      "PROC",
+      "CPT"
+    ],
+    "distinction": "Procedure sequence may be distinctive.",
+    "default_detectors": [
+      "D03",
+      "D05",
+      "D06",
+      "D12"
+    ]
+  },
+  {
+    "id": "clinical.medication",
+    "family": "clinical",
+    "meaning": "Medication name/code",
+    "alias_hints": [
+      "MED",
+      "RX",
+      "DRUG"
+    ],
+    "distinction": "Can disclose conditions indirectly; do not infer indication as fact.",
+    "default_detectors": [
+      "D03",
+      "D05",
+      "D06",
+      "D12"
+    ]
+  },
+  {
+    "id": "clinical.drug_exposure",
+    "family": "clinical",
+    "meaning": "Dose/course/exposure",
+    "alias_hints": [
+      "DOSE",
+      "DRUG_DAYS"
+    ],
+    "distinction": "Units and timing affect utility.",
+    "default_detectors": [
+      "D03",
+      "D05",
+      "D06",
+      "D12"
+    ]
+  },
+  {
+    "id": "clinical.treatment_regimen",
+    "family": "clinical",
+    "meaning": "Treatment combination or course",
+    "alias_hints": [
+      "REGIMEN",
+      "TX"
+    ],
+    "distinction": "Not the state Texas or a generic transaction.",
+    "default_detectors": [
+      "D03",
+      "D05",
+      "D06",
+      "D12"
+    ]
+  },
+  {
+    "id": "clinical.laboratory_result",
+    "family": "clinical",
+    "meaning": "Lab measurement",
+    "alias_hints": [
+      "LAB",
+      "ASSAY_VALUE"
+    ],
+    "distinction": "Not diagnostic by itself.",
+    "default_detectors": [
+      "D03",
+      "D05",
+      "D06",
+      "D12"
+    ]
+  },
+  {
+    "id": "clinical.disease_stage",
+    "family": "clinical",
+    "meaning": "Disease stage",
+    "alias_hints": [
+      "STAGE",
+      "TNM"
+    ],
+    "distinction": "STAGE can be workflow state.",
+    "default_detectors": [
+      "D03",
+      "D05",
+      "D06",
+      "D12"
+    ]
+  },
+  {
+    "id": "clinical.clinical_outcome",
+    "family": "clinical",
+    "meaning": "Clinical response/outcome",
+    "alias_hints": [
+      "RESPONSE",
+      "TX_RESP"
+    ],
+    "distinction": "Do not silently perturb analysis target.",
+    "default_detectors": [
+      "D03",
+      "D05",
+      "D06",
+      "D12"
+    ]
+  },
+  {
+    "id": "clinical.prognostic_measure",
+    "family": "clinical",
+    "meaning": "Prognostic score or estimate",
+    "alias_hints": [
+      "RISK_SCORE"
+    ],
+    "distinction": "Not PRISM privacy risk.",
+    "default_detectors": [
+      "D03",
+      "D05",
+      "D06",
+      "D12"
+    ]
+  },
+  {
+    "id": "clinical.healthcare_use",
+    "family": "clinical",
+    "meaning": "Visits/admissions/use measures",
+    "alias_hints": [
+      "ED_VISITS",
+      "UTILIZATION"
+    ],
+    "distinction": "Can create count/timing fingerprints.",
+    "default_detectors": [
+      "D03",
+      "D05",
+      "D06",
+      "D12"
+    ]
+  },
+  {
+    "id": "clinical.anatomical_site",
+    "family": "clinical",
+    "meaning": "Body/tumor anatomical location",
+    "alias_hints": [
+      "TUMOR_SITE",
+      "BODY_SITE"
+    ],
+    "distinction": "Never map to physical geography.",
+    "default_detectors": [
+      "D03",
+      "D05",
+      "D06",
+      "D12"
+    ]
+  },
+  {
+    "id": "clinical.clinical_note",
+    "family": "clinical",
+    "meaning": "Narrative clinical content",
+    "alias_hints": [
+      "NOTE",
+      "NARRATIVE"
+    ],
+    "distinction": "Header classification does not find all personal facts.",
+    "default_detectors": [
+      "D03",
+      "D05",
+      "D06",
+      "D12"
+    ]
+  },
+  {
+    "id": "clinical.reproductive_health",
+    "family": "clinical",
+    "meaning": "Reproductive/sexual health content",
+    "alias_hints": [
+      "REPRO_HISTORY"
+    ],
+    "distinction": "Restricted-context default; no diagnosis inference.",
+    "default_detectors": [
+      "D03",
+      "D05",
+      "D06",
+      "D12"
+    ]
+  },
+  {
+    "id": "clinical.mental_health",
+    "family": "clinical",
+    "meaning": "Mental/behavioral health information",
+    "alias_hints": [
+      "PSYCH",
+      "MH"
+    ],
+    "distinction": "Avoid inferring values from generic text.",
+    "default_detectors": [
+      "D03",
+      "D05",
+      "D06",
+      "D12"
+    ]
+  },
+  {
+    "id": "genetic.genomic_sequence",
+    "family": "genetic",
+    "meaning": "DNA/RNA sequence content",
+    "alias_hints": [
+      "SEQUENCE",
+      "FASTA"
+    ],
+    "distinction": "Requires domain-specific analysis; no genomic anonymity score.",
+    "default_detectors": [
+      "D03",
+      "D05",
+      "D23"
+    ]
+  },
+  {
+    "id": "genetic.variant",
+    "family": "genetic",
+    "meaning": "Genomic variant call",
+    "alias_hints": [
+      "VARIANT",
+      "SNP",
+      "RSID"
+    ],
+    "distinction": "Rare combination or familial linkage may matter.",
+    "default_detectors": [
+      "D03",
+      "D05",
+      "D23"
+    ]
+  },
+  {
+    "id": "genetic.mutation_status",
+    "family": "genetic",
+    "meaning": "Presence/status of a selected mutation",
+    "alias_hints": [
+      "KRAS",
+      "BRAF_STATUS"
+    ],
+    "distinction": "Ordinary categorical checks only unless genomic adapter exists.",
+    "default_detectors": [
+      "D03",
+      "D05",
+      "D23"
+    ]
+  },
+  {
+    "id": "genetic.gene_expression",
+    "family": "genetic",
+    "meaning": "Expression measurements",
+    "alias_hints": [
+      "EXPRESSION",
+      "RNA_LEVEL"
+    ],
+    "distinction": "High-dimensional linkage not covered by scalar rarity alone.",
+    "default_detectors": [
+      "D03",
+      "D05",
+      "D23"
+    ]
+  },
+  {
+    "id": "genetic.hereditary_condition",
+    "family": "genetic",
+    "meaning": "Hereditary condition/marker",
+    "alias_hints": [
+      "HEREDITARY",
+      "GERMLINE"
+    ],
+    "distinction": "Can disclose relatives without direct identifiers.",
+    "default_detectors": [
+      "D03",
+      "D05",
+      "D23"
+    ]
+  },
+  {
+    "id": "genetic.genetic_ancestry",
+    "family": "genetic",
+    "meaning": "Genetic ancestry estimate",
+    "alias_hints": [
+      "ANCESTRY"
+    ],
+    "distinction": "Not nationality or self-reported ethnicity.",
+    "default_detectors": [
+      "D03",
+      "D05",
+      "D23"
+    ]
+  },
+  {
+    "id": "genetic.biological_assay",
+    "family": "genetic",
+    "meaning": "Protein/molecular assay result",
+    "alias_hints": [
+      "PROTEIN",
+      "ASSAY"
+    ],
+    "distinction": "May be nonpersonal experimental data.",
+    "default_detectors": [
+      "D03",
+      "D05",
+      "D23"
+    ]
+  },
+  {
+    "id": "financial.bank_account",
+    "family": "financial",
+    "meaning": "Bank account or IBAN",
+    "alias_hints": [
+      "IBAN",
+      "BANK_ACCT"
+    ],
+    "distinction": "Use format/checksum where applicable.",
+    "default_detectors": [
+      "D01",
+      "D03",
+      "D05",
+      "D09"
+    ]
+  },
+  {
+    "id": "financial.payment_card",
+    "family": "financial",
+    "meaning": "Payment-card information",
+    "alias_hints": [
+      "PAN",
+      "CARD_NO"
+    ],
+    "distinction": "Not every 16-digit value is a card.",
+    "default_detectors": [
+      "D01",
+      "D03",
+      "D05",
+      "D09"
+    ]
+  },
+  {
+    "id": "financial.income",
+    "family": "financial",
+    "meaning": "Income/earnings",
+    "alias_hints": [
+      "INCOME",
+      "SALARY"
+    ],
+    "distinction": "Can be analysis target and sensitive.",
+    "default_detectors": [
+      "D01",
+      "D03",
+      "D05",
+      "D09"
+    ]
+  },
+  {
+    "id": "financial.balance",
+    "family": "financial",
+    "meaning": "Account balance",
+    "alias_hints": [
+      "BALANCE"
+    ],
+    "distinction": "Not a transaction amount.",
+    "default_detectors": [
+      "D01",
+      "D03",
+      "D05",
+      "D09"
+    ]
+  },
+  {
+    "id": "financial.credit_record",
+    "family": "financial",
+    "meaning": "Credit-related information",
+    "alias_hints": [
+      "CREDIT",
+      "FICO"
+    ],
+    "distinction": "Contextual protected content.",
+    "default_detectors": [
+      "D01",
+      "D03",
+      "D05",
+      "D09"
+    ]
+  },
+  {
+    "id": "financial.transaction_amount",
+    "family": "financial",
+    "meaning": "Value of an individual transaction",
+    "alias_hints": [
+      "AMOUNT",
+      "TX_AMOUNT"
+    ],
+    "distinction": "Exact amounts may be externally known.",
+    "default_detectors": [
+      "D01",
+      "D03",
+      "D05",
+      "D09"
+    ]
+  },
+  {
+    "id": "financial.merchant",
+    "family": "financial",
+    "meaning": "Merchant/counterparty",
+    "alias_hints": [
+      "MERCHANT",
+      "PAYEE"
+    ],
+    "distinction": "Person and organization counterparties differ.",
+    "default_detectors": [
+      "D01",
+      "D03",
+      "D05",
+      "D09"
+    ]
+  },
+  {
+    "id": "financial.purchase_item",
+    "family": "financial",
+    "meaning": "Purchased item/service",
+    "alias_hints": [
+      "ITEM",
+      "SKU"
+    ],
+    "distinction": "May reveal condition or behavior; model cannot certify implication.",
+    "default_detectors": [
+      "D01",
+      "D03",
+      "D05",
+      "D09"
+    ]
+  },
+  {
+    "id": "financial.financial_institution",
+    "family": "financial",
+    "meaning": "Bank/financial institution",
+    "alias_hints": [
+      "BANK",
+      "INSTITUTION"
+    ],
+    "distinction": "Constant institutional context can still locate cohort.",
+    "default_detectors": [
+      "D01",
+      "D03",
+      "D05",
+      "D09"
+    ]
+  },
+  {
+    "id": "behavior.location_history",
+    "family": "behavior",
+    "meaning": "Recorded location history",
+    "alias_hints": [
+      "LOC_HISTORY"
+    ],
+    "distinction": "May span many events per person.",
+    "default_detectors": [
+      "D03",
+      "D10",
+      "D23"
+    ]
+  },
+  {
+    "id": "behavior.device_activity",
+    "family": "behavior",
+    "meaning": "Device interaction/activity",
+    "alias_hints": [
+      "DEVICE_LOG"
+    ],
+    "distinction": "Device ownership may be shared.",
+    "default_detectors": [
+      "D03",
+      "D10",
+      "D23"
+    ]
+  },
+  {
+    "id": "behavior.browsing_history",
+    "family": "behavior",
+    "meaning": "Sites/pages visited",
+    "alias_hints": [
+      "HISTORY",
+      "URL_LOG"
+    ],
+    "distinction": "URLs can carry direct IDs and tokens.",
+    "default_detectors": [
+      "D03",
+      "D10",
+      "D23"
+    ]
+  },
+  {
+    "id": "behavior.communication_pattern",
+    "family": "behavior",
+    "meaning": "Communication metadata",
+    "alias_hints": [
+      "CALL_LOG",
+      "MSG_TIMES"
+    ],
+    "distinction": "Relationships and timing may identify.",
+    "default_detectors": [
+      "D03",
+      "D10",
+      "D23"
+    ]
+  },
+  {
+    "id": "behavior.sleep_activity",
+    "family": "behavior",
+    "meaning": "Wearable sleep/steps/activity",
+    "alias_hints": [
+      "SLEEP",
+      "STEPS"
+    ],
+    "distinction": "Longitudinal data; no wearable required to audit file.",
+    "default_detectors": [
+      "D03",
+      "D10",
+      "D23"
+    ]
+  },
+  {
+    "id": "behavior.application_usage",
+    "family": "behavior",
+    "meaning": "Application use history",
+    "alias_hints": [
+      "APP_LOG",
+      "USAGE"
+    ],
+    "distinction": "May contain identifiers and timestamps.",
+    "default_detectors": [
+      "D03",
+      "D10",
+      "D23"
+    ]
+  },
+  {
+    "id": "behavior.routine",
+    "family": "behavior",
+    "meaning": "Repeated routine pattern",
+    "alias_hints": [
+      "ROUTINE",
+      "SCHEDULE"
+    ],
+    "distinction": "Often derived sequence representation.",
+    "default_detectors": [
+      "D03",
+      "D10",
+      "D23"
+    ]
+  },
+  {
+    "id": "relationship.family_link",
+    "family": "relationship",
+    "meaning": "Explicit familial relationship",
+    "alias_hints": [
+      "PARENT_ID",
+      "SIBLING"
+    ],
+    "distinction": "Must resolve edges locally, not infer real kinship.",
+    "default_detectors": [
+      "D03",
+      "D11"
+    ]
+  },
+  {
+    "id": "relationship.household_link",
+    "family": "relationship",
+    "meaning": "Household membership key",
+    "alias_hints": [
+      "HH_ID"
+    ],
+    "distinction": "Family and household are not equivalent.",
+    "default_detectors": [
+      "D03",
+      "D11"
+    ]
+  },
+  {
+    "id": "relationship.patient_provider_link",
+    "family": "relationship",
+    "meaning": "Patient-provider association",
+    "alias_hints": [
+      "PROVIDER_ID"
+    ],
+    "distinction": "Provider can connect appointment records.",
+    "default_detectors": [
+      "D03",
+      "D11"
+    ]
+  },
+  {
+    "id": "relationship.caregiver_link",
+    "family": "relationship",
+    "meaning": "Caregiver relationship",
+    "alias_hints": [
+      "CAREGIVER"
+    ],
+    "distinction": "Can identify a second person.",
+    "default_detectors": [
+      "D03",
+      "D11"
+    ]
+  },
+  {
+    "id": "relationship.organizational_affiliation",
+    "family": "relationship",
+    "meaning": "Membership or institutional link",
+    "alias_hints": [
+      "MEMBER_OF",
+      "AFFILIATION"
+    ],
+    "distinction": "Public roster availability is an assumption.",
+    "default_detectors": [
+      "D03",
+      "D11"
+    ]
+  },
+  {
+    "id": "relationship.social_link",
+    "family": "relationship",
+    "meaning": "Social/contact graph edge",
+    "alias_hints": [
+      "FRIEND_ID",
+      "CONTACT_ID"
+    ],
+    "distinction": "Graph re-identification needs dedicated coverage.",
+    "default_detectors": [
+      "D03",
+      "D11"
+    ]
+  },
+  {
+    "id": "relationship.shared_device_account",
+    "family": "relationship",
+    "meaning": "Shared device/account relation",
+    "alias_hints": [
+      "SHARED_ACCOUNT"
+    ],
+    "distinction": "Do not assume one ID is one person.",
+    "default_detectors": [
+      "D03",
+      "D11"
+    ]
+  },
+  {
+    "id": "relationship.referral_link",
+    "family": "relationship",
+    "meaning": "Referral/source relationship",
+    "alias_hints": [
+      "REFERRED_BY"
+    ],
+    "distinction": "Can describe a provider or organization.",
+    "default_detectors": [
+      "D03",
+      "D11"
+    ]
+  },
+  {
+    "id": "technical.ip_address",
+    "family": "technical",
+    "meaning": "Network IP address",
+    "alias_hints": [
+      "IP",
+      "IP_ADDR"
+    ],
+    "distinction": "Can identify network context, not necessarily person.",
+    "default_detectors": [
+      "D01",
+      "D08",
+      "D17"
+    ]
+  },
+  {
+    "id": "technical.mac_address",
+    "family": "technical",
+    "meaning": "Hardware network address",
+    "alias_hints": [
+      "MAC"
+    ],
+    "distinction": "May be randomized; do not infer stability.",
+    "default_detectors": [
+      "D01",
+      "D08",
+      "D17"
+    ]
+  },
+  {
+    "id": "technical.device_id",
+    "family": "technical",
+    "meaning": "Device-bound identifier",
+    "alias_hints": [
+      "DEVICE_ID",
+      "IMEI"
+    ],
+    "distinction": "Ownership model needed.",
+    "default_detectors": [
+      "D01",
+      "D08",
+      "D17"
+    ]
+  },
+  {
+    "id": "technical.advertising_id",
+    "family": "technical",
+    "meaning": "Advertising/tracking ID",
+    "alias_hints": [
+      "AD_ID",
+      "IDFA"
+    ],
+    "distinction": "Persistent cross-dataset association.",
+    "default_detectors": [
+      "D01",
+      "D08",
+      "D17"
+    ]
+  },
+  {
+    "id": "technical.session_id",
+    "family": "technical",
+    "meaning": "Session token/key",
+    "alias_hints": [
+      "SESSION_ID",
+      "SID"
+    ],
+    "distinction": "May be an active secret; do not contact endpoints.",
+    "default_detectors": [
+      "D01",
+      "D08",
+      "D17"
+    ]
+  },
+  {
+    "id": "technical.url",
+    "family": "technical",
+    "meaning": "URL/link",
+    "alias_hints": [
+      "URL",
+      "LINK"
+    ],
+    "distinction": "Scan paths/query parameters locally.",
+    "default_detectors": [
+      "D01",
+      "D08",
+      "D17"
+    ]
+  },
+  {
+    "id": "technical.file_path",
+    "family": "technical",
+    "meaning": "Filesystem path",
+    "alias_hints": [
+      "PATH",
+      "FILENAME"
+    ],
+    "distinction": "May contain username or name.",
+    "default_detectors": [
+      "D01",
+      "D08",
+      "D17"
+    ]
+  },
+  {
+    "id": "technical.author_metadata",
+    "family": "technical",
+    "meaning": "Document author/editor metadata",
+    "alias_hints": [
+      "AUTHOR",
+      "CREATOR"
+    ],
+    "distinction": "Not necessarily study subject.",
+    "default_detectors": [
+      "D01",
+      "D08",
+      "D17"
+    ]
+  },
+  {
+    "id": "technical.document_time",
+    "family": "technical",
+    "meaning": "File creation/modification time",
+    "alias_hints": [
+      "CREATED",
+      "MODIFIED"
+    ],
+    "distinction": "Not necessarily encounter time.",
+    "default_detectors": [
+      "D01",
+      "D08",
+      "D17"
+    ]
+  },
+  {
+    "id": "technical.tracking_token",
+    "family": "technical",
+    "meaning": "Tracking/correlation token",
+    "alias_hints": [
+      "TRACE_ID",
+      "TOKEN"
+    ],
+    "distinction": "May be person-, request-, or system-bound.",
+    "default_detectors": [
+      "D01",
+      "D08",
+      "D17"
+    ]
+  },
+  {
+    "id": "technical.cryptographic_digest",
+    "family": "technical",
+    "meaning": "Digest with unknown semantic source",
+    "alias_hints": [
+      "SHA256",
+      "DIGEST"
+    ],
+    "distinction": "Cannot infer hash algorithm or secret from shape alone.",
+    "default_detectors": [
+      "D01",
+      "D08",
+      "D17"
+    ]
+  },
+  {
+    "id": "technical.credential",
+    "family": "technical",
+    "meaning": "Password/key/authentication secret",
+    "alias_hints": [
+      "PASSWORD",
+      "API_KEY"
+    ],
+    "distinction": "Always owner-restricted handling; never execute or transmit.",
+    "default_detectors": [
+      "D01",
+      "D08",
+      "D17"
+    ]
+  },
+  {
+    "id": "technical.row_index",
+    "family": "technical",
+    "meaning": "Export row index or ordering key",
+    "alias_hints": [
+      "INDEX",
+      "ROW_NUM"
+    ],
+    "distinction": "Can preserve source alignment across releases.",
+    "default_detectors": [
+      "D01",
+      "D08",
+      "D17"
+    ]
+  },
+  {
+    "id": "text.survey_response",
+    "family": "text",
+    "meaning": "Free-form survey answer",
+    "alias_hints": [
+      "COMMENT",
+      "FREE_RESPONSE"
+    ],
+    "distinction": "May contain arbitrary personal facts.",
+    "default_detectors": [
+      "D02",
+      "D22"
+    ]
+  },
+  {
+    "id": "text.personal_description",
+    "family": "text",
+    "meaning": "Narrative about a person",
+    "alias_hints": [
+      "BIO",
+      "DESCRIPTION"
+    ],
+    "distinction": "Rare relationships can identify without a name.",
+    "default_detectors": [
+      "D02",
+      "D22"
+    ]
+  },
+  {
+    "id": "text.quoted_conversation",
+    "family": "text",
+    "meaning": "Quoted conversation/transcript",
+    "alias_hints": [
+      "TRANSCRIPT"
+    ],
+    "distinction": "Speaker labels are not anonymization.",
+    "default_detectors": [
+      "D02",
+      "D22"
+    ]
+  },
+  {
+    "id": "text.mixed_text",
+    "family": "text",
+    "meaning": "Mixed free-text content",
+    "alias_hints": [
+      "DETAILS",
+      "MISC"
+    ],
+    "distinction": "Scan locally; do not assume safe if unclassified.",
+    "default_detectors": [
+      "D02",
+      "D22"
+    ]
+  },
+  {
+    "id": "research.study_arm",
+    "family": "research",
+    "meaning": "Assignment/treatment study arm",
+    "alias_hints": [
+      "ARM",
+      "GROUP"
+    ],
+    "distinction": "Can be sensitive when linked to participation.",
+    "default_detectors": [
+      "D03",
+      "D12",
+      "D24"
+    ]
+  },
+  {
+    "id": "research.sampling_weight",
+    "family": "research",
+    "meaning": "Statistical sampling/analysis weight",
+    "alias_hints": [
+      "WEIGHT",
+      "WT"
+    ],
+    "distinction": "Must not be converted from pounds to kilograms.",
+    "default_detectors": [
+      "D03",
+      "D12",
+      "D24"
+    ]
+  },
+  {
+    "id": "research.censoring_indicator",
+    "family": "research",
+    "meaning": "Censoring/event observation indicator",
+    "alias_hints": [
+      "CENSORED",
+      "EVENT"
+    ],
+    "distinction": "Interpretation needs dictionary, not generic survival inference.",
+    "default_detectors": [
+      "D03",
+      "D12",
+      "D24"
+    ]
+  },
+  {
+    "id": "research.experimental_setting",
+    "family": "research",
+    "meaning": "Nonpersonal experiment configuration",
+    "alias_hints": [
+      "BATCH",
+      "TEMPERATURE"
+    ],
+    "distinction": "May link specimens or laboratories.",
+    "default_detectors": [
+      "D03",
+      "D12",
+      "D24"
+    ]
+  },
+  {
+    "id": "research.constant_context",
+    "family": "research",
+    "meaning": "Study-wide contextual fact",
+    "alias_hints": [
+      "STUDY",
+      "COHORT"
+    ],
+    "distinction": "Constant does not mean harmless membership context.",
+    "default_detectors": [
+      "D03",
+      "D12",
+      "D24"
+    ]
+  },
+  {
+    "id": "unknown.unknown",
+    "family": "unknown",
+    "meaning": "Insufficient evidence for meaning",
+    "alias_hints": [
+      "N/A"
+    ],
+    "distinction": "Not a negative security finding.",
+    "default_detectors": [
+      "D01",
+      "D02",
+      "D03",
+      "D04",
+      "D22"
+    ]
+  },
+  {
+    "id": "unknown.other_known",
+    "family": "unknown",
+    "meaning": "Meaning described but leaf not in catalog",
+    "alias_hints": [
+      "OTHER"
+    ],
+    "distinction": "Keep description local and offer extension.",
+    "default_detectors": [
+      "D01",
+      "D02",
+      "D03",
+      "D04",
+      "D22"
+    ]
+  },
+  {
+    "id": "unknown.mixed",
+    "family": "unknown",
+    "meaning": "Multiple meanings or heterogeneous values",
+    "alias_hints": [
+      "MIXED"
+    ],
+    "distinction": "Split local profiling; do not silently coerce.",
+    "default_detectors": [
+      "D01",
+      "D02",
+      "D03",
+      "D04",
+      "D22"
+    ]
+  },
+  {
+    "id": "unknown.none_of_catalog",
+    "family": "unknown",
+    "meaning": "No provided category fits",
+    "alias_hints": [
+      "NONE"
+    ],
+    "distinction": "Not equivalent to nonpersonal.",
+    "default_detectors": [
+      "D01",
+      "D02",
+      "D03",
+      "D04",
+      "D22"
+    ]
+  },
+  {
+    "id": "unknown.unsupported",
+    "family": "unknown",
+    "meaning": "Format/domain outside current analyzers",
+    "alias_hints": [
+      "UNSUPPORTED"
+    ],
+    "distinction": "Create a coverage gap, not a pass.",
+    "default_detectors": [
+      "D01",
+      "D02",
+      "D03",
+      "D04",
+      "D22"
+    ]
+  }
+]

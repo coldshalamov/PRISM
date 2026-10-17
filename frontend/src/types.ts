@@ -48,6 +48,11 @@ export interface SemanticField {
   validation?: unknown;
   lineage?: unknown;
 }
+export interface SemanticMetadataPreview {
+  datasetId: string; semanticRevision: string; metadataDigest: string;
+  provider: string; model: string; fieldCount: number;
+  metadata: { columns: Record<string, unknown>[]; neighboringLabels: string[]; [key: string]: unknown };
+}
 export interface SemanticProvider { status: string; calls: number; error?: unknown; message?: unknown; [key: string]: unknown }
 export interface DatasetSemantics { version: string; revision?: string; fields: SemanticField[]; provider?: SemanticProvider; [key: string]: unknown }
 export interface SemanticOntology {
@@ -385,9 +390,10 @@ export interface LabExperiment {
   result: Record<string, unknown>; lesson: string; assumptions: string[]; status: string;
 }
 export interface LabResult { experiments: LabExperiment[] }
-/** `deploymentMode: 'synthetic_demo'` with `uploadsAllowed: false` identifies the hosted fictional-only demo. */
+/** Upload capability and limits are reported by the actual service. */
 export interface ApiHealth {
-  status: string; version?: string; deploymentMode?: 'synthetic_demo' | 'local' | string; uploadsAllowed?: boolean;
+  status: string; version?: string; deploymentMode?: 'synthetic_demo' | 'hosted_workbench' | 'local' | string; uploadsAllowed?: boolean;
+  maxUploadBytes?: number; maxDatasets?: number; maxRows?: number; maxColumns?: number;
   backendProvider?: string; computeProvider?: string; storageProvider?: string; modelInRuntime?: boolean;
   sessionTtlSeconds?: number; maxSearchCandidates?: number; maxCandidates?: number;
   [key: string]: unknown;

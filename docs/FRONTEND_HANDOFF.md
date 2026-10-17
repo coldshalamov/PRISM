@@ -1,32 +1,25 @@
-# Frontend handoff
+# PRISM 0.1.1 frontend handoff
 
-PRISM retains six connected views: Workbench, Knowledge Map, Attack Lab, Research Intent, Pareto Explorer and Report. The visual identity is a graphite library/navigation rail, neutral work canvas, violet candidate channel, orange exposure and self-hosted IBM Plex typography. Keep product controls close to the actual tables and measured consequences; do not replace this with a generic SaaS dashboard.
+Keep the six connected views: Workbench, Knowledge Map, Attack Lab, Research Intent, Pareto Explorer and Report. The design is a desktop instrument with a graphite library rail, neutral data canvas, violet candidate channel, orange exposure and self-hosted IBM Plex typography. The source/candidate comparison is the primary experience.
 
-Claude Sonnet5.5 XHigh built and matured the frontend through Devin. Gemini4 Argon completed the original requested audit/improvement pass through OpenCode Go. The original independent approval sequence is reviewer2 recheck → reviewer4 → reviewer5 against source `c5404fd` and immutable revision `r20261017d`. Those approvals do not automatically cover the later semantic extension. Current extension reviews and actual browser checks are recorded in `docs/frontend-reviews/README.md` and `artifacts/verification.md`.
+## Current workflow
 
-## Semantic workbench extension
+The compact hosting notice and concise initial ledger leave room for source rows immediately. Import table and Semantic example are directly accessible. Classification and record-grain review remain deliberate. The duplicate introductory panel was removed, and Protection preference appears after an actual candidate exists. No mock candidate or favorable empty metric is inserted to populate the screen.
 
-Sonnet's additional integration remains inside Workbench. `SemanticPanel.tsx` presents cached field interpretations, controlled-vocabulary corrections, explicit metadata-only Jev permission, current-output measured findings, unsupported prerequisites and contributing-column focus. No chatbot or model-generated security narrative is used. The semantic revision participates in the existing stale-result guards; old frozen findings are never silently relabeled by a new source interpretation.
+The hosted workbench accepts real CSV, JSON and single-sheet XLSX files up to 3 MiB, 100,000 rows and 80 columns, with eight datasets per visitor. Files and external protected versions use the same parsing and engine contracts as local imports. A dataset's `synthetic` flag controls fictional labels; the hosting origin does not. Local intake supports files up to 50 MB. The main workflow has no account/login or permission checklist.
 
-Protection preference selects actual evaluated snapshots, showing measured uniqueness and scientific loss. It is not a universal privacy percentage. Field controls use `draftPreview.ts` for supported row-local draft transformations; only the preview changes immediately. Full-table assessments remain pending until evaluation. Whole recipes requiring unavailable full-table/random operations abstain from client preview. Original data remains unchanged. The cross-engine regression check compares eleven preview recipes to Python, including conversion, negative rounding ties and ISO-week year boundaries.
+Source data remains unchanged. `draftPreview.ts` previews compatible row-local recipes immediately while full measurements remain pending. Semantic corrections create revisions and stale previous evidence; immutable snapshots keep their original interpretation. Protection preference selects real cached evaluated candidates and displays measured uniqueness and scientific loss. It does not interpolate a universal protection score.
 
-The authoritative endpoints are `GET /v1/semantics/ontology`, dataset `semantic`, `POST /v1/datasets/{id}/semantics`, and candidate `risk.semantic`. API keys are server-only. Optional Jev decisions use schema metadata after user permission, while all privacy, transformation and utility calculations remain deterministic.
+The primary Jev Interpret action prepares a current outbound-metadata digest and requests interpretation directly. View model input is optional and read-only. Only schema metadata goes to the provider; no source rows. Manual corrections and local deterministic inspection remain available. Jev does not run during slider movement or candidate replay. Findings highlight their contributing column combination and show actual evidence or missing prerequisites.
 
-## Hosting and publication
+Direct protected-CSV download uses the current selected frozen candidate, recognized direct-identifier checks and version guards. It does not require the former three acknowledgment boxes. JSON/HTML evidence and recipe exports remain available. Main-path download labels should describe the artifact, not an approval or certification.
 
-Canonical public app: https://41d0bdfd-0065-4b0b-a973-efbe1c1a9c5e.archie.site/ . Archie hosts the saved HTML entry/application origin and Archie Core stores fictional session configuration. Vercel supplies pinned immutable JS/CSS/fonts and Python compute. The public route has passed real fixture, evaluation, search and download workflows. The final semantic revision and its browser outcome are in `artifacts/DELIVERY_STATUS.json`.
+## Authorship and publication
 
-`frontend/src/api.ts` selects the bridge only when the production module comes from the fixed Vercel origin into the Archie page. The backend separately requires an exact configured origin. The single-flight visitor token is held only in module memory. Expired responses cannot clear a newer session generation. Local/same-origin transport remains separate.
+Sonnet 5.5 XHigh authored the frontend through Devin; Gemini 4 Argon supplied the earlier OpenCode Go audit. Sonnet also produced the bounded v3 first-use changes before its daily quota was exhausted during self-check; the controller reviewed and completed those changes and updated real-upload copy. [v3 product review](v3-review-product.md) records that scope. Earlier three-review sequences apply to their named commits; current acceptance is recorded in [review index](frontend-reviews/README.md), [delivery status](../artifacts/DELIVERY_STATUS.json) and [verification](../artifacts/verification.md).
 
-After frontend changes, create a new immutable revision with `deploy/archie-static/build-entry.mjs`. Deploy assets to Vercel first, then save the exact generated tracked HTML through Archie's Code editor/Source Control and publish. Keep every previously published revision available. GitHub synchronization still reports an error; manual source-preserving publication works. Do not run Archie generation over the reviewed application. `deploy/archie/` is an unused alternative Next adapter, not the current host.
+[Archie is the canonical public origin](https://41d0bdfd-0065-4b0b-a973-efbe1c1a9c5e.archie.site/). Archie serves the HTML entry; Vercel supplies immutable assets and Python; Archie Core stores uploaded source files plus session configuration. The former generated prototype is not the maintained application. GitHub sync has reported an error, so exact Code-editor publication is the established update path.
 
-## Validation commands
+For each frontend release use a new unused revision with `deploy/archie-static/build-entry.mjs`, deploy its immutable assets to Vercel, then save/publish the exact tracked HTML in Archie. Keep already-published revisions available. `deploy/archie/` is an unused alternative Next adapter. The final revision is in delivery status; do not infer publication from a local build.
 
-```powershell
-npm run typecheck --prefix frontend
-npm run build --prefix frontend
-node frontend/tools/review-regressions.mjs
-node frontend/tools/draft-preview-regressions.mjs
-```
-
-Builds and reviewer opinions do not replace the actual browser route. The final acceptance covers original/protected values, consent and correction, stale guards, evaluated-candidate preference, findings details, charts, external audit and exports. Review known limits in `docs/RELEASE_LIMITATIONS.md` without inventing guarantees.
+Use `npm run typecheck --prefix frontend`, the production build, and focused frontend regression tools as appropriate. Actual acceptance includes the fresh desktop view, imported-table flow, correction/stale recovery, real candidate comparison, external audit and downloads. Browser acceptance belongs to the release verification record, not model agreement alone.

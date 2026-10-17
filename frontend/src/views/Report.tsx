@@ -1,7 +1,6 @@
-import { useEffect, useRef, useState } from 'react';
-import { ArrowDownToLine, ArrowRight, Braces, FileCode2, FileText, Fingerprint, LockKeyhole, ScrollText, Table2, X } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { ArrowDownToLine, ArrowRight, Braces, FileCode2, FileText, Fingerprint, LockKeyhole, ScrollText, Table2 } from 'lucide-react';
 import { findingCoverage, isAudit, linkageOf, queryOutcome, STALE_LABEL } from '../analysis';
-import type { Acknowledgment } from '../api';
 import { isFictional } from '../deployment';
 import { groupLabel, num, pct, title } from '../format';
 import { recipeLabel } from '../recipe';
@@ -78,15 +77,10 @@ function ReportInspector({ candidate }: { candidate: Candidate }) {
 export default function Report() {
   const ws = useWorkspace();
   const candidate = ws.active;
-  const [reviewId, setReviewId] = useState<string | null>(null);
-  const [acknowledgments, setAcknowledgments] = useState<Acknowledgment[]>([]);
   const [exportError, setExportError] = useState('');
   const [lastExport, setLastExport] = useState('');
-  const reviewRef = useRef<HTMLElement>(null);
-  const csvButton = useRef<HTMLButtonElement>(null);
   const currentId = candidate?.candidateId;
-  useEffect(() => { setReviewId(null); setAcknowledgments([]); setExportError(''); setLastExport(''); }, [currentId]);
-  useEffect(() => { if (reviewId) reviewRef.current?.focus(); }, [reviewId]);
+  useEffect(() => { setExportError(''); setLastExport(''); }, [currentId]);
 
   if (!candidate) return <div className="start"><Empty icon={<ScrollText size={28} />} title="Evaluate a candidate to create an owner audit" actions={<button type="button" className="btn primary" onClick={() => ws.setView('workbench')}>Open workbench<ArrowRight size={14} /></button>}>Reports contain measured risk, research preservation and the exact recipe from a frozen candidate. No candidate has been evaluated in this session yet.</Empty></div>;
 
@@ -107,9 +101,9 @@ export default function Report() {
   const doExport = async (format: ExportFormat) => {
     setExportError(''); setLastExport('');
     const id = candidate.candidateId;
-    const success = await ws.exportCandidate(id, format, format === 'csv' ? acknowledgments : undefined);
+    const success = await ws.exportCandidate(id, format);
     if (!success) setExportError(`The ${format === 'csv' ? 'protected CSV' : 'owner file'} could not be downloaded. The service message explains the block; your candidate remains intact.`);
-    else { setLastExport(`${format === 'csv' ? 'Protected CSV' : format === 'html' ? 'Confidential owner HTML' : format === 'json' ? 'Confidential owner JSON' : 'Confidential recipe'} downloaded for ${label}.`); if (format === 'csv') { setReviewId(null); setAcknowledgments([]); csvButton.current?.focus(); } }
+    else setLastExport(`${format === 'csv' ? 'Protected CSV' : format === 'html' ? 'Confidential owner HTML' : format === 'json' ? 'Confidential owner JSON' : 'Confidential recipe'} downloaded for ${label}.`);
   };
   const measuredRisk = Object.entries(candidate.risk.metrics);
   const unavailableQueries = candidate.utility.queries.filter(query => queryOutcome(query) === 'uncovered').length;
@@ -132,7 +126,7 @@ export default function Report() {
       <nav className="report-outline" aria-label="Owner audit sections"><span className="intent-eyebrow">In this audit</span><a href="#report-snapshot" onClick={event => { event.preventDefault(); document.getElementById('report-snapshot')?.scrollIntoView({ block: 'start' }); }}>01 · Snapshot</a><a href="#report-risk" onClick={event => { event.preventDefault(); document.getElementById('report-risk')?.scrollIntoView({ block: 'start' }); }}>02 · Measured exposure</a><a href="#report-utility" onClick={event => { event.preventDefault(); document.getElementById('report-utility')?.scrollIntoView({ block: 'start' }); }}>03 · Research preservation</a><a href="#report-coverage" onClick={event => { event.preventDefault(); document.getElementById('report-coverage')?.scrollIntoView({ block: 'start' }); }}>04 · Coverage & caveats</a><a href="#report-downloads" onClick={event => { event.preventDefault(); document.getElementById('report-downloads')?.scrollIntoView({ block: 'start' }); }}>05 · Downloads</a></nav>
       <article className="owner-report-document">
         <div className="report-confidential"><LockKeyhole size={14} /><span>Confidential · owner-only evidence · review before forwarding</span></div>
-        <header className="report-document-head"><div className="report-document-mark"><Fingerprint size={28} strokeWidth={1.2} /><span>PRISM <small>{ws.deployment.hosted ? 'HOSTED DEMO ASSESSMENT RECORD' : 'LOCAL ASSESSMENT RECORD'}</small></span></div><h1>Candidate audit</h1><p className="report-deck">{label} · {deckSummary}</p><div className="report-date-line"><span>{dateLabel(candidate.createdAt)}</span><span>{isFictional(ws.deployment, ws.dataset) ? 'Fictional demonstration data' : 'Imported data · owner evidence'}</span></div></header>
+        <header className="report-document-head"><div className="report-document-mark"><Fingerprint size={28} strokeWidth={1.2} /><span>PRISM <small>{ws.deployment.hosted ? 'HOSTED ASSESSMENT RECORD' : 'LOCAL ASSESSMENT RECORD'}</small></span></div><h1>Candidate audit</h1><p className="report-deck">{label} · {deckSummary}</p><div className="report-date-line"><span>{dateLabel(candidate.createdAt)}</span><span>{!isAudit(candidate) && isFictional(ws.deployment, ws.dataset) ? 'Fictional demonstration data' : 'Imported data · owner evidence'}</span></div></header>
         <EvidenceBanner compact />
         <div className="report-decision"><strong>No automatic release clearance.</strong><p>These measurements describe this dataset, recipe and declared attacker. They do not establish anonymity, differential privacy, legal compliance or permission to publish.{assessmentNote ? ` ${assessmentNote}` : ''}</p></div>
 
@@ -174,17 +168,11 @@ export default function Report() {
           <Notice title="Owner evidence is confidential.">HTML and JSON include exact source statistics, private assumptions and measured evidence. Recipe files contain the declared transformation and evaluation context. Review each before forwarding; none is a public release clearance.</Notice>
           <div className="report-export-options"><button type="button" disabled={exportBlocked} onClick={() => void doExport('html')}><FileCode2 size={20} /><span><strong>Owner audit · HTML</strong><small>Readable assessment record</small></span><ArrowDownToLine size={15} /></button><button type="button" disabled={exportBlocked} onClick={() => void doExport('json')}><Braces size={20} /><span><strong>Owner evidence · JSON</strong><small>Full structured measurements</small></span><ArrowDownToLine size={15} /></button><button type="button" disabled={exportBlocked} onClick={() => void doExport('recipe')}><FileText size={20} /><span><strong>Recipe · JSON</strong><small>Exact frozen transformation</small></span><ArrowDownToLine size={15} /></button></div>
           {blockReason ? <p className="report-export-reason" role="status">{blockReason}</p> : null}
-          <div className="report-csv-intro"><div><h3><Table2 size={17} />Protected CSV</h3><p>Transformed data from {label}, separate from the confidential owner audit. Spreadsheet-leading formula characters are neutralized by the exporter. No owner lineage or index is included.{ws.deployment.hosted ? ' In the hosted demo every record is fictional.' : ''}</p></div><button ref={csvButton} type="button" className="btn primary" disabled={csvBlocked} onClick={() => { setReviewId(candidate.candidateId); setAcknowledgments([]); setExportError(''); }}>Review CSV export</button></div>
+          <div className="report-csv-intro"><div><h3><Table2 size={17} />Protected CSV</h3><p>Transformed data from {label}, separate from the confidential owner audit. Spreadsheet-leading formula characters are neutralized by the exporter. No owner lineage or index is included.{!isAudit(candidate) && isFictional(ws.deployment, ws.dataset) ? ' This candidate uses fictional example records.' : ''}</p></div><button type="button" className="btn primary" disabled={csvBlocked} onClick={() => void doExport('csv')}><ArrowDownToLine size={14} />{ws.busy.export ? 'Preparing download…' : 'Download protected CSV'}</button></div>
           {csvReason && csvReason !== blockReason ? <p className="report-export-reason" role="status">{csvReason}</p> : null}
-          {reviewId === candidate.candidateId ? <section ref={reviewRef} tabIndex={-1} aria-labelledby="report-csv-review-heading" className="report-csv-review" onKeyDown={event => { if (event.key === 'Escape') { setReviewId(null); csvButton.current?.focus(); } }}><div className="report-csv-review-head"><h3 id="report-csv-review-heading">Review protected CSV · {label}</h3><button type="button" className="icon-btn" aria-label="Close CSV review" onClick={() => { setReviewId(null); csvButton.current?.focus(); }}><X size={16} /></button></div><p>Export target: <code>{candidate.candidateId}</code> · {num(candidate.rowCount, 0)} rows · {candidate.columns.length} fields.</p><p>{unavailableQueries ? `${unavailableQueries} selected research questions are unavailable. ` : ''}{outsideQueries ? `${outsideQueries} questions are outside tolerance. ` : ''}{candidate.risk.findings.filter(finding => finding.status !== 'implemented').length} findings are partial, not assessed or inapplicable. These acknowledgments record your review; they are not signed regulatory approval.</p>
-            <fieldset><legend>Acknowledge all three statements</legend>{([
-              { id: 'authority', label: 'I have authority to export this candidate and will control its recipients.' },
-              { id: 'limitations', label: 'I understand the stated assumptions, unsupported attacks and limitations; this export is not automatic release clearance.' },
-              { id: 'reviewed', label: 'I reviewed this exact candidate, its field roles, measured results and unresolved warnings.' },
-            ] as { id: Acknowledgment; label: string }[]).map(ack => <label key={ack.id} className="check-row"><input type="checkbox" checked={acknowledgments.includes(ack.id)} onChange={event => setAcknowledgments(current => event.target.checked ? [...current, ack.id] : current.filter(id => id !== ack.id))} /><span>{ack.label}</span></label>)}</fieldset><div className="report-csv-review-foot"><span>The service independently blocks direct identifiers.</span><button type="button" className="btn primary" disabled={csvBlocked || acknowledgments.length !== 3} onClick={() => void doExport('csv')}><ArrowDownToLine size={14} />{ws.busy.export ? 'Preparing download…' : `Download ${label} CSV`}</button></div></section> : null}
           {exportError ? <div className="form-error" role="alert">{exportError}</div> : null}{lastExport ? <p className="report-download-success" role="status">{lastExport}</p> : null}
         </section>
-        <footer className="report-document-foot"><span>PRISM · {ws.deployment.hosted ? 'hosted demo' : 'local'} assessment record</span><span>Candidate {candidate.candidateId}</span><strong>Confidential · not a release approval</strong></footer>
+        <footer className="report-document-foot"><span>PRISM · {ws.deployment.hosted ? 'hosted' : 'local'} assessment record</span><span>Candidate {candidate.candidateId}</span><strong>Confidential · not a release approval</strong></footer>
       </article>
     </div>
   </div>;

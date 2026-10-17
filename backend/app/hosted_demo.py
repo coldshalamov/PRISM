@@ -171,7 +171,7 @@ class HostedDemo:
             return await self._problem(scope, receive, send, "origin_required", "Changing demo state requires its exact same-origin Origin header.", 403)
         if path == "/health" and method in {"GET", "HEAD"}:
             return await self._respond(scope, receive, send, JSONResponse({
-                "status": "ok", "version": "0.1.0", "deploymentMode": "synthetic_demo", "uploadsAllowed": False,
+                "status": "ok", "version": "0.1.1", "deploymentMode": "synthetic_demo", "uploadsAllowed": False,
                 "sessionTtlSeconds": self.ttl, "maxSearchCandidates": self.max_search_candidates, "maxCandidates": self.max_candidates,
             }))
         if path == "/v1/registry" and method == "GET":

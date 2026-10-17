@@ -9,7 +9,7 @@ Enterprise AI covers business workflow automation, knowledge and decisions, sale
 | Scored dimension | Points | Relevant demo evidence |
 | --- | ---: | --- |
 | Innovation and originality | 25 | Joint privacy/utility comparison and misleading-metric counterexamples |
-| Technical execution | 25 | Real calculations, reproducible search, isolated durable Archie sessions |
+| Technical execution | 25 | Real calculations, reproducible search, real imported-table computation and durable Archie sessions |
 | Impact and viability | 20 | Concrete governance decision and portable report |
 | Design and user experience | 15 | Completed workspace and readable uncertainty |
 | Pitch and presentation | 15 | Short problem/solution/value demonstration |
@@ -28,7 +28,7 @@ The submission page collects track, project name, description, demo/repository/d
 
 The organizer advertises separate awards for the three best uses of Archie: $2,500, $1,000, and $500 across all tracks, compatible with track prizes. Public descriptions do not specify an all-Archie-hosting requirement or a minimum platform-use threshold. A functioning Archie backend is demonstrable usage, but award eligibility or ranking cannot be guaranteed from that alone. [Organizer Archie awards](https://luma.com/aihackathon26)
 
-For the implemented architecture, describe **Archie hosting the public HTML entry and Archie Core Postgres/GraphQL for durable fictional-session records, with Vercel serving immutable frontend assets and Python computation**. Do not describe this hybrid deployment as entirely hosted by Archie, or point judges to Archie's unfinished generated prototype. Include the actual project integration and a working public demo in the handoff.
+For the implemented 0.1.1 architecture, describe **Archie hosting the public HTML entry and Archie Core Postgres/GraphQL storing uploaded source files plus durable visitor configuration, with Vercel serving immutable frontend assets and Python computation**. The public workbench accepts CSV, JSON and single-sheet XLSX up to 3 MiB per file, 100,000 rows and 80 columns; it supports original/protected-file comparison and direct downloads. Labeled fictional examples remain optional. This is a hybrid deployment, and Python does not run on Archie. Point judges to the maintained [public application](https://41d0bdfd-0065-4b0b-a973-efbe1c1a9c5e.archie.site/), not the old generated prototype. The final published revision and browser outcome are in [delivery status](../artifacts/DELIVERY_STATUS.json) and [verification](../artifacts/verification.md).
 
 ## Participant agreement disclosures
 

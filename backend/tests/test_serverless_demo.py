@@ -119,12 +119,12 @@ def test_boundary_ttl_failure_and_stable_pseudonyms():
     moment = [100.0]
     with client(store, clock=lambda: moment[0]) as visitor:
         assert visitor.get("/health").json()["backendProvider"] == "Archie"
-        assert visitor.get("/health").json()["uploadsAllowed"] is False
+        assert visitor.get("/health").json()["uploadsAllowed"] is True
         assert visitor.get("/health", headers={"Host": "evil.example"}).status_code == 403
         assert visitor.get("/health", headers={"Origin": "https://evil.example"}).status_code == 403
         assert visitor.get("/health", headers={"Sec-Fetch-Site": "same-site"}).status_code == 403
-        assert visitor.post("/v1/datasets/import", content=b"PRIVATE_ROWS").status_code == 403
-        assert visitor.post("/v1/audits/import-pair", json={"rows": ["PRIVATE"]}).status_code == 403
+        assert visitor.post("/v1/datasets/import", content=b"PRIVATE_ROWS").status_code == 422
+        assert visitor.post("/v1/audits/import-pair", json={"rows": ["PRIVATE"]}).status_code == 422
         assert not store.records
         assert visitor.post("/v1/candidates", content=b"x" * (BODY_LIMIT + 1)).status_code == 413
         assert visitor.post("/v1/candidates", content=b"[]").status_code == 422
@@ -207,8 +207,8 @@ def test_archie_bridge_preflight_is_exact_opt_in_and_has_no_credentials():
             denied = visitor.post("/v1/browser-session", headers={"Origin": foreign})
             assert denied.status_code == 403 and "access-control-allow-origin" not in denied.headers
         assert visitor.post("/v1/browser-session", headers={"Host": "evil.example", "X-Forwarded-Host": "demo.example"}).status_code == 403
-        assert visitor.post("/v1/datasets/import", content=b"PRIVATE_ROWS").json()["code"] == "fictional_only"
-        assert visitor.post("/v1/audits/import-pair", json={}).json()["code"] == "fictional_only"
+        assert visitor.post("/v1/datasets/import", content=b"PRIVATE_ROWS").json()["code"] == "browser_session_required"
+        assert visitor.post("/v1/audits/import-pair", json={}).json()["code"] == "browser_session_required"
         assert visitor.post("/v1/browser-session", json={"rows": ["PRIVATE"]}).status_code == 422
         assert not store.records
     with client(store) as same_origin:

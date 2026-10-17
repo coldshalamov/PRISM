@@ -34,7 +34,7 @@ def test_full_workflow_and_private_exports(client, caplog):
     assert len(result["utility"]["queries"]) >= 2
     assert "_frame" not in result and "_lineage" not in result
     for kind in ["json", "html", "recipe", "csv"]:
-        response = client.post("/v1/reports/export", json={"candidateId": result["candidateId"], "format": kind, "acknowledgments": ["authority", "limitations", "reviewed"] if kind == "csv" else []})
+        response = client.post("/v1/reports/export", json={"candidateId": result["candidateId"], "format": kind})
         assert response.status_code == 200
         assert "attachment;" in response.headers["content-disposition"]
         assert "example.invalid" not in response.text
@@ -77,7 +77,7 @@ def test_direct_identifiers_block_csv_and_session_clear(client):
     demo = client.get("/v1/demo").json()
     unchanged = client.post("/v1/candidates", json={"datasetId": demo["datasetId"], "steps": []}).json()
     response = client.post("/v1/reports/export", json={"candidateId": unchanged["candidateId"], "format": "csv"})
-    assert response.status_code == 409
+    assert response.status_code == 409 and response.json()["code"] == "direct_identifiers_blocked"
     client.delete("/v1/session")
     assert client.get(f'/v1/candidates/{unchanged["candidateId"]}/comparison').status_code == 404
 
@@ -171,13 +171,14 @@ def test_noise_membership_and_external_unknown_recipe_abstain(client):
     assert result["risk"]["metrics"]["p_guess"] is None
 
 
-def test_export_requires_all_three_acknowledgments(client):
+def test_csv_download_needs_no_permission_checklist_and_ignores_legacy_flags(client):
     result = candidate(client)
-    for acknowledgments in ([], ["authority"], ["authority", "limitations"]):
+    direct = client.post("/v1/reports/export", json={"candidateId": result["candidateId"], "format": "csv"})
+    assert direct.status_code == 200
+    assert direct.headers["content-disposition"].startswith("attachment;")
+    for acknowledgments in ([], ["authority"], ["authority", "limitations"], ["authority", "limitations", "reviewed"]):
         response = client.post("/v1/reports/export", json={"candidateId": result["candidateId"], "format": "csv", "acknowledgments": acknowledgments})
-        assert response.status_code == 409 and response.json()["code"] == "export_review_required"
-    response = client.post("/v1/reports/export", json={"candidateId": result["candidateId"], "format": "csv", "acknowledgments": ["authority", "limitations", "reviewed"]})
-    assert response.status_code == 200
+        assert response.status_code == 200 and response.content == direct.content
 
 
 def test_repeated_entity_key_remains_record_diagnostic(client):

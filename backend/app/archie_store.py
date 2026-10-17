@@ -6,6 +6,8 @@ OAuth credential belongs in the application runtime.
 from __future__ import annotations
 
 import json
+import base64
+import gzip
 import os
 from dataclasses import dataclass
 
@@ -90,3 +92,23 @@ class ArchieStore:
         result = self._query("mutation($id:String!){deletePrismDemoRecord(id:$id)}", {"id": record.id})
         if not result["deletePrismDemoRecord"]:
             raise StoreConflict()
+
+    def create_blob(self, visitor, content, filename, expires):
+        text = json.dumps({"version": 1, "filename": filename,
+                           "gzipBase64": base64.b64encode(gzip.compress(content, mtime=0)).decode("ascii")}, separators=(",", ":"))
+        result = self._query("""mutation($input:PrismDemoRecordCreateInput!){
+            createPrismDemoRecord(input:$input){id visitorId data expiresAt}}""",
+                             {"input": {"visitorId": visitor, "kind": "dataset", "data": text, "expiresAt": expires}})
+        return self._record(result["createPrismDemoRecord"])
+
+    def get_blob(self, visitor, identifier):
+        result = self._query("""query($visitor:String!,$id:String!){prismDemoRecord(first:1,
+            filter:{id:{equals:$id},visitorId:{equals:$visitor},kind:{equals:"dataset"}}){items{id visitorId data expiresAt}}}""",
+                             {"visitor": visitor, "id": identifier})
+        items = result["prismDemoRecord"]["items"]
+        return self._record(items[0]) if items else None
+
+    def delete_blob(self, visitor, identifier):
+        record = self.get_blob(visitor, identifier)
+        if record is not None:
+            self.delete(record)

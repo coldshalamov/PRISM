@@ -56,7 +56,8 @@ function Tile({ label, kind, frontier }: { label: string; kind: 'created' | 'sea
 export function Library({ onPick }: { onPick?: () => void }) {
   const ws = useWorkspace();
   const { dataset, baseline, candidates, active, select, meta, labelOf, search, setView, view, staleFor, fixture, deployment } = ws;
-  const uploadHint = deployment.uploadsAllowed ? undefined : 'Not available in this demo; run locally';
+  const sessionBusy = Object.values(ws.busy).some(Boolean);
+  const uploadHint = deployment.uploadsAllowed ? undefined : deployment.uploadsNote;
   const dialogs = useDialogs();
   const [now, setNow] = useState(Date.now());
   useEffect(() => { const t = window.setInterval(() => setNow(Date.now()), 30000); return () => window.clearInterval(t); }, []);
@@ -82,8 +83,8 @@ export function Library({ onPick }: { onPick?: () => void }) {
             { id: 'demo', label: 'Open fictional oncology demo', hint: '5,000 records', icon: <Database size={15} />, onSelect: () => ws.requestReplace('the fictional oncology demo', () => void ws.loadDemo('architecture')) },
             { id: 'kit', label: 'Open fictional benchmark', hint: '480 records with exact-linkage replay', icon: <Beaker size={15} />, onSelect: () => ws.requestReplace('the fictional benchmark', () => void ws.loadDemo('kit')) },
             { id: 's1', separator: true },
-            { id: 'import', label: 'Import original CSV…', hint: uploadHint, icon: <FileUp size={15} />, disabled: !deployment.uploadsAllowed, onSelect: () => dialogs.open('import') },
-            { id: 'audit', label: 'Audit a protected CSV…', hint: uploadHint, icon: <ScanSearch size={15} />, disabled: !dataset || !deployment.uploadsAllowed, onSelect: () => dialogs.open('audit') },
+            { id: 'import', label: 'Import data…', hint: uploadHint, icon: <FileUp size={15} />, disabled: sessionBusy || !deployment.uploadsAllowed, onSelect: () => dialogs.open('import') },
+            { id: 'audit', label: 'Audit protected table…', hint: uploadHint, icon: <ScanSearch size={15} />, disabled: sessionBusy || !dataset || !deployment.uploadsAllowed, onSelect: () => dialogs.open('audit') },
             { id: 'review', label: 'Review classifications…', icon: <ClipboardCheck size={15} />, disabled: !dataset, onSelect: () => dialogs.open('review') },
           ]}
         />
@@ -173,10 +174,10 @@ export function SessionFooter() {
   const hosted = deployment.hosted;
   const version = healthInfo?.version ? ` ${healthInfo.version}` : '';
   const headline = health === 'checking' ? 'Connecting…' : health === 'down' ? 'Service unreachable'
-    : hosted ? 'Hosted fictional demo' : deployment.kind === 'remote' ? 'Remote session' : 'Local session';
+    : hosted ? deployment.label : deployment.kind === 'remote' ? 'Remote session' : 'Local session';
   const detail = health === 'ok'
-    ? (hosted ? `Service${version} · fictional records · uploads off` : `Service${version} on ${origin.host || 'this computer'}`)
-    : health === 'checking' ? (hosted ? 'Checking the hosted demo service' : 'Checking the service')
+    ? (hosted ? `Service${version} · ${deployment.uploadsAllowed ? 'uploads enabled' : 'uploads off'}` : `Service${version} on ${origin.host || 'this computer'}`)
+    : health === 'checking' ? (hosted ? 'Checking the hosted service' : 'Checking the service')
       : (!hosted && origin.local ? 'Start the backend on 127.0.0.1:8000' : 'Retrying automatically');
   return (
     <footer className="rail-foot">

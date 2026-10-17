@@ -10,11 +10,12 @@ import { ago, num, pct, plural, title as spaced } from '../../format';
 import { recipeLabel } from '../../recipe';
 import { scenarioById } from '../../scenarios';
 import { Facts } from '../../ui/Facts';
+import { Dialog } from '../../ui/Dialog';
 import { Notice } from '../../ui/Feedback';
 import { Status } from '../../ui/Status';
 import { Tabs, panelProps } from '../../ui/Tabs';
 import { useWorkspace } from '../../workspace';
-import type { Candidate, SemanticField, SemanticFinding, SemanticOntology, SemanticOverrides, SemanticProvider, SemanticSeverity } from '../../types';
+import type { Candidate, SemanticField, SemanticFinding, SemanticOntology, SemanticMetadataPreview, SemanticOverrides, SemanticProvider, SemanticSeverity } from '../../types';
 import { feasibility, rowLoss } from '../pareto/model';
 import type { Feasibility } from '../pareto/model';
 import './semantic-panel.css';
@@ -285,6 +286,8 @@ export function SemanticPanel({ selectedColumn, onSelectColumn, onSelectColumns 
   const [expandedField, setExpandedField] = useState<string | null>(null);
   const [openFindings, setOpenFindings] = useState<Set<string>>(() => new Set());
   const [drafts, setDrafts] = useState<Record<string, string>>({});
+  const [modelInput, setModelInput] = useState<{ preview: SemanticMetadataPreview; key: string } | null>(null);
+  const datasetKey = JSON.stringify([dataset?.datasetId, dataset?.schema, dataset?.semantic?.revision]);
   const [attempt, setAttempt] = useState<Attempt | null>(null);
   const [ontology, setOntology] = useState<SemanticOntology | null>(null);
   const [ontologyError, setOntologyError] = useState('');
@@ -338,11 +341,20 @@ export function SemanticPanel({ selectedColumn, onSelectColumn, onSelectColumns 
     return [plural(fields.length, 'field'), ...parts].join(' · ');
   }, [fields, semantic]);
 
-  const act = async (kind: 'offline' | 'remote' | 'correction', allowRemote: boolean, overrides?: SemanticOverrides) => {
+  const act = async (kind: 'offline' | 'remote' | 'correction', allowRemote: boolean, overrides?: SemanticOverrides, metadataDigest?: string) => {
     setAttempt(null);
-    const result = await ws.inspectSemantics(allowRemote, overrides);
+    const result = await ws.inspectSemantics(allowRemote, overrides, metadataDigest);
     if (result && kind !== 'correction') setDrafts({});
     setAttempt(result ? { kind, state: 'done', fields: Array.isArray(result.fields) ? result.fields.length : 0, provider: isRecord(result.provider) ? result.provider : undefined } : { kind, state: 'failed' });
+  };
+  const prepareRemote = async () => {
+    setAttempt(null);
+    const preview = await ws.previewSemantics();
+    if (preview) await act('remote', true, undefined, preview.metadataDigest);
+  };
+  const viewModelInput = async () => {
+    const preview = await ws.previewSemantics();
+    if (preview) setModelInput({ preview, key: datasetKey });
   };
   const confirm = (field: SemanticField) => {
     const primaryType = drafts[fieldKey(field)] ?? field.primaryType;
@@ -365,6 +377,16 @@ export function SemanticPanel({ selectedColumn, onSelectColumn, onSelectColumns 
 
   return (
     <section className={`sem${open ? ' open' : ''}${evaluating ? ' is-pending' : ws.stale.length ? ' is-stale' : ''}`} aria-label="Semantic intelligence">
+      {modelInput ? (
+        <Dialog title="Model input" size="lg" onClose={() => setModelInput(null)} description="The schema metadata used for Jev interpretation. Viewing it does not call the model." footer={<button type="button" className="btn" onClick={() => setModelInput(null)}>Close</button>}>
+          <p><b>Provider:</b> {modelInput.preview.provider} · <b>Model:</b> {modelInput.preview.model}</p>
+          <p>Interpretation uses the metadata below for {modelInput.preview.fieldCount} ambiguous fields and up to 12 neighboring labels. Row values and filenames are excluded.</p>
+          {modelInput.key !== datasetKey ? <Notice>The field metadata changed since this view was opened.</Notice> : null}
+          {modelInput.preview.fieldCount === 0 ? <p>No unresolved fields need remote interpretation.</p> : null}
+          <pre className="sem-metadata-preview" tabIndex={0} aria-label="Model input metadata">{JSON.stringify(modelInput.preview.metadata, null, 2)}</pre>
+          <p className="muted">The input digest keeps interpretation consistent with the current dataset, schema, reviewed meanings and model.</p>
+        </Dialog>
+      ) : null}
       <header className="sem-head">
         <button type="button" className="sem-toggle" aria-expanded={open} aria-controls={open ? bodyId : undefined} onClick={() => setOpen(value => !value)}>
           <span aria-hidden="true">{open ? <ChevronDown size={15} /> : <ChevronRight size={15} />}</span>
@@ -381,9 +403,10 @@ export function SemanticPanel({ selectedColumn, onSelectColumn, onSelectColumns 
               Nothing is sent to Jev when the page loads, when you move Protection preference or when you correct a field.
             </p>
             <div className="sem-buttons">
-              <button type="button" className={`btn small primary${inspecting ? ' busy' : ''}`} aria-describedby={disclosureId} disabled={locked || ws.health === 'down'} onClick={() => void act('remote', true)}>
+              <button type="button" className={`btn small primary${inspecting ? ' busy' : ''}`} aria-describedby={disclosureId} disabled={locked || ws.health === 'down'} onClick={() => void prepareRemote()}>
                 <Sparkles size={14} />Interpret ambiguous fields with Jev
               </button>
+              <button type="button" className="btn small" disabled={locked} onClick={() => void viewModelInput()}>View model input</button>
               <button type="button" className="btn small" title="Local rules only. No remote call is requested." disabled={locked} onClick={() => void act('offline', false)}>
                 <ScanSearch size={14} />Inspect fields
               </button>

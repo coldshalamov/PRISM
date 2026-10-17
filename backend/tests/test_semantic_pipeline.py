@@ -27,7 +27,7 @@ def test_real_combination_evidence_changes_and_keeps_clinical_queries():
         original = copy.deepcopy(data["preview"])
         before = create(client, data, [])
         after = create(client, data, data["defaultSteps"])
-        assert len(after["risk"]["semantic"]["findings"]) == 24
+        assert len(after["risk"]["semantic"]["findings"]) == 25
         raw, protected = finding(before, "spatiotemporal_linkage"), finding(after, "spatiotemporal_linkage")
         assert {"DOS", "HOSP_SITE", "AGE"} <= set(raw["columns"])
         assert raw["measured"]["uniqueRows"] == 480
@@ -107,7 +107,8 @@ def test_public_remote_result_cached_through_cold_replay_and_attempts_bounded(mo
         data = client.get("/v1/demo?fixture=semantic").json()
         endpoint = f'/v1/datasets/{data["datasetId"]}/semantics'
         assert not calls
-        interpreted = client.post(endpoint, json={"allowRemote": True})
+        approval = client.post(endpoint, json={"previewOnly": True}).json()
+        interpreted = client.post(endpoint, json={"allowRemote": True, "metadataDigest": approval["metadataDigest"]})
         assert interpreted.status_code == 200, interpreted.text
         assert len(calls) == 1
         data["semantic"] = interpreted.json()
@@ -125,8 +126,10 @@ def test_public_remote_result_cached_through_cold_replay_and_attempts_bounded(mo
         reassessed_id = reassessed.json()["candidateId"]
         assert cold.get(f'/v1/candidates/{reassessed_id}/comparison').json() == reassessed.json()
         assert len(calls) == 1
-        assert cold.post(endpoint, json={"allowRemote": True}).status_code == 200
-        assert cold.post(endpoint, json={"allowRemote": True}).status_code == 429
+        approval = cold.post(endpoint, json={"previewOnly": True}).json()
+        assert cold.post(endpoint, json={"allowRemote": True, "metadataDigest": approval["metadataDigest"]}).status_code == 200
+        approval = cold.post(endpoint, json={"previewOnly": True}).json()
+        assert cold.post(endpoint, json={"allowRemote": True, "metadataDigest": approval["metadataDigest"]}).status_code == 429
         assert len(calls) == 2
         searched = cold.post("/v1/search", json={"datasetId": data["datasetId"], "maxCandidates": 24})
         assert searched.status_code == 200, searched.text

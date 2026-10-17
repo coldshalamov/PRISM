@@ -1,9 +1,9 @@
 {
   "application": "PRISM",
-  "status": "ready_for_user_hackathon_review",
+  "status": "v3_hosted_upload_release_in_progress",
   "backend": {
-    "tests": 157,
-    "result": "passed integrated semantic checkpoint",
+    "tests": 179,
+    "result": "passed integrated hosted upload/v3 checkpoint",
     "laterFocused": "9 semantic pipeline/alternative tests passed after concrete attacker prerequisites; recipe identity and representation-aware severity directly checked",
     "warning": "Starlette TestClient httpx deprecation; checks passed"
   },
@@ -24,10 +24,10 @@
       "Pareto Explorer",
       "Report"
     ],
-    "implementation": "Six views and Sonnet semantic extension integrated; all three Gemini interaction repairs complete",
+    "implementation": "Desktop-first source-visible workspace, direct hosted import/audit/export, canceled-upload response guards and optional model input view",
     "requiredConsecutiveAuditApprovals": 3,
-    "actualConsecutiveAuditApprovals": 3,
-    "liveVerification": "Final Archie r20261017e: all six views, actual Jev classification, semantic correction/stale/reassessment, eight-recipe search, cached alternative selection/restoration, JSON and CSV downloads passed; no captured public console errors",
+    "actualConsecutiveAuditApprovals": 0,
+    "liveVerification": "Local native CSV file import, direct Jev and1440/768/390 first-use views passed; final hosted browser route pending",
     "previousFrozenApprovals": 3,
     "reviewedSource": "9f40ec12e0178d4eabe4c9bc2663ceb0938c861d",
     "reviewReports": [
@@ -42,13 +42,7 @@
     "improvement": "OpenCode Go Gemini4 Argon completed semantic audit; malformed data, unindexed candidate restoration and unconfirmed correction draft repairs verified",
     "semanticFrontend": "Claude Sonnet5.5 XHigh via Devin, pickled-border, completed; controller integrated exact ontology, revisions, previews and group focus"
   },
-  "packaging": {
-    "wheel": "prism_local_workbench-0.1.0-py3-none-any.whl",
-    "wheelBytes": 2561779,
-    "wheelSha256": "22968326a7914105b52bf06a7cc5cc14467f815f25a8b532ddf5c15dd49e4edc",
-    "installedSmoke": "passed isolated installed target with existing dependencies; no Jev calls",
-    "sourceZip": "Final documentation/media inventory refreshed from source_paths with the independently tested wheel; checksum accompanies external release assets"
-  },
+  "packaging": "v0.1.0 available; v0.1.1 rebuild pending final app freeze",
   "releaseCleared": false,
   "track": "Enterprise AI",
   "deployment": {
@@ -56,10 +50,26 @@
     "repository": "https://github.com/coldshalamov/PRISM",
     "backend": "Archie HTML entry and Core durable fictional configuration; Vercel immutable frontend assets and deterministic Python; optional OpenRouter Jev",
     "verified": "Final e: architecture Jev disease_stage 86%, two calls; semantic480→96, user correction+reassessment, 8real searchresults/11attempts/6nondominated/1checksmet, allsixviews, JSON+CSVdownloads. Earlier d: kit75→20, fourdownloads, architecture24search.",
-    "publishedRevision": "r20261017e"
+    "publishedRevision": "r20261017e",
+    "nextRevision": "r20261017f",
+    "uploads": {
+      "enabledInSource": true,
+      "publicVerification": "pending final publication",
+      "formats": [
+        "CSV",
+        "JSON",
+        "XLSX"
+      ],
+      "maxUploadBytes": 3145728,
+      "maxRows": 100000,
+      "maxColumns": 80,
+      "maxDatasets": 8,
+      "storage": "Archie Core separate visitor-owned compressed dataset records",
+      "realCoreVerification": "all3formats,96-rowcandidate,coldexternal0uniqueness/1.2cmheight,exactreportbindings,all4owneduploadedrecordsdeleted; passed17.03s"
+    }
   },
   "submission": {
-    "state": "Draft saved! confirmed in actual eMerge form",
+    "state": "Existing draft retained; upload-enabled copy and final screenshot refresh pending",
     "track": "Enterprise AI",
     "project": "PRISM",
     "description": "Current Jev and semantic benchmark copy",
@@ -71,7 +81,7 @@
   "semantic": {
     "ontologyTypes": 145,
     "families": 13,
-    "attackCategories": 24,
+    "attackCategories": 25,
     "provider": "OpenRouter Decisions API typesafe/jev-1.14",
     "servedModel": "typesafe/jev-1.14-20261014",
     "actualProviderVerified": true,
@@ -105,7 +115,8 @@
         "owner JSON with24semanticfindings and confirmedDOS",
         "protected CSV480rows7columns withoutPAT_IDandNOTES"
       ]
-    }
+    },
+    "rulesVersion": "1.1"
   },
-  "readyForHackathonReview": true
+  "readyForHackathonReview": false
 }

@@ -46,3 +46,9 @@ Primary sources checked October 17, 2026: [OpenRouter's Jev decisions examples, 
 A real minimal provider check on fictional metadata returned model **`typesafe/jev-1.14-20261014`**. The final two logical requests used 3,270 and 4,513 input tokens and cost **$0.000326886 total**. Repeating the same classification made **zero requests with two cache hits**. Jev supported `STAGE → disease_stage` (0.77) and `LAT → gps_coordinates` (0.89). The other six intentionally ambiguous labels remained unresolved under the 0.65 threshold. This is a small integration demonstration, not a benchmark or accuracy claim. The local rules recognized all eight unambiguous acceptance fields listed above; remote interpretation did not remove any core local evidence.
 
 Sanitized request IDs, usage and classifications are retained locally in ignored `artifacts/jev-live-receipt.json`; no credential is included. This check verifies the provider adapter. Hosted UI integration and release verification are recorded by the release owner.
+
+## Current-output recovery finding
+
+Semantic evidence version 1.1 has **25 categories**. The added `recoverable_value_encoding` test recognizes the explicitly declared PRISM `CI[lower,upper]` encoding in actual output and reports aggregate exact-midpoint recovery counts. It also scans additional external output columns absent from the source schema. Plain shared bins do not activate source-center recovery. For an unknown external mechanism, the finding does not assert that the midpoint was the source value or that a person was identified. Malformed encodings remain unassessed. Centered intervals are retained solely as an explicitly unsafe diagnostic demo, not a protection recommendation.
+
+The [v3 reconciliation](V3_RECONCILIATION.md) records the supplied design's useful integrations and deliberate capability boundaries; the [engine review](v3-review-engine.md) records the implementation and focused checks.

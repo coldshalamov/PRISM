@@ -21,7 +21,7 @@ def versions():
 
 def evidence(candidate, dataset, registry):
     public = {k: v for k, v in candidate.items() if k not in {"preview", "_frame", "_lineage"}}
-    return {"application": "PRISM", "version": "0.1.0", "generatedAt": datetime.now(timezone.utc).isoformat(),
+    return {"application": "PRISM", "version": "0.1.1", "generatedAt": datetime.now(timezone.utc).isoformat(),
             "classification": "CONFIDENTIAL — owner audit; exact source aggregate statistics and workload definitions may disclose sensitive information. Review before forwarding.",
             "decision": LIMITATION, "candidate": public,
             "dataset": {"name": dataset["name"], "rowCount": len(dataset["frame"]), "synthetic": dataset["synthetic"], "schema": dataset["schema"],

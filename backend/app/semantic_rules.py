@@ -15,7 +15,7 @@ import pandas as pd
 
 from . import datasets
 
-VERSION = "1.0"
+VERSION = "1.1"
 CATALOG = [
     ("direct_identifier_disclosure", "Direct identifier disclosure", "direct"),
     ("sample_singling_out", "Sample singling out", "partition"),
@@ -41,6 +41,7 @@ CATALOG = [
     ("genomic_distinguishability", "Genomic and familial distinguishability", "genetics"),
     ("rare_event_disclosure", "Rare-event disclosure", "rare"),
     ("repeated_entity_leakage", "Repeated-entity or record-joining leakage", "repeated"),
+    ("recoverable_value_encoding", "Centered ranges retain readable exact midpoints", "recovery"),
 ]
 
 
@@ -68,6 +69,7 @@ def _classes(test):
         "genetics": ["genetics.*"], "relationship": ["relationships.*"],
         "metadata": ["technical.*", "embedded metadata container"],
         "repeated": ["declared entity key"], "rare": ["categorical sensitive event"],
+        "recovery": ["explicit PRISM CI[lower,upper] integer encoding"],
     }.get(test, ["An additional release, population, query history or model artifact is required"])
 
 
@@ -85,6 +87,7 @@ def _prerequisite(test):
         "genetics": "Validated genomic/familial representation and a domain-specific attack protocol.",
         "hash": "The pseudonym/hash mechanism, salt/key policy and a defensible candidate dictionary.",
         "text": "Structured residual-pattern scanning only; exhaustive entity recognition is not provided.",
+        "recovery": "Output values using the declared CI[lower,upper] integer encoding; generic intervals do not establish source-centered protection.",
     }.get(test, "Current released columns, finite-table exact values and reviewed field meaning.")
 
 
@@ -106,6 +109,7 @@ def _attacker_needs(test, columns):
         "repeated": "Access to repeated entity keys or a trustworthy cross-record association. Real-world identity still requires an identifying mapping or outside information.",
         "auxiliary": "Correct target-known attributes, compatible public transformation rules and known source membership for the simulated exact-match experiment. A real external attack additionally requires an independent auxiliary table and validation.",
         "composition": "At least one additional overlapping release and a compatible join key or matching attributes. Single-release measurements do not test this combination.",
+        "recovery": "Only the released interval bounds and the public CI encoding are needed to read each exact integer midpoint. Naming a person still requires separate identifying information.",
     }.get(test, _prerequisite(test))
 
 
@@ -184,8 +188,6 @@ def lineage(semantic, frame, steps=None, *, external=False):
                     representation, granularity = "numeric interval", "bucketed"
                 elif method == "centered_interval":
                     representation, granularity = "recoverable centered integer interval", "exact"
-                elif method == "centered_interval":
-                    representation, granularity = "user-centered interval (midpoint recoverable)", "generalized"
                 elif method == "round":
                     representation, granularity = "rounded numeric", "rounded"
                 elif method in {"date_generalize", "zip_prefix", "rare_group", "top_bottom"}:
@@ -349,6 +351,50 @@ def evaluate(frame, semantic, schema, qi, sensitive, *, steps=None, external=Fal
                 explanation = "Repeated values of the declared entity key were counted. Entity identity and event-sequence attacks were not inferred."
             else:
                 explanation = "The current output has no declared entity key. Repeated people cannot be resolved from row similarity."
+        elif test == "recovery":
+            # This explicit public encoding denotes an exactly readable center.
+            # A plain [lo,hi] interval might be a shared bin: never infer that
+            # its midpoint was the original source value or align external rows.
+            pattern = re.compile(r"^CI\[(-?\d{1,14}),(-?\d{1,14})\]$")
+            known_columns = {c for step in (steps or []) if step.get("method") == "centered_interval"
+                             for c in step.get("columns", [])} if not external else set()
+            summaries = []
+            for column in frame.columns:
+                valid = invalid = 0
+                for value in frame[column]:
+                    if not isinstance(value, str) or not value.startswith("CI["):
+                        continue
+                    match = pattern.fullmatch(value)
+                    if match:
+                        low, high = map(int, match.groups())
+                        if high > low and (low + high) % 2 == 0:
+                            valid += 1
+                            continue
+                    invalid += 1
+                if valid or invalid:
+                    summaries.append({"column": column, "recoverableCells": valid,
+                                      "invalidEncodingCells": invalid, "rows": len(frame),
+                                      "sourceMechanismVerified": column in known_columns})
+            columns = [item["column"] for item in summaries]
+            recovered = sum(item["recoverableCells"] for item in summaries)
+            if recovered:
+                status, severity = "implemented", "Moderate"
+                measured = {"recoverableCells": recovered, "columns": summaries,
+                            "precision": "exact integer midpoint", "formula": "(lower + upper) / 2",
+                            "sourceMechanismVerified": all(item["sourceMechanismVerified"] for item in summaries if item["recoverableCells"])}
+                explanation = f"{recovered} released CI-encoded cells retain an exactly readable integer midpoint. Changing a value to this centered display does not conceal its center; fixed shared bins have different semantics."
+                if external:
+                    explanation += " This output-only check does not establish that the midpoint equals the unknown external source value or identify a person."
+                invalid = sum(item["invalidEncodingCells"] for item in summaries)
+                if invalid:
+                    explanation += f" A further {invalid} CI-prefixed cells have invalid encodings and remain unassessed."
+                mitigation = ["Use fixed shared nonoverlapping bins when reducing numeric precision is intended; evaluate their research effects before release."]
+            elif columns:
+                explanation = "CI-prefixed cells do not satisfy the declared centered-integer encoding; midpoint recovery is unassessed until the representation is corrected."
+                measured = {"recoverableCells": 0, "columns": summaries}
+            else:
+                status, severity = "not_applicable", "Mild"
+                explanation = "No explicit PRISM CI encoding remains. Ordinary interval bounds alone do not prove source-centered recovery."
         uncertain = [{"column": column, "primaryType": by_name[column].get("primaryType", "unknown"),
                       "reviewStatus": by_name[column].get("reviewStatus", "needs_review"),
                       "alternatives": copy.deepcopy(by_name[column].get("alternatives", []))}

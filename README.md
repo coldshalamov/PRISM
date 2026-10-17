@@ -1,8 +1,8 @@
 # PRISM
 
-[Open the fictional demo](https://41d0bdfd-0065-4b0b-a973-efbe1c1a9c5e.archie.site/) · [Pitch deck](https://prism-healthcare-taupe.vercel.app/pitch/) · [Download pitch PDF](https://prism-healthcare-taupe.vercel.app/pitch/PRISM-Pitch.pdf) · [Local app and source release](https://github.com/coldshalamov/PRISM/releases/tag/v0.1.0)
+[Open PRISM](https://41d0bdfd-0065-4b0b-a973-efbe1c1a9c5e.archie.site/) · [Pitch deck](https://prism-healthcare-taupe.vercel.app/pitch/) · [Download pitch PDF](https://prism-healthcare-taupe.vercel.app/pitch/PRISM-Pitch.pdf) · [Local app and source release](https://github.com/coldshalamov/PRISM/releases/tag/v0.1.1)
 
-PRISM is a privacy preflight workbench for structured research datasets. It understands field meanings, explains measured disclosure pathways, and compares protective recipes against the research questions you need to preserve. Original and protected tables, distributions, correlations, findings and reproducible evidence stay in one connected workflow.
+PRISM is a desktop-style privacy preflight workbench for structured research datasets. It understands field meanings, explains measured disclosure pathways, and compares protective recipes against the research questions you need to preserve. Original and protected tables, distributions, correlations, findings and reproducible evidence stay in one connected workflow.
 
 Built for the **eMerge AI Hackathon, October 17, 2026**, Enterprise AI track: **AI safety, trust and governance**. Oncology is an independently generated fictional example; no sponsor or patient dataset is used.
 
@@ -48,19 +48,21 @@ For frontend development, keep the backend running and use `npm run dev --prefix
 
 The semantic pipeline is **field interpretation → controlled ontology → deterministic attack tests → transformations → reassessment → utility comparison → researcher decision**. It augments the existing engines rather than replacing them.
 
-Set `OPENROUTER_API_KEY` and `PRISM_JEV_ENABLED=1` in the server environment to enable Jev. `PRISM_JEV_BUDGET_USD` defaults to a $0.10 **per-process** ceiling; hosted sessions also reserve at most two remote interpretation attempts durably. The workbench asks before sending minimized column labels, declared types, units, format descriptions and neighboring labels. It sends no row values. Local rules and all core statistical tests continue when the provider is disabled, times out or abstains. Confirmed corrections override suggestions and persist in the session. The key is never an export or browser configuration.
+Set `OPENROUTER_API_KEY` and `PRISM_JEV_ENABLED=1` in the server environment to enable Jev. `PRISM_JEV_BUDGET_USD` defaults to a $0.10 **per-process** ceiling; hosted sessions also reserve at most two remote interpretation attempts durably. The explicit Interpret action sends minimized column labels, declared types, units, format descriptions and up to twelve neighboring labels. View model input shows the exact metadata without calling Jev. It sends no row values. Local rules and all core statistical tests continue when the provider is disabled, times out or abstains. Confirmed corrections override suggestions and persist in the session. The key is never an export or browser configuration.
 
 Jev answers bounded family, leaf and independent-property questions using the local vocabulary. An interpretation is a hypothesis: model probabilities do not prove field meaning or privacy. Current release measurements and transformation lineage are frozen with each candidate. Corrections mark earlier evidence stale until reassessment.
 
-See [the integrated specification](docs/SEMANTIC_SPEC.md), [semantic engine](docs/SEMANTIC_ENGINE.md), and [specification coverage](docs/SPEC_COVERAGE.md). Centered age intervals are offered explicitly, but their midpoint reveals the source age exactly; fixed nonoverlapping bands provide a different, actually coarsened representation.
+See [the integrated specification](docs/SEMANTIC_SPEC.md), [semantic engine](docs/SEMANTIC_ENGINE.md), and [specification coverage](docs/SPEC_COVERAGE.md). Centered age intervals are labeled as an unsafe diagnostic demo: their midpoint reveals the source age exactly. A dedicated output-based finding explains that recoverability; fixed nonoverlapping bands provide a different, actually coarsened representation. See the [v3 reconciliation](docs/V3_RECONCILIATION.md).
 
-## Hosted fictional demo
+## Hosted workbench
 
-The [public fictional demo](https://41d0bdfd-0065-4b0b-a973-efbe1c1a9c5e.archie.site/) opens the reviewed React interface at its published Archie origin. Archie serves the public HTML entry; immutable JavaScript, CSS and font assets and the real Python privacy/utility calculations run on Vercel project `prism-healthcare`. Archie Core PostgreSQL/GraphQL stores durable fictional-demo configuration in one dedicated table, accessed through a server-only service role. This is a split Archie/Vercel deployment. The pitch deck and PDF remain on Vercel; Archie does not serve the pitch path. Actual deployed fixture calculations reproduce 75 then 20 correct matches; the [verification record](artifacts/verification.md) distinguishes API checks from frontend acceptance.
+[Open PRISM on Archie](https://41d0bdfd-0065-4b0b-a973-efbe1c1a9c5e.archie.site/). Import your own CSV, JSON or XLSX table, review its field roles, evaluate protections, compare an externally protected table and download the result. No account or sign-in is required inside PRISM. The labeled fictional examples are optional demonstrations using the same engine.
 
-The public adapter accepts only bundled fictional fixtures, including the ambiguous-field semantic oncology demonstration. CSV, JSON and single-sheet XLSX import and external-file audits remain available in the local workbench above. Each public visitor has an isolated session limited to 24 candidates per search, 40 candidates total, four search jobs, bounded configuration storage and 30 minutes of inactivity. Session clear removes that visitor's stored configuration. Candidate data is reconstructed from the fixtures across cold starts; source tables and protected-row previews are not stored in Archie. Abandoned expired configuration is inaccessible but remains until that visitor returns for lazy deletion.
+Archie hosts the public HTML entry and Archie Core stores uploaded source bytes plus session recipes and results configuration. Vercel serves immutable frontend assets and executes the authoritative Python engine. Uploaded tables are reconstructed for cold-start calculations; external comparisons retain the actual protected file and declared mapping. This is a split deployment. The pitch and PDF remain on the Vercel origin.
 
-See [Archie + Vercel deployment](docs/ARCHIE_DEPLOYMENT.md) for the architecture, exact environment-variable names, deployment commands and fixture/API reproduction. The verification record records current live checks; measured tradeoffs do not establish privacy or release clearance.
+The hosted file limit is **3 MiB per file**, up to100,000rows and80columns; this stays within the hosting platform's request limit. A visitor session holds up to eight datasets,40candidates and four searches, with up to24candidates per search. Clear session deletes its uploaded tables and configuration. Sessions expire after30minutes of inactivity; abandoned uploaded records are deleted when the expired visitor returns. A page reload starts a new Archie browser session; download work you want to keep. The local application supports50MB files and keeps working tables in memory.
+
+See [deployment instructions](docs/ARCHIE_DEPLOYMENT.md), [the v3 reconciliation](docs/V3_RECONCILIATION.md) and [actual verification](artifacts/verification.md). These describe the current application rather than the earlier fictional-only adapter.
 
 ## Try the complete workflow
 
@@ -69,7 +71,7 @@ See [Archie + Vercel deployment](docs/ARCHIE_DEPLOYMENT.md) for the architecture
 3. Apply the baseline: remove declared direct identifiers, put age in five-year intervals, truncate ZIP to three digits and put weight in five-kg intervals. Birth dates and other retained attributes still deserve scrutiny. A ZIP prefix alone does not establish HIPAA Safe Harbor.
 4. Inspect the actual candidate and its distributions, correlations, research-query results and Knowledge Map. The metrics concern the declared fields and the finite released sample.
 5. Search 24 configurations. Compare several actual recipes, their failed constraints and their frontier status. A frontier candidate can still be infeasible; a small or constrained input can exhaust the available grammar before reaching the requested count.
-6. Export the evidence as HTML or JSON, the recipe as JSON, and the protected table as CSV. Direct-identifier columns block CSV export. Reports exclude table previews and private row alignment; aggregate labels, query definitions and results can still require review before sharing.
+6. Download the evidence as HTML or JSON, the recipe as JSON, and the protected table as CSV. Direct-identifier columns block CSV export. Reports exclude table previews and private row alignment; aggregate labels, query definitions and results can still require review before sharing.
 7. Clear the local session when finished. This removes in-memory dataset, candidate and search references and rotates the session HMAC key. It does not delete files you imported or downloaded.
 
 [The demo script](docs/DEMO_SCRIPT.md) includes a short presentation route and reproducible PowerShell API examples, including an external two-file audit with reversed scientific correlation.
@@ -80,7 +82,7 @@ See [Archie + Vercel deployment](docs/ARCHIE_DEPLOYMENT.md) for the architecture
 |---|---|
 | Intake | CSV, JSON record tables and single-sheet XLSX; leading-zero ZIP preservation, strict rectangular shape, type/role suggestions and schema review |
 | Semantic intelligence | Extensible hierarchical ontology, independent properties, local format/cardinality scans, optional typed Jev decisions, explicit unknown/abstention, researcher corrections and cached semantic lineage |
-| Attack knowledge | 24 semantic attack categories connect contributing fields and prerequisites to measured current-output partitions, entropy, homogeneity, structured text patterns and explicit unsupported states |
+| Attack knowledge | 25 semantic attack categories connect contributing fields and prerequisites to measured current-output partitions, entropy, homogeneity, structured text patterns and explicit unsupported states |
 | Protection preference | Selects actual cached evaluated candidates; exposes their measured disclosure, research loss and exact recipe rather than inventing a universal privacy percentage |
 | Transformations | Drop, mask, HMAC tokens, half-open bands, explicitly recoverable centered intervals, ZIP prefix, round, top/bottom code, rare categories, UTC hour/day/ISO-week/month/quarter/year generalization and date shift, experimental noise/permutation, limited redaction, cell and capped row suppression |
 | Disclosure diagnostics | Exact sample uniqueness, minimum k, present-target guessing, conditional row-index entropy, bounded QI subset map, categorical l/homogeneity, categorical total-variation distance, in-sample inference and a separate within-table held-out diagnostic |
@@ -95,7 +97,7 @@ The implemented release workflow is `row_release`. An imported file can be label
 
 Local API limits are 50 MB per table, 100,000 rows, 80 columns, eight datasets and 160 candidates per process session. Candidate previews show at most 30 rows. The explicit dataset-preview endpoint defaults to 30 and permits up to 100. The service is intended for one trusted local user, with no multi-user authentication or durable database.
 
-The original kit's 480-record benchmark is also available at `/v1/demo?fixture=kit`: the public-rule exact-linkage simulation reproduces 75/480 unique correct matches, and 20/480 after ZIP removal, with identical selected protected analytical answers. See [the reproduced baseline](docs/KIT_BASELINE.md). Those are modeled source-target matches, not population probabilities. Unknown external mechanisms and incompatible known-field transformations abstain. Protected CSV export requires authority, limitations and reviewed-candidate acknowledgments; owner audits remain confidential.
+The original kit's 480-record benchmark is also available at `/v1/demo?fixture=kit`: the public-rule exact-linkage simulation reproduces 75/480 unique correct matches, and 20/480 after ZIP removal, with identical selected protected analytical answers. See [the reproduced baseline](docs/KIT_BASELINE.md). Those are modeled source-target matches, not population probabilities. Unknown external mechanisms and incompatible known-field transformations abstain. Protected CSV downloads directly from the current evaluated candidate; stale evidence and recognized remaining direct identifiers have concrete explanations. Owner audits remain confidential.
 
 ## Check or regenerate
 

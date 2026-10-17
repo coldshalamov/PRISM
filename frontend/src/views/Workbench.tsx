@@ -12,7 +12,7 @@ import { num, plural } from '../format';
 import { useMedia } from '../hooks';
 import { columnTreatmentNote, normalizeSteps, recipeLabel, sameSteps } from '../recipe';
 import { EvidenceBanner } from '../ui/EvidenceBanner';
-import { Empty, Notice, Skeleton } from '../ui/Feedback';
+import { Empty, Skeleton } from '../ui/Feedback';
 import { InspectorSlot, ToolbarSlot } from '../ui/Slots';
 import { Tabs, panelProps } from '../ui/Tabs';
 import { Term } from '../ui/Tip';
@@ -41,14 +41,16 @@ function StartPanel() {
             <button type="button" className="btn primary" onClick={() => void ws.loadDemo('architecture')}><Database size={15} />Fictional oncology demo · 5,000</button>
             <button type="button" className="btn" onClick={() => void ws.loadDemo('kit')}><Beaker size={15} />Fictional benchmark · 480</button>
             <button type="button" className="btn" onClick={() => ws.requestReplace('the semantic ambiguity demo', () => void ws.loadDemo('semantic'))}><ScanSearch size={15} />Semantic ambiguity demo</button>
-            {deployment.uploadsAllowed ? <button type="button" className="btn" onClick={() => dialogs.open('import')}><FileUp size={15} />Import a CSV</button> : null}
+            {deployment.uploadsAllowed ? <button type="button" className="btn" onClick={() => dialogs.open('import')}><FileUp size={15} />Import CSV, JSON or XLSX</button> : null}
           </>
         )}
       >
         {loading
           ? (deployment.hosted ? 'Asking the hosted demo service for fictional records.' : 'Generating fictional records.')
           : deployment.uploadsAllowed
-            ? 'Open a fictional demonstration, or import your own CSV. Demonstration records are invented; files are read only by the local service on this computer.'
+            ? deployment.hosted
+              ? 'Import CSV, JSON or XLSX, or open a labeled fictional example. Your tables and recipes are stored in Archie Core; Python calculations run through Vercel.'
+              : 'Open a fictional demonstration, or import CSV, JSON or XLSX. Demonstration records are invented; imports are read by the local service on this computer.'
             : `Open a fictional demonstration. ${deployment.hosted ? 'Every record in the hosted demo is invented' : 'Demonstration records are invented'}, and the measurements are real computations run ${deployment.place}. ${deployment.uploadsNote}`}
       </Empty>
     </div>
@@ -113,6 +115,7 @@ export default function Workbench() {
   const protectedLabel = active ? ws.labelOf(active.candidateId) : null;
   const note = active ? rowCountNote(active, dataset.rowCount) : null;
   const pending = busy.apply || busy.assess;
+  const sessionBusy = Object.values(busy).some(Boolean);
   const tabId = 'panes';
   const external = isAudit(active);
   const sourceUnit = dist ? dataset.schema.find(spec => spec.name === dist.column)?.unit ?? null : null;
@@ -225,7 +228,12 @@ export default function Workbench() {
           </div>
         ) : null}
         <span className="toolbar-spacer" />
+        {ws.deployment.uploadsAllowed ? <button type="button" className="btn" title="Import CSV, JSON or XLSX" disabled={sessionBusy} onClick={() => dialogs.open('import')}><FileUp size={15} />Import table</button> : null}
         {!reviewed ? <button type="button" className="btn" onClick={() => dialogs.open('review')}><ClipboardCheck size={15} />Review classifications<span className="attn-dot" aria-hidden="true" /></button> : null}
+        <button
+          type="button" className="btn tool-demo" title="Load the semantic ambiguity demo" aria-label="Semantic example: semantic ambiguity demo" disabled={sessionBusy}
+          onClick={() => ws.requestReplace('the semantic ambiguity demo', () => void ws.loadDemo('semantic'))}
+        ><ScanSearch size={15} />Semantic example</button>
         {pending ? (
           <button type="button" className="btn" onClick={() => ws.cancel(busy.apply ? 'apply' : 'assess')}><Square size={13} fill="currentColor" />Stop waiting</button>
         ) : null}
@@ -237,13 +245,7 @@ export default function Workbench() {
 
       <div className={`panes-wrap${pending ? ' is-pending' : stale.length ? ' is-stale' : ''}`} {...panelProps(tabId, tab)}>
         <EvidenceBanner />
-        {!reviewed && !active ? (
-          <Notice tone="info" title="Start by reviewing the fields.">
-            PRISM suggests which columns identify a person, which are sensitive and which you analyse, and asks whether each person appears in one row. Confirm them once and the first candidate is created automatically.
-            <span className="notice-actions"><button type="button" className="btn primary" onClick={() => dialogs.open('review')}><ClipboardCheck size={15} />Review classifications</button></span>
-          </Notice>
-        ) : null}
-        <ProtectionPreference />
+        {active ? <ProtectionPreference /> : null}
         <div className={`panes${showOriginal && showProtected ? '' : ' single'}`}>
           {showOriginal ? originalPane : null}
           {showProtected ? protectedPane : null}

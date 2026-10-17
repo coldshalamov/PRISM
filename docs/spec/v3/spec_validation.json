@@ -1,0 +1,133 @@
+{
+  "artifact": "PRISM_Complete_Specification_v3.md",
+  "scope": "Specification arithmetic and internal consistency only; not application, API or security validation",
+  "checks": [
+    {
+      "check": "F01 exact ages",
+      "passed": true,
+      "details": "{\"k\": 1, \"u\": 1.0, \"pg\": 1.0, \"H\": 0.0, \"reduction\": 3.0}"
+    },
+    {
+      "check": "F01 shared five-year bands",
+      "passed": true,
+      "details": "{\"k\": 4, \"u\": 0.0, \"pg\": 0.25, \"H\": 2.0, \"reduction\": 1.0}"
+    },
+    {
+      "check": "F01 shared ten-year bands",
+      "passed": true,
+      "details": "{\"k\": 8, \"u\": 0.0, \"pg\": 0.125, \"H\": 3.0, \"reduction\": 0.0}"
+    },
+    {
+      "check": "F01 centered intervals invert exactly",
+      "passed": true,
+      "details": ""
+    },
+    {
+      "check": "F02 k=5 with homogeneous sensitive groups",
+      "passed": true,
+      "details": ""
+    },
+    {
+      "check": "F03 equal marginals opposite correlations",
+      "passed": true,
+      "details": ""
+    },
+    {
+      "check": "F04 duplicate rows do not create people",
+      "passed": true,
+      "details": ""
+    },
+    {
+      "check": "F05 interval composition recovers integer age",
+      "passed": true,
+      "details": "{44}"
+    },
+    {
+      "check": "F06 XOR needs joint analysis",
+      "passed": true,
+      "details": ""
+    },
+    {
+      "check": "Binning exact boundary and negative floor",
+      "passed": true,
+      "details": ""
+    },
+    {
+      "check": "144 unique semantic leaf IDs",
+      "passed": true,
+      "details": ""
+    },
+    {
+      "check": "15 semantic families",
+      "passed": true,
+      "details": ""
+    },
+    {
+      "check": "60 unique rule IDs",
+      "passed": true,
+      "details": ""
+    },
+    {
+      "check": "All taxonomy detector references resolve",
+      "passed": true,
+      "details": ""
+    },
+    {
+      "check": "All rule detector references resolve",
+      "passed": true,
+      "details": ""
+    },
+    {
+      "check": "All rule mitigation references resolve",
+      "passed": true,
+      "details": ""
+    },
+    {
+      "check": "All rule severity policies defined",
+      "passed": true,
+      "details": ""
+    },
+    {
+      "check": "All detector sections present",
+      "passed": true,
+      "details": ""
+    },
+    {
+      "check": "All transformation definitions present",
+      "passed": true,
+      "details": ""
+    },
+    {
+      "check": "90 acceptance tests defined",
+      "passed": true,
+      "details": ""
+    },
+    {
+      "check": "All cited sources defined",
+      "passed": true,
+      "details": ""
+    },
+    {
+      "check": "Markdown fences balanced",
+      "passed": true,
+      "details": ""
+    },
+    {
+      "check": "No transcript-only citation artifacts",
+      "passed": true,
+      "details": ""
+    },
+    {
+      "check": "No unfilled placeholder TODOs",
+      "passed": true,
+      "details": ""
+    },
+    {
+      "check": "Complete end marker",
+      "passed": true,
+      "details": ""
+    }
+  ],
+  "passed": 25,
+  "total": 25
+}
