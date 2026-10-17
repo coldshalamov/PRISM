@@ -1,69 +1,83 @@
 /* PRISM design tokens.
-   Direction: native desktop-style workspace. Graphite shell frames a soft neutral data canvas.
-   Three semantic channels in every chart: graphite = original, violet = protected, orange = exposure.
-   Green is intentionally absent: nothing in PRISM is a "safe" signal. */
+   Direction: "refraction". An indigo-ink frame holds a soft, light sheet. The product's own metaphor drives the colour:
+   one beam enters a prism and leaves as separate channels, and every chart and figure keeps the same three.
+   graphite = original, violet = protected, orange = exposure. Green is intentionally absent: nothing in PRISM is a "safe" signal.
+   Shape encodes hierarchy: panes are the roundest, cards next, controls tighter, chips are pills. Shadows are reserved for
+   things that float (menus, popovers, dialogs); everything else is grouped by tone and spacing, not outlines. */
 :root {
   color-scheme: light;
 
-  --font-ui: 'IBM Plex Sans', 'Segoe UI Variable Text', 'Segoe UI', system-ui, sans-serif;
+  --font-display: 'Bricolage Grotesque Variable', 'Instrument Sans Variable', system-ui, sans-serif;
+  --font-ui: 'Instrument Sans Variable', 'Segoe UI Variable Text', 'Segoe UI', system-ui, sans-serif;
   --font-mono: 'IBM Plex Mono', 'Cascadia Mono', ui-monospace, Consolas, monospace;
-  --font-doc: 'IBM Plex Serif', Georgia, 'Times New Roman', serif;
+  --font-doc: var(--font-display);
 
-  /* graphite shell */
-  --shell-0: #0b0c0f;
-  --shell-1: #111317;
-  --shell-2: #1a1d22;
-  --shell-3: #242830;
-  --shell-line: rgba(255, 255, 255, 0.09);
-  --shell-line-strong: rgba(255, 255, 255, 0.16);
-  --shell-ink: #eef0f4;
-  --shell-ink-2: #a9afba;
-  --shell-ink-3: #868e9b;
-  --shell-accent: #b3a7ff;
-  --shell-risk: #ff8a4c;
+  /* ink frame */
+  --shell-0: #090b16;
+  --shell-1: #0e1120;
+  --shell-2: #171b2e;
+  --shell-3: #222845;
+  --shell-line: rgba(255, 255, 255, 0.07);
+  --shell-line-strong: rgba(255, 255, 255, 0.15);
+  --shell-ink: #eef0fb;
+  --shell-ink-2: #aab1c8;
+  --shell-ink-3: #8b93ad;
+  --shell-accent: #bcb0ff;
+  --shell-risk: #ff9564;
 
-  /* neutral canvas */
-  --canvas: #e9ebef;
+  /* light sheet */
+  --canvas: #f1f2f9;
   --surface: #ffffff;
-  --surface-2: #f5f6f8;
-  --surface-3: #eceef2;
-  --line: #dcdfe6;
-  --line-strong: #c2c7d1;
-  --ink: #0f1218;
-  --ink-2: #363d4a;
-  --ink-3: #565f6d;
-  --ink-4: #646d7b;
+  --surface-2: #f7f8fc;
+  --surface-3: #eceef7;
+  --line: #e4e7f1;
+  --line-strong: #c9cee0;
+  --field-line: #a8afc6;
+  --ink: #0e1020;
+  --ink-2: #2f3550;
+  --ink-3: #4f5873;
+  --ink-4: #636d88;
 
   /* channels */
-  --accent: #5b3df5;
-  --accent-ink: #4a2de0;
+  --accent: #6b4dff;
+  --accent-ink: #5436e6;
   --accent-soft: #eeeaff;
-  --accent-wash: rgba(91, 61, 245, 0.08);
-  --accent-line: rgba(91, 61, 245, 0.38);
-  --original: #4b5362;
-  --original-soft: #c7ccd6;
-  --risk: #d9480f;
-  --risk-ink: #b83a08;
-  --risk-soft: #fff1e8;
-  --risk-wash: rgba(217, 72, 15, 0.1);
+  --accent-wash: rgba(107, 77, 255, 0.08);
+  --accent-line: rgba(107, 77, 255, 0.4);
+  --original: #4c5466;
+  --original-soft: #c9cedc;
+  --risk: #f2602a;
+  --risk-ink: #b53b0a;
+  --risk-soft: #fff1ea;
+  --risk-wash: rgba(242, 96, 42, 0.1);
   --alert: #c92a2a;
-  --uncovered: #6a7280;
+  --uncovered: #657089;
+
+  /* shape: hierarchy, not one radius for everything */
+  --r-1: 6px;
+  --r-2: 10px;
+  --r-3: 14px;
+  --r-4: 20px;
+  --r-pill: 999px;
 
   /* geometry */
-  --r-1: 2px;
-  --r-2: 4px;
-  --r-3: 8px;
-  --rail-w: 244px;
-  --rail-w-compact: 60px;
-  --inspector-w: 336px;
-  --topbar-h: 46px;
-  --toolbar-h: 44px;
+  --rail-w: 252px;
+  --rail-w-compact: 68px;
+  --inspector-w: 348px;
+  --topbar-h: 56px;
+  --toolbar-h: 56px;
+  --ctl-h: 34px;
+  --ctl-h-sm: 28px;
 
   --ease: cubic-bezier(0.2, 0.7, 0.2, 1);
   --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
-  --shadow-pop: 0 1px 0 rgba(15, 18, 24, 0.04), 0 12px 32px -8px rgba(15, 18, 24, 0.28), 0 0 0 1px rgba(15, 18, 24, 0.1);
-  --shadow-paper: 0 1px 2px rgba(15, 18, 24, 0.08), 0 10px 30px -12px rgba(15, 18, 24, 0.22);
+  --shadow-pop: 0 2px 4px rgba(13, 15, 34, 0.06), 0 18px 40px -12px rgba(13, 15, 34, 0.38), 0 0 0 1px rgba(13, 15, 34, 0.08);
+  --shadow-paper: 0 1px 2px rgba(22, 26, 70, 0.05), 0 14px 34px -18px rgba(22, 26, 70, 0.28);
+  --shadow-ring: 0 0 0 1px rgba(22, 26, 70, 0.06);
   --focus: 0 0 0 2px var(--surface), 0 0 0 4px var(--accent);
+
+  /* the dotted canvas used behind the hero and empty states, never behind tables */
+  --dots: radial-gradient(circle at 1px 1px, rgba(22, 26, 70, 0.14) 1px, transparent 0) 0 0 / 20px 20px;
 }
 
 @media (prefers-reduced-motion: reduce) {

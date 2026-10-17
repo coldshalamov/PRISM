@@ -618,10 +618,16 @@ export function ProtectionPreference() {
           <span className="sem-end">Lower uniqueness</span>
         </div>
         <div className="sem-pref-read" id={noteId}>
-          <p>
-            The scale selects between real evaluated snapshots and needs at least two. {pool.length ? 'Only one matches the current assumptions. ' : ''}
-            <b>Evaluate alternatives</b> tests up to 8 recipes on the full dataset (within the search caps); each measured result becomes a position.
-          </p>
+          <p>{pool.length ? 'Only one snapshot matches the current assumptions; the scale needs two.' : 'The scale needs two evaluated snapshots.'}</p>
+          <details className="sem-order">
+            <summary>How the scale works</summary>
+            <div>
+              <p>
+                The scale selects between real evaluated snapshots and needs at least two. {pool.length ? 'Only one matches the current assumptions. ' : ''}
+                <b>Evaluate alternatives</b> tests up to 8 recipes on the full dataset (within the search caps); each measured result becomes a position.
+              </p>
+            </div>
+          </details>
           {excludedText.length ? <p className="muted">Not on the scale: {excludedText.join('; ')}.</p> : null}
           {ws.reviewed && searchBlock && !searching ? <p className="muted">{searchBlock}</p> : null}
           <div className="sem-pref-actions">

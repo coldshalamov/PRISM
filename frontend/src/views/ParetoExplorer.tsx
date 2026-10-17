@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { ArrowDown, ArrowUp, ArrowUpRight, ClipboardCheck, GitCompareArrows, Play, ScanLine, SlidersHorizontal, Square, TriangleAlert } from 'lucide-react';
+import { ArrowDown, ArrowUp, ArrowUpRight, ClipboardCheck, GitCompareArrows, Play, ScanLine, ScatterChart, SlidersHorizontal, Square, TriangleAlert } from 'lucide-react';
 import { STALE_LABEL } from '../analysis';
 import { useDialogs } from '../dialogs';
 import { isFictional } from '../deployment';
@@ -7,7 +7,9 @@ import { num, pct, signed, title } from '../format';
 import { recipeLabel } from '../recipe';
 import { scenarioById, scenarios } from '../scenarios';
 import type { Candidate } from '../types';
-import { Empty, Notice } from '../ui/Feedback';
+import { Notice } from '../ui/Feedback';
+import { PageHead } from '../ui/PageHead';
+import { ViewEmpty } from '../ui/ViewEmpty';
 import { InspectorSlot, ToolbarSlot } from '../ui/Slots';
 import { useWorkspace } from '../workspace';
 import { ParetoInspector } from './pareto/ParetoInspector';
@@ -108,7 +110,7 @@ export default function ParetoExplorer() {
 
   const sortHeading = (key: Sort, label: string) => <th scope="col" aria-sort={sort.key === key ? sort.descending ? 'descending' : 'ascending' : 'none'}><button type="button" onClick={() => setSort(current => ({ key, descending: current.key === key ? !current.descending : false }))}>{label}{sort.key === key ? sort.descending ? <ArrowDown size={12} /> : <ArrowUp size={12} /> : null}</button></th>;
 
-  if (!ws.dataset) return <div className="px-start"><Empty icon={<ScanLine size={28} />} title="Open a dataset to explore candidates" actions={<button type="button" className="btn primary" disabled={ws.busy.boot} onClick={() => void ws.loadDemo('architecture')}>{ws.busy.boot ? 'Loading fictional records…' : 'Load fictional oncology demo'}</button>}>The search evaluates real transformations of your source against the selected attack assumptions and research workload.</Empty></div>;
+  if (!ws.dataset) return <div className="px-start"><ViewEmpty title="Open a dataset to explore candidates" actions={<button type="button" className="btn primary" disabled={ws.busy.boot} onClick={() => void ws.loadDemo('architecture')}>{ws.busy.boot ? 'Loading fictional records…' : 'Load fictional oncology demo'}</button>}>The search evaluates real transformations of your source against the selected attack assumptions and research workload.</ViewEmpty></div>;
 
   return <div className="px-workspace">
     <ToolbarSlot>
@@ -121,7 +123,7 @@ export default function ParetoExplorer() {
     </ToolbarSlot>
     <InspectorSlot><ParetoInspector candidate={selected} frontier={frontier} originalRows={originalRows} /></InspectorSlot>
 
-    <header className="px-heading"><div><p className="px-eyebrow">SEARCH WORKSPACE</p><h1>Explore the trade-offs</h1><p>Compare measured privacy exposure, scientific loss and row loss. Choose a snapshot to inspect before using it.</p></div><span className="px-source-label">{isFictional(ws.deployment, ws.dataset) ? 'Fictional source' : 'Imported source'}<b>{num(originalRows, 0)} records</b></span></header>
+    <PageHead className="px-heading" icon={<ScatterChart size={22} />} title="Explore the trade-offs" summary="Compare measured exposure, scientific loss and row loss." detail={<p>Compare measured privacy exposure, scientific loss and row loss. Choose a snapshot to inspect before using it.</p>}><span className="px-source-label">{isFictional(ws.deployment, ws.dataset) ? 'Fictional source' : 'Imported source'}<b>{num(originalRows, 0)} records</b></span></PageHead>
 
     <section className="px-plan" aria-labelledby="px-plan-title">
       <div className="px-section-head"><h2 id="px-plan-title"><SlidersHorizontal size={15} />Search plan</h2><span>Editable planning limits · not release standards</span></div>
@@ -146,7 +148,7 @@ export default function ParetoExplorer() {
       {(planChanged || frozenDrift.length > 0) && ws.search ? <div className="px-state warning"><TriangleAlert size={17} /><div><b>Earlier search snapshot · current controls have changed.</b><p>{limitsChanged ? 'Hard checks below use the limits from the earlier run. ' : ''}{frozenDrift.length ? `Frozen ${frozenDrift.map(reason => STALE_LABEL[reason]).join(', ')} differ from the current controls. ` : ''}Run search again to measure this plan. Nondominance below describes the earlier snapshots only.</p></div></div> : null}
     </div>
 
-    {!ws.search ? <section className="px-search-empty"><Empty icon={<ScanLine size={30} />} title="No search results yet" actions={<button type="button" className="btn primary" disabled={blocked} onClick={() => void startSearch()}><Play size={13} fill="currentColor" />Evaluate up to {budget} candidates</button>}>The chart will contain measured snapshots of this source. Start with 24 recipes, inspect the conflicts, then adjust the plan if needed.</Empty><p>Every point must have an available attack metric and scientific loss. No automatic release clearance.</p></section> : <>
+    {!ws.search ? <section className="px-search-empty"><ViewEmpty title="No search results yet" actions={<button type="button" className="btn primary" disabled={blocked} onClick={() => void startSearch()}><Play size={13} fill="currentColor" />Evaluate up to {budget} candidates</button>}>The chart will contain measured snapshots of this source. Start with 24 recipes, inspect the conflicts, then adjust the plan if needed.</ViewEmpty><p>Every point must have an available attack metric and scientific loss. No automatic release clearance.</p></section> : <>
       <section className="px-results" aria-labelledby="px-results-title" aria-busy={busy}>
         <div className="px-section-head px-results-head"><div><h2 id="px-results-title">Measured candidate space</h2><p>{num(ws.search.evaluated, 0)} successful evaluations / {ws.search.cap} budget{typeof ws.search.attempted === 'number' ? ` · ${ws.search.attempted} recipe attempts` : ''} · {TERMINATION[ws.search.termination] ?? title(ws.search.termination)}</p></div><span className="px-result-context">{savedPlan?.scenario ?? 'Frozen search context'}</span></div>
         <div className="px-chart-controls"><label>Attack metric · lower is better<select value={metric} onChange={event => setMetric(event.target.value as AttackMetric)}>{ATTACK_METRICS.map(item => <option key={item.key} value={item.key}>{item.label}</option>)}</select></label><div className="px-filter" role="group" aria-label="Candidate filter">{([{ id: 'all', label: `All ${candidates.length}` }, { id: 'frontier', label: `Nondominated ${frontier.size}` }, { id: 'feasible', label: `Checks met ${met}` }] as const).map(item => <button type="button" key={item.id} aria-pressed={filter === item.id} className={filter === item.id ? 'active' : ''} onClick={() => setFilter(item.id)}>{item.label}</button>)}</div></div>

@@ -1,10 +1,11 @@
 import { useState } from 'react';
-import { ArrowRight, Beaker, BookOpen, RefreshCw } from 'lucide-react';
+import { ArrowRight, Beaker, BookOpen, FlaskConical, RefreshCw } from 'lucide-react';
 import { api } from '../api';
 import { num } from '../format';
 import type { LabResult, Registry } from '../types';
 import { Facts } from '../ui/Facts';
 import { Empty, Notice, Skeleton } from '../ui/Feedback';
+import { PageHead } from '../ui/PageHead';
 import { InspectorSlot, ToolbarSlot } from '../ui/Slots';
 import { Tabs, panelProps } from '../ui/Tabs';
 import { useWorkspace } from '../workspace';
@@ -61,7 +62,7 @@ export default function AttackLab() {
       </>}
     </div></div></InspectorSlot>
     <div className="al-scroll" {...panelProps('attack-lab', tab)}>
-      <header className="al-page-head"><p className="al-eyebrow">Attack lab <span>/</span> Limits made visible</p><h1>{tab === 'experiments' ? 'Counterexamples: where a protection fails' : tab === 'threats' ? 'Threat register: what is covered' : 'Methods and engines: what exists, what runs'}</h1><p>{tab === 'experiments' ? `Small executable counterexamples, computed ${deployment.hosted ? 'by the hosted demo service' : 'by the service'} on fictional records. They explain a failure mode; they do not measure your candidate.` : tab === 'threats' ? 'Search broad threat families, then inspect the implemented portion, assumptions and source. A catalogue status is never release clearance.' : 'The protection catalogue is separate from threat families and executable analyses. Unavailable integrations remain visibly uncovered.'}</p></header>
+      <PageHead className="al-page-head" icon={<FlaskConical size={22} />} title={tab === 'experiments' ? 'Counterexamples: where a protection fails' : tab === 'threats' ? 'Threat register: what is covered' : 'Methods and engines: what exists, what runs'} detail={<><p>Limits made visible.</p><p>{tab === 'experiments' ? `Small executable counterexamples, computed ${deployment.hosted ? 'by the hosted demo service' : 'by the service'} on fictional records. They explain a failure mode; they do not measure your candidate.` : tab === 'threats' ? 'Search broad threat families, then inspect the implemented portion, assumptions and source. A catalogue status is never release clearance.' : 'The protection catalogue is separate from threat families and executable analyses. Unavailable integrations remain visibly uncovered.'}</p></>} />
       {ws.health === 'down' ? <Notice tone="warn" title="The service is currently unreachable.">Any results below are from an earlier response. Retry when the service is available; a connection failure is not a completed evaluation.</Notice> : null}
       {error && error.kind === (needsRegistry ? 'registry' : 'lab') ? <Notice tone="warn" title="The latest request failed.">{error.message}{(needsRegistry ? registry : lab) ? ' The earlier response remains visible below.' : ''}</Notice> : null}
       {tab === 'experiments' ? lab ? <>

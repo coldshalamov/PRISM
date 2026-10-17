@@ -1,0 +1,28 @@
+/* Shared view furniture: page head, view-level empty state, role badges. */
+
+.page-head { display: flex; align-items: center; gap: 14px; min-width: 0; }
+.page-head-icon { display: grid; place-items: center; flex: none; width: 44px; height: 44px; border-radius: var(--r-3); background: linear-gradient(135deg, var(--accent-soft), #fff); color: var(--accent-ink); box-shadow: var(--shadow-ring); }
+.page-head-text { min-width: 0; flex: 0 1 auto; }
+.page-head h1 { font-size: 24px; line-height: 1.15; font-weight: 650; letter-spacing: -0.02em; text-wrap: balance; }
+.page-head-text p { margin-top: 2px; color: var(--ink-3); font-size: 14px; }
+.page-head-info { flex: none; margin-left: -4px; }
+.page-head-actions { margin-left: auto; display: flex; align-items: center; gap: 10px; flex: none; }
+@media (max-width: 719px) {
+  .page-head { flex-wrap: wrap; row-gap: 10px; }
+  .page-head h1 { font-size: 21px; }
+  .page-head-text { flex: 1 1 140px; }
+  .page-head-actions { margin-left: 0; width: 100%; }
+}
+
+.view-empty { display: grid; justify-items: center; text-align: center; gap: 8px; padding: 36px 24px 32px; border-radius: var(--r-4); background: var(--surface); box-shadow: var(--shadow-ring); }
+.view-empty .prism-art { margin-bottom: 4px; max-width: 100%; height: auto; }
+.view-empty h2 { font-size: 22px; font-weight: 650; text-wrap: balance; }
+.view-empty p { max-width: 52ch; color: var(--ink-3); }
+.view-empty .empty-actions { justify-content: center; margin-top: 8px; }
+
+.role-badge { display: inline-grid; place-items: center; width: 22px; height: 22px; flex: none; border-radius: 7px; background: var(--surface-3); color: var(--ink-3); }
+.role-badge.r-direct_identifier { background: var(--risk-wash); color: var(--risk-ink); }
+.role-badge.r-quasi_identifier { background: var(--surface-3); color: var(--ink-2); }
+.role-badge.r-sensitive { background: var(--ink); color: #fff; }
+.role-badge.r-research_target { background: var(--accent-soft); color: var(--accent-ink); }
+.role-badge.ghost { background: transparent; }

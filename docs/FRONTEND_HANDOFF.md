@@ -1,6 +1,20 @@
 # PRISM 0.1.1 frontend handoff
 
-Keep the six connected views: Workbench, Knowledge Map, Attack Lab, Research Intent, Pareto Explorer and Report. The design is a desktop instrument with a graphite library rail, neutral data canvas, violet candidate channel, orange exposure and self-hosted IBM Plex typography. The source/candidate comparison is the primary experience.
+PRISM retains six connected views: Workbench, Knowledge Map, Attack Lab, Research Intent, Pareto Explorer and Report. The visual identity is an indigo-ink frame (navigation rail and top bar) holding one rounded light sheet. Colour keeps the product's own channels: graphite for the original, violet for the protected candidate, orange for exposure and grey for what the research questions lost. Green is intentionally absent because nothing in PRISM is a safe signal. Type is self-hosted: Bricolage Grotesque for headings and figures, Instrument Sans for the interface, and IBM Plex Mono only for hashes and identifiers. Keep product controls close to the actual tables and measured consequences; do not replace this with a generic SaaS dashboard.
+
+## Interface refresh
+
+The Workbench opens with `Hero.tsx`: a four-step workflow position (`Journey.tsx`), a refraction diagram of the evaluated snapshot (`Refraction.tsx`) and measured tiles (`MeasureTiles.tsx`). The tiles read the same `Measure` objects as the ledger (`measuresFor` in `Ledger.tsx`), so an unavailable value keeps its reason and is never drawn as zero, and the suppression line uses the measure's own label (an external file is "Rows fewer than the source", not proof of suppression). In the diagram the entering beam is the unprotected baseline's sample uniqueness, orange is the shown snapshot's, violet is the measured reduction (what the recipe protected), and grey is the normalised research-query loss. A measured zero is a hollow terminal mark, "not reduced" is its own state, and only an unmeasured value is dashed. Widths are measured fractions; a real but tiny value is drawn at a 3 px minimum and labelled with its exact figure; an unmeasured value is a dashed hairline and a dash.
+
+Rules for later changes:
+
+- Nothing may read as a pass mark. The last workflow step counts what was tried and never shows a completion mark, and no gauge has a "good" end.
+- Motion answers an action. The border beam runs only while a job runs, the sheen plays twice when Apply carries unapplied edits, and the rays draw once per snapshot shown. All of it stops under `prefers-reduced-motion`.
+- Long explanations stay verbatim behind the page head's info button or a disclosure; release-clearance wording, fictional/hosted labels, unit and pairing notes stay inline.
+- One shared set of pieces: `PageHead`, `ViewEmpty`, `RoleIcon` (`ROLE_META`) and `BorderBeam`. The "Magic UI" effects are written natively because the content-security policy rules out CDN scripts and the app has no Tailwind.
+- The measurement ledger starts collapsed (a stored preference still wins); its release-clearance chip is always visible.
+
+Existing Archie revisions under `frontend/public/archie-assets/` are immutable and were not touched. This interface reaches the Archie page only through a new revision (see Hosting and publication).
 
 ## Current workflow
 

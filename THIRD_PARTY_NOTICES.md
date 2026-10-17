@@ -34,9 +34,9 @@ These exact versions and declared license labels were read from `frontend/packag
 | react-dom | 19.3.1 | MIT |
 | scheduler | 0.28.0 | MIT |
 | lucide-react | 0.468.0 | ISC |
+| @fontsource-variable/bricolage-grotesque | 5.3.0 | OFL-1.1 |
+| @fontsource-variable/instrument-sans | 5.3.0 | OFL-1.1 |
 | @fontsource/ibm-plex-mono | 5.3.0 | OFL-1.1 |
-| @fontsource/ibm-plex-sans | 5.3.0 | OFL-1.1 |
-| @fontsource/ibm-plex-serif | 5.3.0 | OFL-1.1 |
 | @types/react | 19.3.0 | MIT |
 | @types/react-dom | 19.3.0 | MIT |
 | @vitejs/plugin-react | 4.7.0 | MIT |
@@ -46,7 +46,7 @@ These exact versions and declared license labels were read from `frontend/packag
 
 React, React DOM and the transitive scheduler package are published by the React project; type declarations are from DefinitelyTyped. Lucide icons retain their upstream notices. Playwright is a development-only package, not part of the application runtime bundle. Installed npm packages include their own LICENSE/NOTICE files; the lockfile includes resolved transitive packages and integrity hashes.
 
-The IBM Plex Mono, Sans and Serif font files are self-hosted from the three Fontsource packages above. Their installed `LICENSE` files contain IBM's copyright notices and the full SIL Open Font License 1.1; the package metadata and lockfile both identify version 5.3.0 and `OFL-1.1`. The pitch preserves separate copies at `frontend/public/pitch/fonts/IBM-Plex-Mono-LICENSE.txt`, `IBM-Plex-Sans-LICENSE.txt` and `IBM-Plex-Serif-LICENSE.txt`, alongside the local WOFF2 files. No remote font service is needed.
+The Bricolage Grotesque and Instrument Sans variable fonts (interface and display type) and IBM Plex Mono (identifiers and hashes only) are self-hosted from the three Fontsource packages above. Their installed `LICENSE` files contain the full SIL Open Font License 1.1 and each foundry's copyright notices; the package metadata and lockfile identify version 5.3.0 and `OFL-1.1` for each. The application no longer ships IBM Plex Sans or Serif. The pitch is unchanged and preserves separate copies at `frontend/public/pitch/fonts/IBM-Plex-Mono-LICENSE.txt`, `IBM-Plex-Sans-LICENSE.txt` and `IBM-Plex-Serif-LICENSE.txt`, alongside the local WOFF2 files. No remote font service is needed.
 
 `scripts/package.py` reads the actual locked production npm package inventory and copies each package's complete installed license text into `backend/app/licenses/FRONTEND-RUNTIME-LICENSES.txt`. The same generated text is distributed in the static app as `THIRD_PARTY_LICENSES.txt` and retained at `frontend/public/THIRD_PARTY_LICENSES.txt`; it covers the three Fontsource packages, Lucide, React, React DOM and scheduler. The packager fails if an included production package lacks a recognized license-text file. Development-tool license files remain in their upstream distributions.
 

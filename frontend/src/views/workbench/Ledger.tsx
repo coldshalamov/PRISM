@@ -15,7 +15,7 @@ import type { Candidate, Finding } from '../../types';
 
 type LedgerTab = 'measures' | 'queries' | 'findings';
 
-interface Measure {
+export interface Measure {
   id: string;
   label: string;
   glossary: string;
@@ -37,7 +37,7 @@ function rowsMissing(candidate: Candidate, originalRows: number): number | null 
   return originalRows > 0 ? (originalRows - candidate.rowCount) / originalRows : null;
 }
 
-function measuresFor(candidate: Candidate, baseline: Candidate | null, originalRows: number, membershipKnown: boolean | null): Measure[] {
+export function measuresFor(candidate: Candidate, baseline: Candidate | null, originalRows: number, membershipKnown: boolean | null): Measure[] {
   const m = candidate.risk.metrics;
   const b = baseline?.risk.metrics;
   const membershipUnavailable = membershipKnown === null ? 'Not returned: membership assumption' : 'Not applicable: membership unknown';

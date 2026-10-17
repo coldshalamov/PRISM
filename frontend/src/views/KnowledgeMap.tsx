@@ -4,7 +4,9 @@ import { useDialogs } from '../dialogs';
 import { num, pct } from '../format';
 import { candidateThreat, threatSentence } from '../threat';
 import { EvidenceBanner } from '../ui/EvidenceBanner';
-import { Empty, Notice, Skeleton } from '../ui/Feedback';
+import { Notice, Skeleton } from '../ui/Feedback';
+import { PageHead } from '../ui/PageHead';
+import { ViewEmpty } from '../ui/ViewEmpty';
 import { InspectorSlot, ToolbarSlot } from '../ui/Slots';
 import { Tabs } from '../ui/Tabs';
 import { Term } from '../ui/Tip';
@@ -59,12 +61,12 @@ export default function KnowledgeMap() {
         </div>
       </InspectorSlot>
       <div className="km-scroll">
-        <header className="km-page-head"><p className="km-eyebrow">Knowledge map <span>/</span> Measured on the released sample</p><h1>Which known fields distinguish records?</h1><p>Each row of the surface is a combination of facts an observer might know; each cell describes this file under the evaluated assumptions.</p></header>
+        <PageHead className="km-page-head" icon={<Grid2X2 size={22} />} title="Which known fields distinguish records?" summary="Combinations of known facts that single out a record." detail={<><p>Measured on the released sample.</p><p>Each row of the surface is a combination of facts an observer might know; each cell describes this file under the evaluated assumptions.</p></>} />
         <EvidenceBanner />
         {!active ? <section className="km-empty">
-          {pending || busy.boot ? <><p role="status">{busy.boot ? 'Loading the fictional dataset…' : 'Evaluating the candidate…'}</p><Skeleton lines={5} height={22} /></> : <Empty icon={<Grid2X2 size={28} />} title={dataset ? 'Evaluate a candidate to map its exposure' : 'No dataset in this session'} actions={dataset ? <button type="button" className="btn primary" onClick={() => ws.reviewed ? void ws.apply() : dialogs.open('review')}>{ws.reviewed ? <Play size={14} /> : <ClipboardCheck size={14} />}{ws.reviewed ? 'Apply and evaluate' : 'Review classifications'}</button> : <button type="button" className="btn primary" onClick={() => void ws.loadDemo()}>Open fictional demo</button>}>
+          {pending || busy.boot ? <><p role="status">{busy.boot ? 'Loading the fictional dataset…' : 'Evaluating the candidate…'}</p><Skeleton lines={5} height={22} /></> : <ViewEmpty title={dataset ? 'Evaluate a candidate to map its exposure' : 'No dataset in this session'} actions={dataset ? <button type="button" className="btn primary" onClick={() => ws.reviewed ? void ws.apply() : dialogs.open('review')}>{ws.reviewed ? <Play size={14} /> : <ClipboardCheck size={14} />}{ws.reviewed ? 'Apply and evaluate' : 'Review classifications'}</button> : <button type="button" className="btn primary" onClick={() => void ws.loadDemo()}>Open fictional demo</button>}>
             {ws.bootError || (dataset ? 'Review roles and the person key, then evaluate. Missing measurements are never shown as zero exposure.' : 'Open a fictional dataset or import a CSV from the Workbench.')}
-          </Empty>}
+          </ViewEmpty>}
         </section> : <div className={`km-evidence${pending || ws.stale.length ? ' km-old-evidence' : ''}`}>
           <dl className="km-readout-strip" aria-label="Evaluated candidate summary">
             <div><dt>Frozen snapshot</dt><dd>{ws.labelOf(active.candidateId)}<small>{dataset?.name ?? active.name}</small></dd></div>
@@ -77,11 +79,11 @@ export default function KnowledgeMap() {
           {removed.length ? <Notice tone="info" title="Some declared known fields are absent from this release."><span className="km-field-text">{removed.join(', ')}</span>. They are excluded from these exact-match partitions. Removing a field does not erase outside knowledge, previous releases or inferences from remaining fields.</Notice> : null}
           {!frozen?.membershipKnown ? <Notice tone="warn">These partitions remain descriptions of this file. Unknown source membership is not tested here; present-target guessing is conditional and cannot be read as an unconditional attack probability.</Notice> : null}
           <section className="km-section">
-            <header className="km-section-head"><div><p className="km-eyebrow">01 / Exposure surface</p><h2>What the known fields reveal together</h2></div><span className={`km-coverage-tag${coverage?.exhaustive === true ? '' : ' bounded'}`}>{coverage?.exhaustive === true ? 'Exhaustive enumeration' : coverage?.exhaustive === false ? 'Bounded enumeration' : 'Coverage not reported'}</span></header>
+            <header className="km-section-head"><div><h2>What the known fields reveal together</h2></div><span className={`km-coverage-tag${coverage?.exhaustive === true ? '' : ' bounded'}`}>{coverage?.exhaustive === true ? 'Exhaustive enumeration' : coverage?.exhaustive === false ? 'Bounded enumeration' : 'Coverage not reported'}</span></header>
             <p className="km-section-description">Each row is a tested field combination. Orange intensity encodes its sample-unique fraction; the field marks show which facts are combined.</p>
             <ExposureSurface key={active.candidateId} exposure={exposure} fields={measured} rowCount={rows} />
           </section>
-          <section className="km-section"><header className="km-section-head"><div><p className="km-eyebrow">02 / Minimum distinguishing knowledge</p><h2>How many known fields were enough?</h2></div></header><p className="km-section-description">Each record appears once, at its smallest nonempty distinguishing set{coverage?.exhaustive === true ? '' : ' found in the tested combinations'}. Field count is not acquisition cost or attack effort.</p><KnowledgeHistogram exposure={exposure} rowCount={rows} /></section>
+          <section className="km-section"><header className="km-section-head"><div><h2>How many known fields were enough?</h2></div></header><p className="km-section-description">Each record appears once, at its smallest nonempty distinguishing set{coverage?.exhaustive === true ? '' : ' found in the tested combinations'}. Field count is not acquisition cost or attack effort.</p><KnowledgeHistogram exposure={exposure} rowCount={rows} /></section>
           <footer className="km-scope-footer"><b>Sample description, never release clearance.</b><p>Genomic, family and trajectory risks are uncovered. Sensitive inference is a separate measurement. Outside linkage depends on auxiliary information this map does not observe.</p><button type="button" className="link" onClick={() => ws.setView('lab')}>Inspect the full threat register <ArrowRight size={13} /></button></footer>
         </div>}
       </div>

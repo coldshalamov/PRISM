@@ -2,29 +2,28 @@
    Loaded after the base layers; view-specific sheets load with their views and are edited directly. */
 
 /* ---------- deployment: hosted fictional demo / remote origin ---------- */
-.app.is-hosted .topbar { box-shadow: inset 0 -2px 0 rgba(179, 167, 255, 0.55); }
 .health-line { white-space: nowrap; }
-.health-line.hosted.ok, .health-line.hosted.checking { color: var(--shell-accent); font-weight: 600; letter-spacing: 0.02em; }
-.health-line.remote.ok { color: var(--shell-risk); font-weight: 600; }
+.health-line.hosted.ok, .health-line.hosted.checking { color: var(--shell-accent); font-weight: 600; padding: 5px 12px; border-radius: var(--r-pill); background: rgba(188, 176, 255, 0.14); }
+.health-line.remote.ok { color: var(--shell-risk); font-weight: 600; padding: 5px 12px; border-radius: var(--r-pill); background: rgba(255, 149, 100, 0.14); }
 .session-line.hosted b { color: var(--shell-accent); }
 .session-line.remote b { color: var(--shell-risk); }
-@media (max-width: 719px) { .health-line.hosted, .health-line.remote { display: flex; font-size: 11px; } }
+@media (max-width: 719px) { .health-line.hosted, .health-line.remote { display: flex; font-size: 11.5px; padding: 4px 10px; } }
 
 .deploy-banner {
-  display: flex; align-items: flex-start; gap: 12px; margin: 12px 12px 0; padding: 10px 10px 10px 14px;
-  background: var(--surface); border: 1px solid var(--line-strong); border-left: 3px solid var(--accent); border-radius: var(--r-2);
-  font-size: 13px; line-height: 1.5;
+  display: flex; align-items: flex-start; gap: 12px; margin: 4px 16px 0; padding: 12px 12px 12px 16px;
+  background: var(--accent-wash); border-radius: var(--r-3); box-shadow: inset 0 0 0 1px rgba(107, 77, 255, 0.14);
+  font-size: 13.5px; line-height: 1.5;
 }
 .deploy-banner > svg { flex: none; margin-top: 3px; color: var(--accent-ink); }
-.deploy-banner.remote { border-left-color: var(--risk); background: var(--risk-soft); }
+.deploy-banner.remote { background: var(--risk-soft); box-shadow: inset 0 0 0 1px rgba(242, 96, 42, 0.22); }
 .deploy-banner.remote > svg { color: var(--risk-ink); }
 .deploy-text { flex: 1 1 220px; min-width: 0; display: grid; gap: 2px; }
 .doc-meta { white-space: nowrap; }
-.deploy-text b { font-weight: 600; }
+.deploy-text b { font-weight: 650; }
 .deploy-text p { color: var(--ink-2); max-width: 90ch; }
 .deploy-actions { display: flex; align-items: center; gap: 6px; flex: none; }
 @media (max-width: 719px) {
-  .deploy-banner { flex-wrap: wrap; margin: 8px 8px 0; }
+  .deploy-banner { flex-wrap: wrap; margin: 4px 12px 0; }
   .deploy-actions { margin-left: auto; }
 }
 
@@ -40,9 +39,9 @@
 }
 
 /* ---------- a view that fails to draw keeps the workspace alive ---------- */
-.view-fault { display: flex; gap: 14px; align-items: flex-start; max-width: 720px; margin: 28px auto; padding: 18px 20px; background: var(--risk-soft); border: 1px solid rgba(217, 72, 15, 0.28); border-left: 3px solid var(--risk); border-radius: var(--r-2); }
+.view-fault { display: flex; gap: 14px; align-items: flex-start; max-width: 720px; margin: 28px auto; padding: 20px 22px; background: var(--risk-soft); box-shadow: inset 0 0 0 1px rgba(242, 96, 42, 0.28); border-radius: var(--r-4); }
 .view-fault > svg { flex: none; margin-top: 2px; color: var(--risk-ink); }
-.view-fault h2 { font-size: 15px; font-weight: 600; margin-bottom: 6px; }
+.view-fault h2 { font-size: 17px; font-weight: 650; margin-bottom: 6px; }
 .view-fault p { color: var(--ink-2); line-height: 1.55; }
 .view-fault-detail { margin-top: 8px; }
 .view-fault-detail code { font: 12px var(--font-mono); overflow-wrap: anywhere; }
@@ -53,20 +52,20 @@
 
 /* ---------- charts ---------- */
 .viz-warn { color: var(--risk-ink); }
-.viz-notes { display: grid; gap: 8px; padding: 6px 0 2px; font-size: 12.5px; color: var(--ink-2); line-height: 1.5; }
-.viz-notes b { font-weight: 600; display: block; margin-bottom: 2px; }
+.viz-notes { display: grid; gap: 8px; padding: 6px 0 2px; font-size: 13px; color: var(--ink-2); line-height: 1.5; }
+.viz-notes b { font-weight: 650; display: block; margin-bottom: 2px; }
 .cohort-unit { font-weight: 400; color: var(--ink-3); }
 
 /* ---------- declared subgroup comparison ---------- */
-.subgroups { display: grid; gap: 10px; padding: 0 12px 12px; min-width: 0; }
-.subgroup-summary { display: grid; gap: 4px; padding: 8px 10px; background: var(--surface-2); border: 1px solid var(--line); font-size: 12.5px; line-height: 1.5; }
-.subgroup-summary p.muted { font-size: 12px; }
-.subgroup-scroll { overflow: auto; max-width: 100%; border: 1px solid var(--line); outline: none; }
+.subgroups { display: grid; gap: 12px; padding: 0 16px 14px; min-width: 0; }
+.subgroup-summary { display: grid; gap: 4px; padding: 10px 14px; background: var(--surface-2); border-radius: var(--r-3); font-size: 13px; line-height: 1.5; }
+.subgroup-summary p.muted { font-size: 12.5px; }
+.subgroup-scroll { overflow: auto; max-width: 100%; border-radius: var(--r-3); box-shadow: inset 0 0 0 1px var(--line); outline: none; }
 .subgroup-scroll .data-table { min-width: 520px; }
 .subgroup-scroll small.issue { font-weight: 400; }
 
 /* ---------- toasts: errors persist, so give them a firmer edge ---------- */
-.toast.error { border-left-width: 4px; }
+.toast.error { box-shadow: var(--shadow-pop), inset 0 0 0 1px rgba(255, 149, 100, 0.4); }
 
 /* ---------- containment (found at 390px) ---------- */
 /* A grid with an implicit "auto" column grows to the widest tab strip inside it (686px on a 390px phone); cap the track. */
@@ -80,26 +79,26 @@
 }
 
 /* The primary action of a view must not scroll out of a narrow toolbar. */
-.toolbar > .btn.primary:last-child { position: sticky; right: 12px; box-shadow: -14px 0 12px -6px var(--surface); }
+.toolbar > .btn.primary:last-child { position: sticky; right: 16px; box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.22), 0 6px 16px -8px rgba(91, 60, 242, 0.85); }
 /* Tablet tools wrap into complete rows instead of covering their neighbours. */
 @media (min-width: 720px) and (max-width: 999px) {
-  .app { grid-template-rows: 76px auto minmax(0, 1fr); }
-  .topbar { flex-wrap: wrap; align-content: center; row-gap: 3px; padding-block: 4px; }
+  .app { grid-template-rows: 84px auto minmax(0, 1fr); }
+  .topbar { flex-wrap: wrap; align-content: center; row-gap: 3px; padding-block: 6px; }
   .doc-title { flex: 1 1 160px; }
   .doc-name { max-width: 23ch; }
   .topbar-spacer { display: none; }
   .topbar .menubar { order: 3; flex-basis: 100%; }
-  .toolbar { flex-wrap: wrap; padding-block: 6px; overflow: visible; }
-  .toolbar > .btn.primary:last-child { position: static; box-shadow: none; }
+  .toolbar { flex-wrap: wrap; padding-block: 8px; overflow: visible; }
+  .toolbar > .btn.primary:last-child { position: static; box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.22), 0 6px 16px -8px rgba(91, 60, 242, 0.85); }
 }
 /* Measured figures keep "152 / 480" on one line; the label column is the one that wraps. */
 .ledger-table td.num { white-space: nowrap; }
 
 /* ---------- small-screen touch targets ---------- */
 @media (max-width: 719px) {
-  .icon-btn { width: 36px; height: 36px; }
-  .btn { height: 36px; }
-  .btn.small { height: 32px; }
-  .tabs.segment button, .seg button { height: 32px; }
-  .tabs.underline button { height: 40px; }
+  .icon-btn { width: 38px; height: 38px; }
+  .btn { height: 38px; }
+  .btn.small { height: 34px; }
+  .tabs.segment button, .seg button { height: 34px; }
+  .tabs.underline button { height: 42px; }
 }

@@ -21,7 +21,8 @@ import { DataTable } from './workbench/DataTable';
 import type { TableColumn } from './workbench/DataTable';
 import { Ledger } from './workbench/Ledger';
 import { RecipeInspector } from './workbench/RecipeInspector';
-import { ProtectionPreference, SemanticPanel } from './workbench/SemanticPanel';
+import { Hero } from './workbench/Hero';
+import { SemanticPanel } from './workbench/SemanticPanel';
 
 type PaneTab = 'table' | 'dist' | 'corr' | 'sub';
 type PaneMode = 'both' | 'original' | 'protected';
@@ -202,7 +203,7 @@ export default function Workbench() {
   );
 
   return (
-    <div className="wb">
+    <div className={`wb${active ? '' : ' wb-unassessed'}`}>
       <h1 className="sr-only">Workbench: source and candidate comparison</h1>
       <ToolbarSlot>
         <Tabs<PaneTab>
@@ -237,7 +238,7 @@ export default function Workbench() {
         {pending ? (
           <button type="button" className="btn" onClick={() => ws.cancel(busy.apply ? 'apply' : 'assess')}><Square size={13} fill="currentColor" />Stop waiting</button>
         ) : null}
-        <button type="button" className={`btn primary${busy.apply ? ' busy' : ''}`} disabled={busy.apply || !reviewed} onClick={() => void ws.apply()}>
+        <button type="button" className={`btn primary${busy.apply ? ' busy' : recipeEdited ? ' sheen' : ''}`} disabled={busy.apply || !reviewed} onClick={() => void ws.apply()}>
           <Play size={14} fill="currentColor" />{busy.apply ? 'Evaluating…' : 'Apply and evaluate'}
         </button>
       </ToolbarSlot>
@@ -245,11 +246,12 @@ export default function Workbench() {
 
       <div className={`panes-wrap${pending ? ' is-pending' : stale.length ? ' is-stale' : ''}`} {...panelProps(tabId, tab)}>
         <EvidenceBanner />
-        {active ? <ProtectionPreference /> : null}
+        {active ? <Hero recipeEdited={recipeEdited} /> : null}
         <div className={`panes${showOriginal && showProtected ? '' : ' single'}`}>
           {showOriginal ? originalPane : null}
           {showProtected ? protectedPane : null}
         </div>
+        {!active ? <Hero recipeEdited={recipeEdited} /> : null}
         <SemanticPanel key={dataset.datasetId} selectedColumn={column} onSelectColumn={highlightColumn} onSelectColumns={highlightColumns} />
       </div>
       <Ledger onShowSubgroups={() => setTab('sub')} />

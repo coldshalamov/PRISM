@@ -1,5 +1,6 @@
 /* PRISM mark: a single beam of data enters a prism and leaves as three separated rays:
-   what is preserved (violet), what stays exposed (orange) and what is lost (grey). */
+   what the recipe protected (violet), what stays exposed (orange) and what is lost (grey).
+   The Workbench's refraction diagram draws the same three from measured values. */
 export function Logo({ size = 28, title = 'PRISM' }: { size?: number; title?: string }) {
   return (
     <svg className="logo" width={size} height={size} viewBox="0 0 32 32" role="img" aria-label={title}>

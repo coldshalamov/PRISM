@@ -1,12 +1,13 @@
 import { useEffect, useState } from 'react';
-import { ArrowDownToLine, ArrowRight, Braces, FileCode2, FileText, Fingerprint, LockKeyhole, ScrollText, Table2 } from 'lucide-react';
+import { ArrowDownToLine, ArrowRight, Braces, FileCode2, FileText, Fingerprint, LockKeyhole, Table2 } from 'lucide-react';
 import { findingCoverage, isAudit, linkageOf, queryOutcome, STALE_LABEL } from '../analysis';
 import { isFictional } from '../deployment';
 import { groupLabel, num, pct, title } from '../format';
 import { recipeLabel } from '../recipe';
 import { EvidenceBanner } from '../ui/EvidenceBanner';
 import { Facts } from '../ui/Facts';
-import { Empty, Notice } from '../ui/Feedback';
+import { Notice } from '../ui/Feedback';
+import { ViewEmpty } from '../ui/ViewEmpty';
 import { InspectorSlot, ToolbarSlot } from '../ui/Slots';
 import { Status } from '../ui/Status';
 import { useWorkspace } from '../workspace';
@@ -82,7 +83,7 @@ export default function Report() {
   const currentId = candidate?.candidateId;
   useEffect(() => { setExportError(''); setLastExport(''); }, [currentId]);
 
-  if (!candidate) return <div className="start"><Empty icon={<ScrollText size={28} />} title="Evaluate a candidate to create an owner audit" actions={<button type="button" className="btn primary" onClick={() => ws.setView('workbench')}>Open workbench<ArrowRight size={14} /></button>}>Reports contain measured risk, research preservation and the exact recipe from a frozen candidate. No candidate has been evaluated in this session yet.</Empty></div>;
+  if (!candidate) return <div className="start"><ViewEmpty title="Evaluate a candidate to create an owner audit" actions={<button type="button" className="btn primary" onClick={() => ws.setView('workbench')}>Open workbench<ArrowRight size={14} /></button>}>Reports contain measured risk, research preservation and the exact recipe from a frozen candidate. No candidate has been evaluated in this session yet.</ViewEmpty></div>;
 
   const label = ws.labelOf(candidate.candidateId);
   const baseline = ws.baselineUsable ? ws.baseline : null;
@@ -126,7 +127,7 @@ export default function Report() {
       <nav className="report-outline" aria-label="Owner audit sections"><span className="intent-eyebrow">In this audit</span><a href="#report-snapshot" onClick={event => { event.preventDefault(); document.getElementById('report-snapshot')?.scrollIntoView({ block: 'start' }); }}>01 · Snapshot</a><a href="#report-risk" onClick={event => { event.preventDefault(); document.getElementById('report-risk')?.scrollIntoView({ block: 'start' }); }}>02 · Measured exposure</a><a href="#report-utility" onClick={event => { event.preventDefault(); document.getElementById('report-utility')?.scrollIntoView({ block: 'start' }); }}>03 · Research preservation</a><a href="#report-coverage" onClick={event => { event.preventDefault(); document.getElementById('report-coverage')?.scrollIntoView({ block: 'start' }); }}>04 · Coverage & caveats</a><a href="#report-downloads" onClick={event => { event.preventDefault(); document.getElementById('report-downloads')?.scrollIntoView({ block: 'start' }); }}>05 · Downloads</a></nav>
       <article className="owner-report-document">
         <div className="report-confidential"><LockKeyhole size={14} /><span>Confidential · owner-only evidence · review before forwarding</span></div>
-        <header className="report-document-head"><div className="report-document-mark"><Fingerprint size={28} strokeWidth={1.2} /><span>PRISM <small>{ws.deployment.hosted ? 'HOSTED ASSESSMENT RECORD' : 'LOCAL ASSESSMENT RECORD'}</small></span></div><h1>Candidate audit</h1><p className="report-deck">{label} · {deckSummary}</p><div className="report-date-line"><span>{dateLabel(candidate.createdAt)}</span><span>{!isAudit(candidate) && isFictional(ws.deployment, ws.dataset) ? 'Fictional demonstration data' : 'Imported data · owner evidence'}</span></div></header>
+        <header className="report-document-head"><div className="report-document-mark"><Fingerprint size={28} strokeWidth={1.2} /><span>PRISM <small>{ws.deployment.hosted ? 'Hosted assessment record' : 'Local assessment record'}</small></span></div><h1>Candidate audit</h1><p className="report-deck">{label} · {deckSummary}</p><div className="report-date-line"><span>{dateLabel(candidate.createdAt)}</span><span>{!isAudit(candidate) && isFictional(ws.deployment, ws.dataset) ? 'Fictional demonstration data' : 'Imported data · owner evidence'}</span></div></header>
         <EvidenceBanner compact />
         <div className="report-decision"><strong>No automatic release clearance.</strong><p>These measurements describe this dataset, recipe and declared attacker. They do not establish anonymity, differential privacy, legal compliance or permission to publish.{assessmentNote ? ` ${assessmentNote}` : ''}</p></div>
 

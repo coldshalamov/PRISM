@@ -43,9 +43,9 @@ const BUSY_LABEL: Record<BusyKey, string> = {
 function loadPrefs(): UiPrefs {
   try {
     const raw = JSON.parse(localStorage.getItem(UI_KEY) ?? '{}') as Partial<UiPrefs>;
-    return { library: raw.library ?? true, inspector: raw.inspector ?? true, ledger: raw.ledger ?? true };
+    return { library: raw.library ?? true, inspector: raw.inspector ?? true, ledger: raw.ledger ?? false };
   } catch {
-    return { library: true, inspector: true, ledger: true };
+    return { library: true, inspector: true, ledger: false };
   }
 }
 function viewFromHash(): ViewId {
