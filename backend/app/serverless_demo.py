@@ -34,6 +34,9 @@ MAX_CANDIDATES = 40
 MAX_SEARCH = 24
 MAX_JOBS = 4
 STATE_LIMIT = 64 * 1024
+BROWSER_SESSION_HEADER = "x-prism-demo-session"
+CORS_METHODS = {"GET", "HEAD", "POST", "PATCH", "DELETE", "OPTIONS"}
+CORS_HEADERS = {"content-type", BROWSER_SESSION_HEADER}
 META = ("constraints", "frontierMember", "explanation", "objectives", "feasible", "suppression_rate", "validation")
 
 
@@ -43,7 +46,7 @@ class DemoProblem(Exception):
 
 
 class ServerlessDemo:
-    def __init__(self, public_host=None, *, store=None, secret=None, clock=time.time):
+    def __init__(self, public_host=None, *, store=None, secret=None, clock=time.time, archie_origins=None):
         configured = [public_host] if public_host else [os.environ.get(k) for k in
             ("PUBLIC_DEMO_HOST", "VERCEL_PROJECT_PRODUCTION_URL", "VERCEL_URL")]
         self.hosts = {_authority(h) for h in configured if h}
@@ -52,6 +55,17 @@ class ServerlessDemo:
         self.store = store or ArchieStore()
         self.secret = secret or os.environ.get("PRISM_SESSION_SECRET", "")
         self.clock = clock
+        configured_origins = archie_origins if archie_origins is not None else os.environ.get("PUBLIC_ARCHIE_ORIGINS", "").split(",")
+        self.archie_origins = set()
+        for value in configured_origins:
+            value = value.strip()
+            if not value:
+                continue
+            parsed = urlsplit(value)
+            if (parsed.scheme != "https" or not parsed.netloc or parsed.path or parsed.query or parsed.fragment
+                    or value != "https://" + _authority(parsed.netloc)):
+                raise ValueError("PUBLIC_ARCHIE_ORIGINS must contain exact HTTPS origins without paths or wildcards.")
+            self.archie_origins.add(value)
 
     @staticmethod
     def _module():
@@ -85,17 +99,32 @@ class ServerlessDemo:
         record = self.store.create(visitor, self._dump(state), self.clock() + TTL)
         return token, record, state
 
-    def _session(self, headers):
+    def _session(self, headers, browser=False):
         if len(self.secret) < 32:
             raise StoreUnavailable()
-        token = self._identity(headers)
+        if browser:
+            values = headers.getlist(BROWSER_SESSION_HEADER)
+            if len(values) != 1 or not re.fullmatch(r"[A-Za-z0-9_-]{43}", values[0]):
+                raise DemoProblem("browser_session_required", "Start a fresh fictional browser session before using this bridge.", 403)
+            token = values[0]
+        else:
+            token = self._identity(headers)
         record = self.store.get(hashlib.sha256(token.encode()).hexdigest()) if token else None
         if record and record.expires <= self.clock():
             self.store.delete(record)
             record = None
         if record:
             return token, record, record.state()
+        if browser:
+            # A forged, cleared, or expired header must never allocate a visitor.
+            raise DemoProblem("session_expired", "This fictional browser session ended. Start a fresh session to continue.", 403)
         return self._new()
+
+    def _browser_session(self):
+        if len(self.secret) < 32:
+            raise StoreUnavailable()
+        token, _, _ = self._new()
+        return JSONResponse({"token": token, "expiresIn": TTL})
 
     def _engine(self, token):
         module = self._module()
@@ -149,8 +178,8 @@ class ServerlessDemo:
             raise DemoProblem(kind + "_not_found", "This result is absent or this visitor session has ended.", 404)
         return collection[identifier]
 
-    def _dispatch(self, method, path, query, body, headers):
-        token, record, state = self._session(headers)
+    def _dispatch(self, method, path, query, body, headers, browser=False, session=None):
+        token, record, state = session if session is not None else self._session(headers, browser)
         if method == "DELETE":
             self.store.delete(record)
             return JSONResponse({"cleared": True}), ""
@@ -221,9 +250,13 @@ class ServerlessDemo:
         self.store.save(record, self._dump(state), self.clock() + TTL)
         return result if isinstance(result, Response) else JSONResponse(module.clean(result)), token
 
-    async def _send(self, scope, receive, send, response, token=None):
+    async def _send(self, scope, receive, send, response, token=None, cors_origin=None):
         response.headers.update(SECURITY_HEADERS)
-        if token is not None:
+        if cors_origin is not None:
+            response.headers["Access-Control-Allow-Origin"] = cors_origin
+            response.headers["Access-Control-Expose-Headers"] = "Content-Disposition"
+            response.headers["Vary"] = "Origin"
+        elif token is not None:
             local = urlsplit("//" + Headers(scope=scope)["host"]).hostname in {"localhost", "127.0.0.1", "::1"}
             if token:
                 response.set_cookie(COOKIE, token, max_age=TTL, secure=not local, httponly=True, samesite="strict", path="/")
@@ -243,6 +276,7 @@ class ServerlessDemo:
         if scope["type"] != "http":
             return
         headers = Headers(scope=scope)
+        cors_origin = None
         try:
             if len(headers.getlist("host")) != 1 or headers["host"].lower() not in self.hosts:
                 raise DemoProblem("host_denied", "This hostname is not configured for the public demo.", 403)
@@ -250,22 +284,46 @@ class ServerlessDemo:
             local = urlsplit("//" + host).hostname in {"localhost", "127.0.0.1", "::1"}
             origin = ("http" if local else "https") + "://" + host
             origins = headers.getlist("origin")
-            if len(origins) > 1 or (origins and origins != [origin]):
+            if len(origins) > 1:
                 raise DemoProblem("origin_denied", "Use the demo's own origin.", 403)
-            if headers.get("sec-fetch-site") not in {None, "same-origin", "none"}:
+            if origins and origins != [origin]:
+                if origins[0] not in self.archie_origins:
+                    raise DemoProblem("origin_denied", "Use the demo's own origin or an explicitly configured Archie origin.", 403)
+                cors_origin = origins[0]
+            browser = cors_origin is not None
+            if not browser and headers.get("sec-fetch-site") not in {None, "same-origin", "none"}:
                 raise DemoProblem("cross_site_denied", "Use the demo's own origin.", 403)
             method, path = scope["method"], scope["path"].rstrip("/") or "/"
             if path.startswith("/v1/datasets/import") or path.startswith("/v1/audits"):
                 raise DemoProblem("fictional_only", "The public demo accepts bundled fictional fixtures only. Uploads and external audits are disabled.", 403)
-            if method not in {"GET", "HEAD", "OPTIONS"} and origins != [origin]:
+            if browser and method == "OPTIONS":
+                requested_method = headers.get("access-control-request-method", "")
+                requested_headers = {value.strip().lower() for value in headers.get("access-control-request-headers", "").split(",") if value.strip()}
+                known_route = ((path == "/health" and requested_method in {"GET", "HEAD"})
+                               or (path == "/v1/browser-session" and requested_method == "POST")
+                               or (path in {"/v1/registry", "/v1/lab"} and requested_method == "GET")
+                               or any(requested_method == verb and pattern.fullmatch(path) for verb, pattern in ROUTES))
+                if requested_method not in CORS_METHODS or not requested_headers <= CORS_HEADERS or not known_route:
+                    raise DemoProblem("preflight_denied", "This bridge request method, route, or header is not allowed.", 403)
+                response = Response(status_code=204, headers={
+                    "Access-Control-Allow-Methods": "GET, HEAD, POST, PATCH, DELETE, OPTIONS",
+                    "Access-Control-Allow-Headers": "Content-Type, X-PRISM-Demo-Session",
+                    "Access-Control-Max-Age": "600",
+                })
+                return await self._send(scope, receive, send, response, cors_origin=cors_origin)
+            if not browser and method not in {"GET", "HEAD", "OPTIONS"} and origins != [origin]:
                 raise DemoProblem("origin_required", "Changing demo state requires its exact same-origin Origin header.", 403)
             if path == "/health" and method in {"GET", "HEAD"}:
-                return await self._send(scope, receive, send, JSONResponse({"status": "ok", "version": "0.1.0", "deploymentMode": "synthetic_demo", "uploadsAllowed": False, "backendProvider": "Archie", "sessionTtlSeconds": TTL, "maxSearchCandidates": MAX_SEARCH, "maxCandidates": MAX_CANDIDATES}))
+                return await self._send(scope, receive, send, JSONResponse({"status": "ok", "version": "0.1.0", "deploymentMode": "synthetic_demo", "uploadsAllowed": False, "backendProvider": "Archie", "sessionTtlSeconds": TTL, "maxSearchCandidates": MAX_SEARCH, "maxCandidates": MAX_CANDIDATES}), cors_origin=cors_origin)
+            handshake = browser and path == "/v1/browser-session" and method == "POST"
+            # Authenticate before parsing any cross-origin configuration. Reuse
+            # this record for dispatch so authentication needs only one lookup.
+            session = await run_in_threadpool(self._session, headers, True) if browser and not handshake else None
             if path == "/v1/registry" and method == "GET":
-                return await self._send(scope, receive, send, JSONResponse(registry.get_registry()))
+                return await self._send(scope, receive, send, JSONResponse(registry.get_registry()), cors_origin=cors_origin)
             if path == "/v1/lab" and method == "GET":
-                return await self._send(scope, receive, send, JSONResponse(await run_in_threadpool(lab.experiments)))
-            if not any(method == verb and pattern.fullmatch(path) for verb, pattern in ROUTES):
+                return await self._send(scope, receive, send, JSONResponse(await run_in_threadpool(lab.experiments)), cors_origin=cors_origin)
+            if not handshake and not any(method == verb and pattern.fullmatch(path) for verb, pattern in ROUTES):
                 raise DemoProblem("fictional_only", "This route is not available in the fictional-only demo.", 403)
             length = headers.get("content-length")
             if length and (not length.isdigit() or int(length) > BODY_LIMIT):
@@ -284,8 +342,13 @@ class ServerlessDemo:
             # arbitrary JSON bodies even transiently.
             if body and not isinstance(json.loads(body), dict):
                 raise ValueError()
-            response, token = await run_in_threadpool(self._dispatch, method, path, scope.get("query_string", b"").decode(), bytes(body), headers)
-            return await self._send(scope, receive, send, response, token)
+            if handshake:
+                if body and json.loads(body) != {}:
+                    raise ValueError()
+                response = await run_in_threadpool(self._browser_session)
+                return await self._send(scope, receive, send, response, cors_origin=cors_origin)
+            response, token = await run_in_threadpool(self._dispatch, method, path, scope.get("query_string", b"").decode(), bytes(body), headers, browser, session)
+            return await self._send(scope, receive, send, response, token, cors_origin)
         except StoreUnavailable:
             response = JSONResponse({"code": "backend_unavailable", "message": "Archie storage is temporarily unavailable. Retry shortly; no local fallback is used.", "details": {}}, status_code=503)
         except StoreConflict:
@@ -300,7 +363,7 @@ class ServerlessDemo:
                 response = JSONResponse({"code": exc.code, "message": exc.message, "details": {}}, status_code=exc.status)
             else:
                 raise
-        await self._send(scope, receive, send, response)
+        await self._send(scope, receive, send, response, cors_origin=cors_origin)
 
 
 app = ServerlessDemo()

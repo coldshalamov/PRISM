@@ -10,6 +10,7 @@ from app.serverless_demo import BODY_LIMIT, COOKIE, ServerlessDemo
 
 ORIGIN = "https://demo.example"
 SECRET = "stable-test-secret-with-at-least-32-characters"
+ARCHIE_ORIGIN = "https://41d0bdfd-0065-4b0b-a973-efbe1c1a9c5e.previews.archie.com"
 
 
 class FakeStore:
@@ -146,3 +147,100 @@ def test_boundary_ttl_failure_and_stable_pseudonyms():
         assert down.get("/health").status_code == 200
     with TestClient(ServerlessDemo("demo.example", store=store, secret=SECRET), base_url=ORIGIN) as no_origin:
         assert no_origin.delete("/v1/session").status_code == 403
+
+
+def bridge(store, clock=None):
+    app = ServerlessDemo("demo.example", store=store, secret=SECRET, archie_origins=[ARCHIE_ORIGIN],
+                         **({"clock": clock} if clock else {}))
+    return TestClient(app, base_url=ORIGIN, headers={"Origin": ARCHIE_ORIGIN, "Sec-Fetch-Site": "cross-site"})
+
+
+def handshake(visitor):
+    response = visitor.post("/v1/browser-session", json={})
+    assert response.status_code == 200, response.text
+    payload = response.json()
+    assert set(payload) == {"token", "expiresIn"} and payload["expiresIn"] == 1800
+    assert len(payload["token"]) == 43
+    assert "set-cookie" not in response.headers
+    assert response.headers["access-control-allow-origin"] == ARCHIE_ORIGIN
+    assert "access-control-allow-credentials" not in response.headers
+    visitor.headers["X-PRISM-Demo-Session"] = payload["token"]
+    return payload["token"]
+
+
+def test_archie_bridge_real_calculation_download_and_visitor_isolation_without_cookies():
+    store = FakeStore()
+    with bridge(store) as first, bridge(store) as second:
+        first_token, second_token = handshake(first), handshake(second)
+        assert first_token != second_token and len(store.records) == 2
+        first_data, second_data = fixture(first), fixture(second)
+        assert first_data["datasetId"] != second_data["datasetId"]
+        protected = create(first, first_data)
+        assert protected["risk"]["metrics"]["verified_unique_correct_matches"] == 75
+        assert second.get(f'/v1/candidates/{protected["candidateId"]}/comparison').status_code == 404
+        download = first.post("/v1/reports/export", json={"candidateId": protected["candidateId"], "format": "recipe"})
+        assert download.status_code == 200 and download.json() == protected["recipe"]
+        assert download.headers["access-control-expose-headers"] == "Content-Disposition"
+        assert "attachment;" in download.headers["content-disposition"]
+        assert "set-cookie" not in download.headers and not first.cookies and not second.cookies
+        assert first.delete("/v1/session").json() == {"cleared": True}
+        assert first.get("/v1/demo").status_code == 403 and len(store.records) == 1
+        assert fixture(second)["datasetId"] == second_data["datasetId"]
+
+
+def test_archie_bridge_preflight_is_exact_opt_in_and_has_no_credentials():
+    store = FakeStore()
+    with bridge(store) as visitor:
+        response = visitor.options("/v1/candidates", headers={
+            "Access-Control-Request-Method": "POST",
+            "Access-Control-Request-Headers": "content-type,x-prism-demo-session",
+        })
+        assert response.status_code == 204
+        assert response.headers["access-control-allow-origin"] == ARCHIE_ORIGIN
+        assert set(response.headers["access-control-allow-methods"].split(", ")) == {"GET", "HEAD", "POST", "PATCH", "DELETE", "OPTIONS"}
+        assert set(response.headers["access-control-allow-headers"].lower().split(", ")) == {"content-type", "x-prism-demo-session"}
+        assert "access-control-allow-credentials" not in response.headers and "set-cookie" not in response.headers
+        assert visitor.get("/health").status_code == 200 and not store.records
+        bad_header = visitor.options("/v1/candidates", headers={"Access-Control-Request-Method": "POST", "Access-Control-Request-Headers": "Authorization"})
+        assert bad_header.status_code == 403
+        for foreign in ("https://evil.example", ARCHIE_ORIGIN + ".evil.example", "null"):
+            denied = visitor.post("/v1/browser-session", headers={"Origin": foreign})
+            assert denied.status_code == 403 and "access-control-allow-origin" not in denied.headers
+        assert visitor.post("/v1/browser-session", headers={"Host": "evil.example", "X-Forwarded-Host": "demo.example"}).status_code == 403
+        assert visitor.post("/v1/datasets/import", content=b"PRIVATE_ROWS").json()["code"] == "fictional_only"
+        assert visitor.post("/v1/audits/import-pair", json={}).json()["code"] == "fictional_only"
+        assert visitor.post("/v1/browser-session", json={"rows": ["PRIVATE"]}).status_code == 422
+        assert not store.records
+    with client(store) as same_origin:
+        # The opt-in bridge endpoint is not exposed to ordinary cookie clients.
+        assert same_origin.post("/v1/browser-session", json={}).status_code == 403
+        assert same_origin.get("/health", headers={"Origin": ARCHIE_ORIGIN}).status_code == 403
+
+
+def test_archie_bridge_rejects_missing_invalid_expired_headers_without_allocation():
+    store = FakeStore()
+    moment = [100.0]
+    with bridge(store, clock=lambda: moment[0]) as visitor:
+        for path in ("/v1/demo", "/v1/registry", "/v1/lab"):
+            assert visitor.get(path).json()["code"] == "browser_session_required"
+        assert visitor.post("/v1/candidates", content=b"not-json").json()["code"] == "browser_session_required"
+        assert not store.records
+        token = handshake(visitor)
+        assert visitor.get("/v1/registry").status_code == 200
+        fixture(visitor)
+        for invalid in ("", "bad", "x" * 43, token + "extra"):
+            denied = visitor.get("/v1/demo", headers={"X-PRISM-Demo-Session": invalid})
+            assert denied.status_code == 403 and "set-cookie" not in denied.headers
+            assert len(store.records) == 1
+        duplicate = visitor.get("/v1/demo", headers=[("X-PRISM-Demo-Session", token), ("X-PRISM-Demo-Session", token)])
+        assert duplicate.status_code == 403 and len(store.records) == 1
+        # A valid same-origin cookie cannot replace the required bridge header.
+        visitor.headers.pop("X-PRISM-Demo-Session")
+        visitor.cookies.set(COOKIE, token, domain="demo.example", path="/")
+        assert visitor.get("/v1/demo").status_code == 403 and len(store.records) == 1
+        visitor.headers["X-PRISM-Demo-Session"] = token
+        moment[0] += 1801
+        expired = visitor.get("/v1/demo")
+        assert expired.status_code == 403 and expired.json()["code"] == "session_expired"
+        assert not store.records
+        assert handshake(visitor) != token and len(store.records) == 1

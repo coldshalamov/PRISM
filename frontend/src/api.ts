@@ -50,21 +50,70 @@ const unreachableMessage = (): string => (isLocalHost(window.location.hostname) 
   ? 'The local PRISM service is not reachable. Start the backend on 127.0.0.1:8000 and retry.'
   : 'The PRISM service is not reachable. Check your connection and retry in a moment.');
 
+// Archie serves the exact production module from our public asset CDN. Its
+// static host cannot proxy Python, so that one fixed module origin uses the
+// explicitly allowlisted, fictional-only bridge. Local and same-origin runs
+// keep their existing transport. No credential is placed in URLs or storage.
+const PUBLIC_COMPUTE_ORIGIN = 'https://prism-healthcare-taupe.vercel.app';
+const moduleOrigin = new URL(import.meta.url).origin;
+const bridgeOrigin = moduleOrigin === PUBLIC_COMPUTE_ORIGIN && window.location.origin !== moduleOrigin
+  ? PUBLIC_COMPUTE_ORIGIN : '';
+let browserSession: Promise<string> | null = null;
+const responseSessions = new WeakMap<Response, Promise<string>>();
+
+function bridgeToken(): Promise<string> {
+  if (!browserSession) {
+    const nextSession: Promise<string> = (async () => {
+      const response = await fetch(`${bridgeOrigin}/v1/browser-session`, {
+        method: 'POST', credentials: 'omit', headers: { 'Content-Type': 'application/json' }, body: '{}',
+      });
+      if (!response.ok) throw new ApiError('The hosted demo could not start a visitor session. Retry in a moment.', 'BRIDGE_SESSION_UNAVAILABLE', null);
+      const body = await response.json() as { token?: unknown };
+      if (typeof body.token !== 'string' || !/^[A-Za-z0-9_-]{43}$/.test(body.token)) {
+        throw new ApiError('The hosted demo returned an invalid visitor session.', 'BAD_RESPONSE', null);
+      }
+      return body.token;
+    })().catch(error => {
+      if (browserSession === nextSession) browserSession = null;
+      throw error;
+    });
+    browserSession = nextSession;
+  }
+  return browserSession;
+}
+
+async function serviceFetch(path: string, options: RequestInit = {}): Promise<Response> {
+  if (!bridgeOrigin) return fetch(path, options);
+  const headers = new Headers(options.headers);
+  const session = path !== '/health' ? bridgeToken() : null;
+  if (session) headers.set('X-PRISM-Demo-Session', await session);
+  const response = await fetch(`${bridgeOrigin}${path}`, { ...options, headers, credentials: 'omit' });
+  if (session) responseSessions.set(response, session);
+  if (response.ok && path === '/v1/session' && options.method === 'DELETE' && browserSession === session) browserSession = null;
+  return response;
+}
+
+function resetExpiredBridge(response: Response, code?: string) {
+  if ((code === 'session_expired' || code === 'session_not_found') && browserSession === responseSessions.get(response)) browserSession = null;
+}
+
 async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
   const isForm = options.body instanceof FormData;
   let response: Response;
   try {
-    response = await fetch(path, {
+    response = await serviceFetch(path, {
       ...options,
       headers: isForm ? options.headers : { 'Content-Type': 'application/json', ...options.headers },
     });
   } catch (error) {
+    if (error instanceof ApiError) throw error;
     if (error instanceof DOMException && error.name === 'AbortError') throw new ApiError('Request cancelled.', 'ABORTED', null);
     throw new ApiError(unreachableMessage(), 'UNREACHABLE', null);
   }
   if (!response.ok) {
     let body: { message?: string; code?: string; details?: unknown; detail?: unknown } = {};
     try { body = await response.json(); } catch { /* service may be starting */ }
+    resetExpiredBridge(response, body.code);
     const details = body.details ?? body.detail;
     const extra = describeDetails(details);
     const message = body.message || (typeof body.detail === 'string' ? body.detail : '') || `Request failed (${response.status}).`;
@@ -155,16 +204,18 @@ export const api = {
   exportReport: async (candidateId: string, format: ExportFormat, acknowledgments?: Acknowledgment[]): Promise<string> => {
     let response: Response;
     try {
-      response = await fetch('/v1/reports/export', {
+      response = await serviceFetch('/v1/reports/export', {
         method: 'POST', headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ candidateId, format, ...(format === 'csv' ? { acknowledgments: acknowledgments ?? [] } : {}) }),
       });
-    } catch {
+    } catch (error) {
+      if (error instanceof ApiError) throw error;
       throw new ApiError(unreachableMessage(), 'UNREACHABLE', null);
     }
     if (!response.ok) {
       let body: { message?: string; code?: string; detail?: unknown } = {};
       try { body = await response.json(); } catch { /* ignore */ }
+      resetExpiredBridge(response, body.code);
       throw new ApiError(body.message || (typeof body.detail === 'string' ? body.detail : '') || 'Export was blocked. Review direct identifiers and candidate coverage.', body.code || `HTTP_${response.status}`, body.detail);
     }
     const blob = await response.blob();
