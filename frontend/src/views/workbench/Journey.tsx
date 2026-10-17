@@ -40,7 +40,13 @@ export function Journey({ recipeEdited }: { recipeEdited: boolean }) {
       id: 'measure', label: 'Measure', icon: <Gauge size={16} />,
       state: evaluating ? 'running' : !reviewed ? 'todo' : stalled ? 'stale' : active ? 'done' : 'current',
       sub: evaluating ? 'Evaluating' : !reviewed ? 'Not measured' : stalled ? `Stale · ${stale.map(reason => STALE_LABEL[reason]).join(', ')}` : active && dataset ? `${num(active.rowCount, 0)} rows` : 'Not measured',
-      disabled: !reviewed || evaluating || sessionLost || audit, onClick: () => void ws.apply(), hint: 'Apply and evaluate',
+      /* Re-running an unchanged, current recipe would store a duplicate candidate, so the step only acts when a measurement is missing,
+         stale or edited, and it takes the same action the stale banner offers (evaluate the recipe, or re-evaluate this snapshot). */
+      disabled: !reviewed || evaluating || sessionLost,
+      onClick: !active || stalled || recipeEdited
+        ? () => void (audit || (stalled && !stale.includes('recipe') && !stale.includes('classifications')) ? ws.assess() : ws.apply())
+        : undefined,
+      hint: !active ? 'Apply and evaluate' : audit || (stalled && !stale.includes('recipe') && !stale.includes('classifications')) ? 'Re-evaluate this snapshot' : 'Evaluate the current recipe',
     },
     {
       id: 'compare', label: 'Compare', icon: <GitCompareArrows size={16} />,

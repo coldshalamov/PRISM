@@ -33,8 +33,9 @@ export function Refraction({ values, idle = false, label, external = false }: { 
   const loss = unit(values.loss);
   const removed = before !== null && after !== null ? Math.max(0, before - after) : null;
   const worse = before !== null && after !== null && after > before;
-  const widths = { removed: weight(removed), exposed: weight(after), lost: weight(loss) } as const;
-  const measured = { removed: removed !== null && !worse, exposed: after !== null, lost: loss !== null } as const;
+  const widths = { removed: worse ? 0 : weight(removed), exposed: weight(after), lost: weight(loss) } as const;
+  /* A value is either measured (including a measured zero, and "not reduced") or not measured. Only the second is dashed. */
+  const measured = { removed: removed !== null, exposed: after !== null, lost: loss !== null } as const;
 
   const removedText = removed === null ? '—' : worse ? 'Not reduced' : removed === 0 ? '0 pts' : `${removed * 100 < 0.05 ? '<0.1' : num(removed * 100, 1)} pts`;
   /* The ray is clamped to 100% for drawing only; the label keeps the measured figure. */
@@ -75,6 +76,8 @@ export function Refraction({ values, idle = false, label, external = false }: { 
         {RAYS.map((ray, index) => {
           const known = !idle && measured[ray.id];
           const width = widths[ray.id];
+          /* A measured zero is a hollow terminal mark: it says "nothing here", which is different from "not measured" (dashed). */
+          if (known && width === 0) return <circle key={ray.id} className={`ray-zero ${ray.className}`} cx={ray.from[0]} cy={ray.from[1]} r="3.5" />;
           return (
             <line
               key={ray.id} className={`ray ${ray.className}${known ? '' : ' unknown'}`} x1={ray.from[0]} y1={ray.from[1]} x2={ray.to[0]} y2={ray.to[1]}
@@ -85,9 +88,9 @@ export function Refraction({ values, idle = false, label, external = false }: { 
       </svg>
 
       <ul className="refraction-out">
-        <li className={`ro-removed${measured.removed && !idle ? '' : ' unknown'}`}><i aria-hidden="true" /><b className="tnum">{idle ? '—' : removedText}</b><span>{external ? 'Lower by' : 'Removed'}</span></li>
-        <li className={`ro-exposed${measured.exposed && !idle ? '' : ' unknown'}`}><i aria-hidden="true" /><b className="tnum">{idle || after === null ? '—' : pct(after)}</b><span>Still unique</span></li>
-        <li className={`ro-lost${measured.lost && !idle ? '' : ' unknown'}`}><i aria-hidden="true" /><b className="tnum">{idle ? '—' : lossText}</b><span>Research loss</span></li>
+        <li className={`ro-removed${measured.removed && !idle ? (widths.removed === 0 ? ' none' : '') : ' unknown'}`}><i aria-hidden="true" /><b className="tnum">{idle ? '—' : removedText}</b><span>{external ? 'Lower by' : 'Removed'}</span></li>
+        <li className={`ro-exposed${measured.exposed && !idle ? (widths.exposed === 0 ? ' none' : '') : ' unknown'}`}><i aria-hidden="true" /><b className="tnum">{idle || after === null ? '—' : pct(after)}</b><span>Still unique</span></li>
+        <li className={`ro-lost${measured.lost && !idle ? (widths.lost === 0 ? ' none' : '') : ' unknown'}`}><i aria-hidden="true" /><b className="tnum">{idle ? '—' : lossText}</b><span>Research loss</span></li>
       </ul>
 
     </figure>
