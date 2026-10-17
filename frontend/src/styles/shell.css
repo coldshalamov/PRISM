@@ -14,9 +14,9 @@
 @media (max-width: 1359px) { .app { --inspector-w: 328px; } }
 /* A view with nothing to inspect gives the sheet its full width back. */
 @media (min-width: 1000px) {
-  .app.insp-open:has(.inspector:empty) { grid-template-columns: var(--rail-w) minmax(0, 1fr) 0; }
-  .app.insp-open:has(.inspector:empty) .inspector { visibility: hidden; }
-  .app.insp-open:has(.inspector:empty) .toolbar { border-top-right-radius: var(--r-4); }
+  .app.insp-open:not(.is-guide):has(.inspector:empty) { grid-template-columns: var(--rail-w) minmax(0, 1fr) 0; }
+  .app.insp-open:not(.is-guide):has(.inspector:empty) .inspector { visibility: hidden; }
+  .app.insp-open:not(.is-guide):has(.inspector:empty) .toolbar { border-top-right-radius: var(--r-4); }
 }
 
 /* ---------- rail: navigation + library ---------- */
