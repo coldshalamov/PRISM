@@ -55,7 +55,7 @@ function UploadsOffDialog({ initial, onClose }: { initial: ImportTab; onClose: (
           ? 'You can still explore everything the demo offers on its fictional records: the 5,000-record oncology demo and the 480-record benchmark with exact-linkage replay. Their measurements are real computations run on the demo server.'
           : 'You can still open the fictional demo records, but do not load real data into a service that is not running on your own computer.'}
       </p>
-      <p className="muted">When you run PRISM locally, original and protected CSV files are read only by the service on your own computer.</p>
+      <p className="muted">When you run PRISM locally, original and protected CSV, JSON, or XLSX tables are read only by the service on your own computer.</p>
       {ws.dataset ? null : <button type="button" className="btn" onClick={demos}>Go to the Workbench</button>}
     </Dialog>
   );
@@ -90,7 +90,7 @@ function UploadDialog({ initial, onClose }: { initial: ImportTab; onClose: () =>
     if (!file) return;
     setError('');
     if (file.size > MAX_BYTES) { setError('This file is larger than the 50 MB limit.'); return; }
-    if (!/\.csv$/i.test(file.name) && file.type !== 'text/csv') { setError('Choose a CSV file.'); return; }
+    if (!/\.(csv|json|xlsx)$/i.test(file.name)) { setError('Choose a CSV, JSON table, or XLSX workbook.'); return; }
     setBusy(true);
     try {
       const data = await api.importDataset(file);
@@ -133,7 +133,7 @@ function UploadDialog({ initial, onClose }: { initial: ImportTab; onClose: () =>
   return (
     <Dialog
       title={tab === 'original' ? 'Import original dataset' : 'Audit a protected file'}
-      description="Files are read by the local service on this computer. CSV only, UTF-8, up to 50 MB and 100,000 rows. Use synthetic data for this prototype."
+      description="Files are read by the local service on this computer. CSV or JSON (UTF-8), or a single-sheet XLSX workbook with values only. Up to 50 MB, 100,000 rows and 80 columns. Use synthetic data for this prototype."
       onClose={onClose}
       size="lg"
       backdropClose={!protectedSet && !lineageText}
@@ -164,7 +164,7 @@ function UploadDialog({ initial, onClose }: { initial: ImportTab; onClose: () =>
             {plural(ws.candidates.length, 'candidate')} and any search results will leave this page. The local service keeps earlier datasets in memory until you clear the session.
           </Notice>
         ) : null}
-        <input ref={input} type="file" accept=".csv,text/csv" className="sr-only" aria-label={tab === 'audit' ? 'Protected CSV file' : 'Original CSV file'}
+        <input ref={input} type="file" accept=".csv,.json,.xlsx,text/csv,application/json,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" className="sr-only" aria-label={tab === 'audit' ? 'Protected table file' : 'Original table file'}
           onChange={event => { void upload(event.target.files?.[0]); event.target.value = ''; }} />
         <button
           type="button"
@@ -176,7 +176,7 @@ function UploadDialog({ initial, onClose }: { initial: ImportTab; onClose: () =>
           onDrop={event => { event.preventDefault(); setDragging(false); void upload(event.dataTransfer.files[0]); }}
         >
           <FileUp size={26} aria-hidden="true" />
-          <b>{busy ? 'Reading the file…' : tab === 'audit' && protectedSet ? protectedSet.name : 'Choose a CSV, or drop it here'}</b>
+          <b>{busy ? 'Reading the file…' : tab === 'audit' && protectedSet ? protectedSet.name : 'Choose a table, or drop it here'}</b>
           <span>
             {tab === 'audit' && protectedSet
               ? `${plural(protectedSet.rowCount, 'row')} · ${plural(protectedSet.schema.length, 'column')} · choose another to replace`
@@ -356,12 +356,13 @@ export function PrivacyDialog({ onClose }: { onClose: () => void }) {
         <div>
           <dt>Where measurements run</dt>
           <dd>{hosted
-            ? 'Actual Python calculations run through Vercel on the hosted demo server, not on this computer. No AI or LLM model is in the application runtime.'
-            : origin.local ? 'On this computer, by the local Python service. No AI model is in the application runtime.' : `On ${origin.host}, by the service behind this page.`}</dd>
+            ? 'Actual privacy and utility calculations run deterministically in Python through Vercel on the hosted demo server.'
+            : origin.local ? 'On this computer, deterministically in the local Python service.' : `On ${origin.host}, by the service behind this page.`}</dd>
         </div>
-        <div><dt>Uploads</dt><dd>{deployment.uploadsAllowed ? 'Original and protected CSV files can be imported. They are read by the local service on this computer only.' : deployment.uploadsNote}</dd></div>
+        <div><dt>Optional Jev interpretation</dt><dd>Only after you choose Interpret ambiguous fields with Jev, the server sends approved column labels, types, units, structural format names and neighboring labels to OpenRouter. No row values are sent. Offline rules and all statistical tests work without the model.</dd></div>
+        <div><dt>Uploads</dt><dd>{deployment.uploadsAllowed ? 'Original and protected CSV, JSON, and single-sheet XLSX tables can be imported. They are read by the local service on this computer only.' : deployment.uploadsNote}</dd></div>
         <div><dt>Stored in this browser</dt><dd>Only panel layout preferences (key prism.ui.v1). Rows, candidates and reports are never written to browser storage.</dd></div>
-        <div><dt>Network</dt><dd>The page only requests its own origin, which {hosted ? 'serves the hosted demo service' : 'proxies to the service'}. Source links in the registry open in a new tab only when you click them.</dd></div>
+        <div><dt>Network</dt><dd>{hosted ? 'The Archie page loads its reviewed assets and fictional-data API from the fixed Vercel service. The fallback page uses the same service.' : 'This page requests the service on this computer.'} Optional Jev interpretation is a separate server-to-OpenRouter metadata request after your explicit action. Source links open only when you choose them.</dd></div>
         <div><dt>Reports</dt><dd>Exports contain aggregate measurements, recipes and assumptions and are owner-confidential. Query definitions and aggregate values can still be sensitive; review before sharing.</dd></div>
       </dl>
       <h3 className="dialog-sub">What PRISM does not tell you</h3>

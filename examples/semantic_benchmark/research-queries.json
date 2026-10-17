@@ -1,0 +1,25 @@
+[
+  {
+    "id": "response-by-diagnosis",
+    "type": "group_rate",
+    "groupBy": [
+      "DX_CODE"
+    ],
+    "target": "TX_RESP",
+    "positiveValue": true,
+    "weight": 3,
+    "tolerance": 0.05,
+    "minCohort": 5
+  },
+  {
+    "id": "height-by-diagnosis",
+    "type": "group_mean",
+    "groupBy": [
+      "DX_CODE"
+    ],
+    "target": "HT_CM",
+    "weight": 1,
+    "tolerance": 2,
+    "minCohort": 5
+  }
+]

@@ -153,6 +153,8 @@ export interface CurrentControls {
   workloadDirty?: boolean;
   schema: ColumnSpec[];
   rowUnit?: RowUnit | null;
+  /** Source semantic interpretation bound to an evaluated candidate's frozen findings. */
+  semanticRevision?: string | null;
 }
 
 export function staleReasons(candidate: Candidate | null, current: CurrentControls | null): StaleReason[] {
@@ -176,7 +178,8 @@ export function staleReasons(candidate: Candidate | null, current: CurrentContro
     && ((frozenContext.entityColumn !== undefined && (frozenContext.entityColumn ?? null) !== (current.rowUnit.entityColumn ?? null))
       || (frozenContext.oneRowPerPersonConfirmed !== undefined && Boolean(frozenContext.oneRowPerPersonConfirmed) !== Boolean(current.rowUnit.oneRowPerPersonConfirmed))),
   );
-  if ((candidate.schema && schemaKey(candidate.schema) !== schemaKey(current.schema)) || unitDrifted) reasons.push('classifications');
+  const semanticDrifted = Boolean(current.semanticRevision && candidate.risk.semantic?.semanticRevision !== current.semanticRevision);
+  if ((candidate.schema && schemaKey(candidate.schema) !== schemaKey(current.schema)) || unitDrifted || semanticDrifted) reasons.push('classifications');
   return reasons;
 }
 

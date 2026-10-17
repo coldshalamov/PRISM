@@ -1,7 +1,7 @@
 import { isLocalHost } from './deployment';
 import type {
-  ApiHealth, AuditMode, Candidate, ColumnSpec, Dataset, ExportFormat, LabResult, Registry,
-  ResearchQuery, SearchResult, TransformStep,
+  ApiHealth, AuditMode, Candidate, ColumnSpec, Dataset, DatasetSemantics, ExportFormat, LabResult, Registry,
+  ResearchQuery, SearchResult, SemanticOntology, SemanticOverrides, TransformStep,
 } from './types';
 
 export class ApiError extends Error {
@@ -162,14 +162,15 @@ export interface SearchConstraints { minK: number; maxSuppression: number; maxUn
 /** Threat scenario shared by every evaluation request. */
 export interface ThreatRequest { qi: string[]; sensitive: string[]; membershipKnown: boolean }
 
-export type Fixture = 'architecture' | 'kit';
+export type Fixture = 'architecture' | 'kit' | 'semantic';
 export const EXPORT_ACKNOWLEDGMENTS = ['authority', 'limitations', 'reviewed'] as const;
 export type Acknowledgment = typeof EXPORT_ACKNOWLEDGMENTS[number];
 
 export const api = {
   health: () => request<ApiHealth>('/health'),
-  demo: (fixture: Fixture = 'architecture') => request<Dataset>(fixture === 'kit' ? '/v1/demo?fixture=kit' : '/v1/demo'),
+  demo: (fixture: Fixture = 'architecture') => request<Dataset>(fixture === 'architecture' ? '/v1/demo' : `/v1/demo?fixture=${fixture}`),
   registry: () => request<Registry>('/v1/registry'),
+  semanticOntology: () => request<SemanticOntology>('/v1/semantics/ontology'),
   lab: () => request<LabResult>('/v1/lab'),
   importDataset: (file: File, signal?: AbortSignal) => {
     const data = new FormData();
@@ -185,6 +186,9 @@ export const api = {
         ...(rowUnit && rowUnit.oneRowPerPersonConfirmed !== undefined ? { oneRowPerPersonConfirmed: rowUnit.oneRowPerPersonConfirmed } : {}),
       }),
     }),
+  /** `allowRemote: false` is a purely local inspection; `true` lets the service send column metadata (never row values) to its model provider. */
+  inspectSemantics: (datasetId: string, allowRemote: boolean, overrides: SemanticOverrides, signal?: AbortSignal) =>
+    post<DatasetSemantics>(`/v1/datasets/${encodeURIComponent(datasetId)}/semantics`, { allowRemote, overrides }, signal),
   createCandidate: (datasetId: string, steps: RecipeStep[], threat: ThreatRequest, workload: ResearchQuery[], name?: string, signal?: AbortSignal) =>
     post<Candidate>('/v1/candidates', { datasetId, steps: cleanSteps(steps), ...threat, workload: cleanWorkload(workload), seed: 42, ...(name ? { name } : {}) }, signal),
   assess: (candidateId: string, threat: ThreatRequest, workload: ResearchQuery[], signal?: AbortSignal) =>

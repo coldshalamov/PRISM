@@ -1,21 +1,32 @@
-# Frontend integration checkpoint
+# Frontend handoff
 
-All six views are implemented. Claude Sonnet5.5 XHigh completed an integrated maturation pass through Devin3000.11.3, session tungsten-shampoo. Its actual changes, checks and mock-browser limitations are in `frontend/SONNET_POLISH.md`. Root independently exercised all six views against the real local Python service, a 24-candidate search with six measured nondominated snapshots, comparison/adoption, saved-workload stale export blocking, and JSON/HTML/recipe/three-acknowledgment CSV downloads.
+PRISM retains six connected views: Workbench, Knowledge Map, Attack Lab, Research Intent, Pareto Explorer and Report. The visual identity is a graphite library/navigation rail, neutral work canvas, violet candidate channel, orange exposure and self-hosted IBM Plex typography. Keep product controls close to the actual tables and measured consequences; do not replace this with a generic SaaS dashboard.
 
-The current design preserves the requested graphite library/navigation, neutral data canvas, violet candidate and orange exposure. The rejected generic SaaS concept is not a reference. Public mode blocks private intake and distinguishes Archie-backed session specifications from Vercel computation. Root also bound hosted search budgets to service health and corrected the storage disclosure.
+Claude Sonnet5.5 XHigh built and matured the frontend through Devin. Gemini4 Argon completed the original requested audit/improvement pass through OpenCode Go. The original independent approval sequence is reviewer2 recheck → reviewer4 → reviewer5 against source `c5404fd` and immutable revision `r20261017d`. Those approvals do not automatically cover the later semantic extension. Current extension reviews and actual browser checks are recorded in `docs/frontend-reviews/README.md` and `artifacts/verification.md`.
 
-Gemini4 Argon completed the requested audit and improvement pass through OpenCode Go model `opencode-go/gemini-4-argon-contributor`, using npm OpenCode2.0.31. Root owns final integration and actual browser acceptance. Three successive fresh independent design approvals remain pending and must not be inferred from passing tests or a worker narrative.
+## Semantic workbench extension
 
-The hackathon entry is **Enterprise AI — AI safety, trust and governance**. The oncology fixture is a fictional demonstration of an enterprise research-sharing workflow. No generative model is used in the application runtime. The canonical working deployment remains https://prism-healthcare-taupe.vercel.app/ . See `artifacts/verification.md` and `artifacts/DELIVERY_STATUS.json` for completed checks and remaining work.
+Sonnet's additional integration remains inside Workbench. `SemanticPanel.tsx` presents cached field interpretations, controlled-vocabulary corrections, explicit metadata-only Jev permission, current-output measured findings, unsupported prerequisites and contributing-column focus. No chatbot or model-generated security narrative is used. The semantic revision participates in the existing stale-result guards; old frozen findings are never silently relabeled by a new source interpretation.
 
-## Actual Archie frontend path
+Protection preference selects actual evaluated snapshots, showing measured uniqueness and scientific loss. It is not a universal privacy percentage. Field controls use `draftPreview.ts` for supported row-local draft transformations; only the preview changes immediately. Full-table assessments remain pending until evaluation. Whole recipes requiring unavailable full-table/random operations abstain from client preview. Original data remains unchanged. The cross-engine regression check compares eleven preview recipes to Python, including conversion, negative rounding ties and ISO-week year boundaries.
 
-Archie's project workspace is static Vite. The exact tracked `deploy/archie-static/index.html` has replaced the old generated entry through Code editor → Source Control Save. The authenticated preview rendered the maintained PRISM UI and loaded the actual 5,000-row fixture. All six old source exports have been mined in [ARCHIE_RECONCILIATION.md](ARCHIE_RECONCILIATION.md); the maintained Python engine is the calculation authority.
+The authoritative endpoints are `GET /v1/semantics/ontology`, dataset `semantic`, `POST /v1/datasets/{id}/semantics`, and candidate `risk.semantic`. API keys are server-only. Optional Jev decisions use schema metadata after user permission, while all privacy, transformation and utility calculations remain deterministic.
 
-The entry pins immutable revision `r20261017c` from `frontend/public/archie-assets/`. Archie hosts the entry/origin; Vercel supplies JS/CSS/fonts and Python computation, while Archie Core persists fictional-session configuration. The alternative Next adapter in `deploy/archie/` is retained but is not the current hosting path.
+## Hosting and publication
 
-`frontend/src/api.ts` selects the bridge only when the production module is served from the fixed Vercel origin into a different page origin. The backend additionally requires an exact origin in `PUBLIC_ARCHIE_ORIGINS`. A single-flight handshake provides a random visitor token held only in module memory, sent in `X-PRISM-Demo-Session` with `credentials: 'omit'`. There are no token URLs, browser-storage credentials or cross-origin cookies. Responses are associated with their session generation so stale expiry/clear responses cannot reset a newer session. Reload starts a new visitor. The ordinary local and Vercel same-origin transports remain separate.
+Canonical public app: https://41d0bdfd-0065-4b0b-a973-efbe1c1a9c5e.archie.site/ . Archie hosts the saved HTML entry/application origin and Archie Core stores fictional session configuration. Vercel supplies pinned immutable JS/CSS/fonts and Python compute. The public route has passed real fixture, evaluation, search and download workflows. The final semantic revision and its browser outcome are in `artifacts/DELIVERY_STATUS.json`.
 
-Archie assigned https://41d0bdfd-0065-4b0b-a973-efbe1c1a9c5e.archie.site/ while publishing. The first public request returned HTTP 522 during Deploying; final public acceptance remains pending. The preview result is not proof of public availability. GitHub synchronization still reports an error; the exact tracked entry was saved manually, and automatic pull is not claimed.
+`frontend/src/api.ts` selects the bridge only when the production module comes from the fixed Vercel origin into the Archie page. The backend separately requires an exact configured origin. The single-flight visitor token is held only in module memory. Expired responses cannot clear a newer session generation. Local/same-origin transport remains separate.
 
-After any frontend release, use a new immutable revision with `deploy/archie-static/build-entry.mjs`, build and deploy Vercel first, then save the generated tracked entry and publish Archie. Retain every revision referenced by a published Archie entry. See [ARCHIE_DEPLOYMENT.md](ARCHIE_DEPLOYMENT.md) for the exact rebuild/pin recipe and public acceptance checks. Do not run Archie generation over the reviewed application.
+After frontend changes, create a new immutable revision with `deploy/archie-static/build-entry.mjs`. Deploy assets to Vercel first, then save the exact generated tracked HTML through Archie's Code editor/Source Control and publish. Keep every previously published revision available. GitHub synchronization still reports an error; manual source-preserving publication works. Do not run Archie generation over the reviewed application. `deploy/archie/` is an unused alternative Next adapter, not the current host.
+
+## Validation commands
+
+```powershell
+npm run typecheck --prefix frontend
+npm run build --prefix frontend
+node frontend/tools/review-regressions.mjs
+node frontend/tools/draft-preview-regressions.mjs
+```
+
+Builds and reviewer opinions do not replace the actual browser route. The final acceptance covers original/protected values, consent and correction, stale guards, evaluated-candidate preference, findings details, charts, external audit and exports. Review known limits in `docs/RELEASE_LIMITATIONS.md` without inventing guarantees.

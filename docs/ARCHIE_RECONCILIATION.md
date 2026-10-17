@@ -70,7 +70,7 @@ Pareto Explorer and Report**. The fictional KIT example computes 75 verified
 unique matches among 480 records, and 20 after ZIP removal; these are modelled
 matches, not population probabilities.
 
-Vercel currently serves React and Python compute. Archie Core provides genuine
+The reviewed public application now opens at the Archie `archie.site` origin. Archie serves its saved HTML entry; Vercel supplies immutable React assets and Python compute. Archie Core provides genuine
 durable fictional-session configuration through prism_demo_record and the
 restricted prism_demo_service role. It stores fixture/schema/recipe/threat/
 workload specifications and aggregate metadata, reconstructing source and
@@ -78,12 +78,6 @@ candidate frames. Public limits remain two fixtures, 24 candidates per search,
 40 total candidates, four jobs, 64 KiB configuration and 30-minute inactivity.
 Uploads/external audits are blocked publicly and remain available locally.
 
-The [Archie adapter](../deploy/archie/README.md) preserves the reviewed frontend
-and its same-origin API while retaining that compute/storage path. Publish the
-reviewed repository branch after source-preserving import succeeds; do not
-regenerate from the old plan. Prepared code alone does not establish Archie
-hosting. See [deployment details](ARCHIE_DEPLOYMENT.md).
+The published [static Archie entry](../deploy/archie-static/index.html) has replaced the old generated entry. Actual public fixture evaluation, bounded search and downloads passed. The old generated modules are preserved locally as reference exports and their useful ideas are retained above; they are not a second active app. GitHub sync still reports an error, so source-preserving Code-editor save and Publish is the working path. The Next adapter is retained only as an alternative for a server-capable host. See [deployment details](ARCHIE_DEPLOYMENT.md).
 
-The old source is preserved and its useful concepts have now been mined.
-Only this document changed for reconciliation; no frontend/backend, Git or
-browser changes were made.
+The semantic extension is implemented in the maintained repository and the same deployment path, rather than reviving the generated prototype. The source, model adapter, deterministic measurements and frontend continue to share one contract.

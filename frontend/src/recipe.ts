@@ -7,10 +7,10 @@ import type { ColumnSpec, TransformStep } from './types';
    UI-only fields (uid, disabled) that cleanSteps strips before anything is sent. */
 
 export type { RecipeStep };
-export type QuickKind = 'keep' | 'drop' | 'mask' | 'band' | 'round' | 'zip_prefix' | 'date_generalize' | 'rare_group';
+export type QuickKind = 'keep' | 'drop' | 'mask' | 'band' | 'centered_interval' | 'round' | 'zip_prefix' | 'date_generalize' | 'rare_group';
 export interface Treatment { kind: QuickKind | 'custom'; value?: number | string }
 
-export const QUICK_METHODS = new Set(['drop', 'mask', 'band', 'round', 'zip_prefix', 'date_generalize', 'rare_group']);
+export const QUICK_METHODS = new Set(['drop', 'mask', 'band', 'centered_interval', 'round', 'zip_prefix', 'date_generalize', 'rare_group']);
 const NUMERIC = new Set(['integer', 'float']);
 
 export const newUid = () => Math.random().toString(36).slice(2, 9);
@@ -36,7 +36,7 @@ export function kindOptions(spec: ColumnSpec): KindOption[] {
   if (spec.role === 'direct_identifier') return [keep, drop, { kind: 'mask', label: 'Mask with a label' }];
   if (isZipColumn(spec.name)) return [keep, { kind: 'zip_prefix', label: 'Keep leading digits' }, drop];
   if (spec.dtype === 'date') return [keep, { kind: 'date_generalize', label: 'Coarser date' }, drop];
-  if (NUMERIC.has(spec.dtype)) return [keep, { kind: 'band', label: 'Group into bands' }, { kind: 'round', label: 'Round' }, drop];
+  if (NUMERIC.has(spec.dtype)) return [keep, { kind: 'band', label: 'Group into bands' }, ...(spec.dtype === 'integer' ? [{ kind: 'centered_interval' as QuickKind, label: 'Centered interval (recoverable)' }] : []), { kind: 'round', label: 'Round' }, drop];
   return [keep, { kind: 'rare_group', label: 'Merge rare categories' }, drop];
 }
 
@@ -44,13 +44,14 @@ export interface KindRange { min: number; max: number; step: number; unit: strin
 export function kindRange(kind: QuickKind, spec: ColumnSpec): KindRange | null {
   switch (kind) {
     case 'band': return { min: 1, max: 25, step: 1, unit: spec.unit === 'kg' || isWeightColumn(spec) ? 'kg wide' : /age/i.test(spec.name) ? 'years wide' : 'wide', default: 5 };
+    case 'centered_interval': return { min: 1, max: 10, step: 1, unit: '± radius', default: 1 };
     case 'round': return { min: -2, max: 3, step: 1, unit: 'decimals', default: 0 };
     case 'zip_prefix': return { min: 1, max: 5, step: 1, unit: 'digits kept', default: 3 };
     case 'rare_group': return { min: 2, max: 200, step: 1, unit: 'rows minimum', default: 5 };
     default: return null;
   }
 }
-export const DATE_PRECISIONS = ['year', 'quarter', 'month', 'day'] as const;
+export const DATE_PRECISIONS = ['year', 'quarter', 'month', 'week', 'day', 'hour'] as const;
 
 export function readTreatment(steps: RecipeStep[], column: string): Treatment {
   for (const step of enabled(steps)) {
@@ -59,6 +60,7 @@ export function readTreatment(steps: RecipeStep[], column: string): Treatment {
       case 'drop': return { kind: 'drop' };
       case 'mask': return { kind: 'mask', value: String(step.params.value ?? 'REDACTED') };
       case 'band': return { kind: 'band', value: Number(step.params.width) };
+      case 'centered_interval': return { kind: 'centered_interval', value: Number(step.params.radius) };
       case 'round': return { kind: 'round', value: Number(step.params.decimals) };
       case 'zip_prefix': return { kind: 'zip_prefix', value: Number(step.params.length) };
       case 'date_generalize': return { kind: 'date_generalize', value: String(step.params.precision) };
@@ -80,6 +82,7 @@ function paramsFor(kind: QuickKind, spec: ColumnSpec, value: number | string | u
       if (isWeightColumn(spec) && weightUnit(spec) === 'lb') params.convertFrom = 'lb';
       return params;
     }
+    case 'centered_interval': return { radius: Number(value ?? 1) };
     case 'round': return { decimals: Number(value ?? 0) };
     case 'zip_prefix': return { length: Number(value ?? 3) };
     case 'date_generalize': return { precision: String(value ?? 'year') };
@@ -151,6 +154,7 @@ export function recipeParts(steps: TransformStep[]): string[] {
     const first = step.columns[0] ?? '';
     switch (step.method) {
       case 'drop': parts.push(`drop ${step.columns.length}`); break;
+      case 'centered_interval': parts.push(`${first} ±${String(step.params.radius)} (recoverable)`); break;
       case 'band': parts.push(`${first} ${String(step.params.width)}`); break;
       case 'zip_prefix': parts.push(`${first} ${String(step.params.length)}d`); break;
       case 'date_generalize': parts.push(`${first} ${String(step.params.precision)}`); break;
@@ -176,6 +180,7 @@ export function columnTreatmentNote(steps: TransformStep[], column: string): str
     if (!step.columns.includes(column)) continue;
     const params = step.params ?? {};
     switch (step.method) {
+      case 'centered_interval': notes.push(`centered ±${String(params.radius)} · midpoint reveals source`); break;
       case 'band': notes.push(`[a,b) bands · width ${String(params.width)}`); break;
       case 'round': notes.push(`rounded · ${String(params.decimals)} dp`); break;
       case 'zip_prefix': notes.push(`${String(params.length)}-digit prefix`); break;
@@ -201,6 +206,7 @@ export function describeTreatment(treatment: Treatment, spec: ColumnSpec): strin
     case 'keep': return 'Exact values';
     case 'drop': return 'Removed';
     case 'mask': return 'Masked';
+    case 'centered_interval': return `Centered ±${treatment.value} · recoverable`;
     case 'band': return `${treatment.value}-${isWeightColumn(spec) ? 'kg' : /age/i.test(spec.name) ? 'year' : 'unit'} bands`;
     case 'round': return `Rounded to ${treatment.value} dp`;
     case 'zip_prefix': return `First ${treatment.value} digits`;
@@ -286,10 +292,11 @@ export const METHODS: MethodSpec[] = [
   { id: 'pseudonymize', label: 'Keyed pseudonyms', group: 'identifiers', appliesTo: 'identifier columns', description: 'Replace values with HMAC tokens using a key held only by the service for this session.', params: [{ key: 'namespace', label: 'Namespace', kind: 'text' }], defaults: { namespace: 'prism' }, warning: 'Pseudonyms are still linkable: the same value always becomes the same token.', limitation: 'Not anonymous; frequencies and joins survive.' },
   { id: 'redact', label: 'Redact patterns', group: 'identifiers', appliesTo: 'text or category', description: 'Replace e-mail, phone and ID patterns inside text.', params: [{ key: 'replacement', label: 'Replacement', kind: 'text' }], defaults: { replacement: '[REDACTED]' }, limitation: 'Pattern matching misses names and narrative identifiers.' },
   { id: 'band', label: 'Numeric bands', group: 'precision', appliesTo: 'integer or float', description: 'Replace numbers with half-open intervals [a,b).', params: [{ key: 'width', label: 'Band width', kind: 'number', min: 1, max: 1000, step: 1 }], defaults: { width: 5 }, limitation: 'Utility decodes midpoints, which approximate within-band values.' },
+  { id: 'centered_interval', label: 'Centered intervals', group: 'precision', appliesTo: 'whole-number integer', description: 'Display x as a closed interval [x−r,x+r], marked CI.', params: [{ key: 'radius', label: 'Radius (±)', kind: 'number', min: 1, max: 1000000, step: 1 }], defaults: { radius: 1 }, warning: 'The midpoint reveals the source value exactly. This display does not reduce distinguishability.', limitation: 'Use fixed nonoverlapping bands for actual precision reduction.' },
   { id: 'round', label: 'Round', group: 'precision', appliesTo: 'integer or float', description: 'Round numeric precision (negative decimals round to tens, hundreds).', params: [{ key: 'decimals', label: 'Decimals', kind: 'number', min: -6, max: 6, step: 1 }], defaults: { decimals: 0 }, limitation: 'Rounding is not formal privacy.' },
   { id: 'zip_prefix', label: 'ZIP prefix', group: 'precision', appliesTo: '5-digit ZIP text', description: 'Keep leading characters of a 5-digit ZIP code.', params: [{ key: 'length', label: 'Digits kept', kind: 'number', min: 1, max: 5, step: 1 }], defaults: { length: 3 }, warning: 'Three digits alone never establish HIPAA Safe Harbor.', limitation: 'Loses geographic resolution; population exceptions apply.' },
   { id: 'top_bottom', label: 'Top / bottom coding', group: 'precision', appliesTo: 'integer or float', description: 'Clamp numeric values to explicit lower and upper bounds.', params: [{ key: 'min', label: 'Lower bound', kind: 'number', step: 1 }, { key: 'max', label: 'Upper bound', kind: 'number', step: 1 }], defaults: { min: 0, max: 100 }, limitation: 'Flattens tails that may matter scientifically.' },
-  { id: 'date_generalize', label: 'Coarser dates', group: 'precision', appliesTo: 'date', description: 'Keep only year, quarter, month or day.', params: [{ key: 'precision', label: 'Precision', kind: 'select', options: ['year', 'quarter', 'month', 'day'] }], defaults: { precision: 'year' }, limitation: 'Residual dates and sequences still need review.' },
+  { id: 'date_generalize', label: 'Coarser dates', group: 'precision', appliesTo: 'date', description: 'Keep UTC hour, day, ISO week, month, quarter or year.', params: [{ key: 'precision', label: 'Precision', kind: 'select', options: ['year', 'quarter', 'month', 'week', 'day', 'hour'] }], defaults: { precision: 'year' }, limitation: 'Residual dates and sequences still need review.' },
   { id: 'rare_group', label: 'Merge rare categories', group: 'suppression', appliesTo: 'category, text, boolean', description: 'Combine infrequent categories into "Other".', params: [{ key: 'min_count', label: 'Minimum rows', kind: 'number', min: 2, max: 100000, step: 1 }], defaults: { min_count: 5 }, limitation: 'Single-column rarity does not establish joint k.' },
   { id: 'suppress_cells', label: 'Suppress cells (seeded)', group: 'suppression', appliesTo: 'any column', description: 'Blank a seeded fraction of selected cells.', params: [{ key: 'fraction', label: 'Fraction', kind: 'number', min: 0, max: 1, step: 0.01 }], defaults: { fraction: 0.05 }, limitation: 'Missingness itself can be a distinguishing pattern.' },
   { id: 'date_shift', label: 'Shift dates (seeded)', group: 'experimental', appliesTo: 'date', description: 'Random displacement within ± days.', params: [{ key: 'days', label: 'Days (±)', kind: 'number', min: 0, max: 36500, step: 1 }], defaults: { days: 30 }, warning: 'Not differential privacy; can disturb temporal relationships.', limitation: 'Known-field exact linkage replay becomes not applicable.', experimental: true },
@@ -309,6 +316,7 @@ export function validateStep(step: RecipeStep, schema: ColumnSpec[]): string[] {
     if (!column) { issues.push(`${name} is not a column of this dataset.`); continue; }
     const numeric = NUMERIC.has(column.dtype);
     if (['band', 'round', 'top_bottom', 'noise'].includes(step.method) && !numeric) issues.push(`${name} is ${column.dtype}; ${spec?.label ?? step.method} needs a numeric column.`);
+    if (step.method === 'centered_interval' && column.dtype !== 'integer') issues.push(`${name} must contain whole-number integers for centered intervals.`);
     if (['date_generalize', 'date_shift'].includes(step.method) && column.dtype !== 'date') issues.push(`${name} is ${column.dtype}, not a date.`);
     if (step.method === 'zip_prefix' && !isZipColumn(name)) issues.push(`${name} does not look like a ZIP column; the service needs 5-digit ZIP text.`);
     if (step.method === 'rare_group' && !['category', 'text', 'boolean'].includes(column.dtype)) issues.push(`${name} is numeric; merge rare categories needs category, text or boolean.`);

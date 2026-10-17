@@ -29,6 +29,37 @@ export interface ResearchQuery {
 }
 
 export interface RowUnit { entityColumn: string | null; oneRowPerPersonConfirmed: boolean; repeatedEntitiesDetected: boolean }
+
+/* Field semantics describe what a column means. They never change values or statistical roles, and a meaning is not a vulnerability.
+   properties, privacyRoles, alternatives, validation and lineage are service-defined and may be strings, lists or nested objects:
+   they are typed `unknown` on purpose and must be summarised, never rendered as React children. */
+export interface SemanticField {
+  fieldId: string;
+  column: string;
+  primaryType: string;
+  family?: string | null;
+  properties?: unknown;
+  privacyRoles?: unknown;
+  alternatives?: unknown;
+  source?: string | null;
+  model?: string | null;
+  probability?: number | null;
+  reviewStatus?: string | null;
+  validation?: unknown;
+  lineage?: unknown;
+}
+export interface SemanticProvider { status: string; calls: number; error?: unknown; message?: unknown; [key: string]: unknown }
+export interface DatasetSemantics { version: string; revision?: string; fields: SemanticField[]; provider?: SemanticProvider; [key: string]: unknown }
+export interface SemanticOntology {
+  version: string;
+  families: { id: string; label: string; groups?: unknown[] }[];
+  types: { id: string; label: string; family: string; parent?: string; aliases?: string[] }[];
+  propertyEnums?: Record<string, string[]>;
+  privacyRoles?: unknown;
+}
+export type SemanticOverride = string | { primaryType: string; reviewStatus: 'confirmed' };
+export type SemanticOverrides = Record<string, SemanticOverride>;
+
 export interface Dataset {
   rowUnit?: RowUnit;
   datasetId: string;
@@ -39,6 +70,7 @@ export interface Dataset {
   defaultSteps: TransformStep[];
   defaultWorkload: ResearchQuery[];
   synthetic?: boolean;
+  semantic?: DatasetSemantics;
 }
 
 export interface Finding {
@@ -107,8 +139,34 @@ export interface RiskMetrics {
   verified_linkage_rate?: number | null;
   [key: string]: number | null | undefined;
 }
+/* Frozen with a candidate snapshot. `measured` null (or a null entry) means the quantity was not measured, never zero. */
+export type SemanticSeverity = 'Mild' | 'Moderate' | 'Severe' | 'Needs Assessment';
+export interface SemanticFinding {
+  id: string;
+  attackId: string;
+  title: string;
+  status: 'implemented' | 'unsupported' | 'not_applicable';
+  severity: SemanticSeverity;
+  columns: string[];
+  explanation: string;
+  attackerNeeds: string;
+  measured: Record<string, number | string | null> | null;
+  mitigations: string[];
+  utilityRisks: string[];
+  limitations: string[];
+  sourceIds: string[];
+}
+export interface CandidateSemantic {
+  version: string;
+  semanticRevision?: string;
+  findings: SemanticFinding[];
+  lineage?: unknown;
+  coverage?: unknown;
+  limitations?: string[];
+}
 export interface RiskResult {
   metrics: RiskMetrics;
+  semantic?: CandidateSemantic;
   findings: Finding[];
   exposure: { subsets: ExposureSubset[]; minimal_histogram?: HistogramBin[]; coverage?: ExposureCoverage };
   sensitive?: SensitiveResult[];

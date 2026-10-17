@@ -25,3 +25,16 @@ Reviewed October 17, 2026 against `docs/SEMANTIC_SPEC.md`. Scope: the added sema
 The owner's existing focused tests were inspected rather than repeated. They exercise the real 480-row fictional fixture: exact event/place/demographic unique rows change from **480 to 96** after concrete transformations, and the selected response-by-diagnosis query has **zero error**. This is a finite-table sample result, not population risk or a universal privacy score. Existing tests also cover unchanged source previews, frozen report revisions, externally protected data with unknown mechanism, unknown-membership abstention and cold hosted replay without provider calls.
 
 The independent additional check was the focused recognized-identifier query reproduction described above. Broader live frontend acceptance and final deployment verification belong to the release owner; this source review does not substitute for them.
+
+## Frontend draft helper and intake review
+
+Reviewed `draftPreview.ts`, the centered-interval/date additions in `recipe.ts`, the related import controls, and `structured_intake.py`. The preview helper clones source rows and applies only the supported deterministic row-local methods. Any unsupported method or incompatible step returns the entire original preview and column set; it does not display a partially transformed recipe. No privacy or utility measurement is computed or certified by this helper.
+
+The review found two concrete fidelity problems and fixed them within the authorized helper scope:
+
+- JavaScript normalizes invalid dates such as February 30 and hour 24 into a different calendar date, while the Python engine rejects them. Calendar components and time bounds are now checked before parsing.
+- Unknown parameters, explicit null parameters, duplicate target columns and invalid settings on all-null preview columns could previously appear supported. Parameter shapes, bounds, relevant schema types and weight-unit prerequisites are now checked before inspecting individual values.
+
+The final focused helper check passes **11 direct comparisons with the real Python transform engine**, unchanged source checks, **six unsupported-method abstentions** and **ten invalid-draft abstentions**. ZIP+4 values now follow the backend's supported prefix behavior. Centered intervals remain labeled recoverable, and date options match UTC hour/day, ISO week, month, quarter and year. The JSON/XLSX intake remains explicit about single-sheet, value-only tables and applies the existing CSV normalization rather than a second inference pipeline.
+
+This helper/intake source review is approved within its scope. It is **not** a frontend design approval: the new semantic panel and its actual rendered workflow still require the extension's own post-freeze review. The earlier three frontend approvals cover the pre-extension build only.

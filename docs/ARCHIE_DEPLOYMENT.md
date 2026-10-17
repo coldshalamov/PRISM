@@ -10,20 +10,9 @@ prototype entry has been replaced with the exact tracked
 `deploy/archie-static/index.html`. Archie Logic is not used. Vercel Services is
 currently Beta and builds the fallback frontend and backend together.
 
-**Canonical working origin:** https://prism-healthcare-taupe.vercel.app/ . The deployed API
-has reproduced 75 then 20 verified correct matches, exact comparison replay,
-and rejected intake with 403. The live Archie storage path has also been
-checked separately, as described below. Frontend acceptance is recorded in
-`artifacts/verification.md`.
+**Canonical working origin:** https://41d0bdfd-0065-4b0b-a973-efbe1c1a9c5e.archie.site/ . The public Archie page runs the reviewed PRISM application. Its real browser workflow reproduced the 480-row benchmark, all four downloads, and the 5,000-row bounded search (24 evaluated recipes, six nondominated configurations). Vercel remains the fallback and asset/compute origin at https://prism-healthcare-taupe.vercel.app/ .
 
-**Archie publication checkpoint:** Archie assigned
-https://41d0bdfd-0065-4b0b-a973-efbe1c1a9c5e.archie.site/ . The authenticated
-Archie preview rendered the replacement PRISM application and loaded the real
-5,000-row fictional fixture through the bridge. Publishing is in progress;
-the first public request returned HTTP 522 while Archie reported Deploying.
-Do not replace the canonical working URL with this address until its public
-page and application workflow pass. Current status is recorded in
-`artifacts/DELIVERY_STATUS.json` and `artifacts/verification.md`.
+The old generated application is no longer the entrypoint. The semantic extension adds optional Jev field interpretation to the same deterministic pipeline; its final release revision and browser checks are recorded in `artifacts/DELIVERY_STATUS.json` and `artifacts/verification.md`.
 
 All six old generated view exports have been read and reconciled in
 [ARCHIE_RECONCILIATION.md](ARCHIE_RECONCILIATION.md). The old entry was replaced;
@@ -50,6 +39,9 @@ Set these as server environment variables, never `VITE_*` variables:
 | `ARCHIE_AUTH_PREFIX` | `Bearer` for the UI-created key's configured alias |
 | `PRISM_SESSION_SECRET` | Random stable secret of at least 32 characters |
 | `PUBLIC_DEMO_HOST` | Exact production hostname, without scheme or path |
+| `OPENROUTER_API_KEY` | Optional server-only key for typed Jev metadata decisions |
+| `PRISM_JEV_ENABLED` | `1` enables optional user-requested interpretation; core tests remain offline |
+| `PRISM_JEV_BUDGET_USD` | Per-process ceiling, default `0.10`; public visitor attempts are also bounded durably |
 | `PUBLIC_ARCHIE_ORIGINS` | Comma-separated exact HTTPS Archie preview and published origins, without trailing slashes or wildcards |
 
 Vercel's exact `VERCEL_URL` and `VERCEL_PROJECT_PRODUCTION_URL` values are also
@@ -94,8 +86,8 @@ need the backend. A successful build alone does not verify a usable public app.
 
 ## Rebuild and publish the static Archie entry
 
-The current saved entry pins revision **`r20261017c`** under
-`frontend/public/archie-assets/r20261017c/`. These versioned JS, CSS and font
+The previously verified entry pins revision **`r20261017d`** under
+`frontend/public/archie-assets/r20261017d/`. Final semantic-release revision is recorded in the delivery status. These versioned JS, CSS and font
 files are public, immutable application assets, not private visitor data.
 Keep every revision still referenced by a published Archie page in Git and
 subsequent Vercel deployments.
@@ -105,7 +97,7 @@ root, for example:
 
 ```powershell
 npm run typecheck --prefix frontend
-node deploy/archie-static/build-entry.mjs r20261017d
+node deploy/archie-static/build-entry.mjs r20261017e
 npm run build --prefix frontend
 npx vercel deploy --prod
 ```
@@ -161,7 +153,7 @@ no other table grants. The browser never receives this key.
 
 One visitor record contains bounded JSON replay specifications: bundled fixture
 names, reviewed schema, recipes, seed, threat assumptions, research workload,
-candidate IDs/timestamps, and search frontier/constraint metadata. It contains
+candidate IDs/timestamps, frozen semantic interpretations and search frontier/constraint metadata. Optional Jev uses only approved schema metadata, with at most two remotely requested interpretation attempts per visitor; replay does not call the model. It contains
 no uploaded datasets, pandas frames, raw candidate previews, or private uploads.
 Every candidate comparison, reassessment, and export reconstructs its fictional
 source and protected frame through the existing real engine. A stable
@@ -169,7 +161,7 @@ server-held secret derives a visitor-specific HMAC key, keeping pseudonyms
 consistent across cold starts. Candidate schema snapshots preserve earlier
 results when a visitor later edits the source schema.
 
-Limits are two built-in fixtures, 40 candidates, four search jobs, 24 candidates
+Limits are two loaded fixtures per visitor (chosen from architecture, kit and semantic examples), 40 candidates, four search jobs, 24 candidates
 per search, 64 KiB per request/configuration record, and 30 minutes of inactivity.
 Expired records cannot be replayed and are deleted when that visitor returns;
 abandoned expired metadata is not proactively purged by this adapter. Session

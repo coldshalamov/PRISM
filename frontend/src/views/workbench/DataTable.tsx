@@ -18,7 +18,7 @@ const ROLE_ICON: Partial<Record<Role, { icon: React.ReactNode; label: string }>>
 /* Spreadsheet-style preview. Column selection is shared between the two panes. Rows are independent
    unless the caller can prove row correspondence (verified, unsuppressed), which is the only case
    where hover and changed-cell highlighting are shown. Row numbers are preview positions, not ids. */
-export function DataTable({ side, columns, rows, compareTo, aligned, hoverRow, onHoverRow, scrollRef, onScroll, caption, selectedColumn, onSelectColumn }: {
+export function DataTable({ side, columns, rows, compareTo, aligned, hoverRow, onHoverRow, scrollRef, onScroll, caption, selectedColumn, highlightedColumns = [], onSelectColumn }: {
   side: 'original' | 'protected';
   columns: TableColumn[];
   rows: Row[];
@@ -30,6 +30,7 @@ export function DataTable({ side, columns, rows, compareTo, aligned, hoverRow, o
   onScroll: () => void;
   caption: string;
   selectedColumn: string | null;
+  highlightedColumns?: string[];
   onSelectColumn: (name: string | null) => void;
 }) {
   const heads = useRef<Record<string, HTMLTableCellElement | null>>({});
@@ -51,10 +52,10 @@ export function DataTable({ side, columns, rows, compareTo, aligned, hoverRow, o
             <th scope="col" className="rownum" aria-label="Preview row"> </th>
             {columns.map(column => {
               const role = column.spec ? ROLE_ICON[column.spec.role] : undefined;
-              const selected = selectedColumn === column.name;
+              const selected = selectedColumn === column.name || highlightedColumns.includes(column.name);
               return (
                 <th key={column.name} scope="col" ref={node => { heads.current[column.name] = node; }} className={`${column.removed ? 'removed' : ''}${selected ? ' col-selected' : ''}`}>
-                  <button type="button" className="th-button" aria-pressed={selected} title={`Highlight ${column.name} in both panes`} onClick={() => onSelectColumn(selected ? null : column.name)}>
+                  <button type="button" className="th-button" aria-pressed={selected} title={`Highlight ${column.name} in both panes`} onClick={() => onSelectColumn(selectedColumn === column.name ? null : column.name)}>
                     <span className="th-name">{column.name}</span>
                     <span className="th-meta">
                       {role ? <span className={`role-glyph r-${column.spec?.role}`} role="img" title={role.label} aria-label={role.label}>{role.icon}</span> : null}
@@ -73,7 +74,7 @@ export function DataTable({ side, columns, rows, compareTo, aligned, hoverRow, o
               {columns.map(column => {
                 const value = row[column.name];
                 const changed = aligned && compareTo && !column.removed && String(compareTo[index]?.[column.name]) !== String(value);
-                const classes = [typeof value === 'number' ? 'num' : '', changed ? 'changed' : '', column.removed ? 'removed' : '', selectedColumn === column.name ? 'col-selected' : '', value === null || value === undefined ? 'missing' : ''].filter(Boolean).join(' ');
+                const classes = [typeof value === 'number' ? 'num' : '', changed ? 'changed' : '', column.removed ? 'removed' : '', selectedColumn === column.name || highlightedColumns.includes(column.name) ? 'col-selected' : '', value === null || value === undefined ? 'missing' : ''].filter(Boolean).join(' ');
                 return (
                   <td key={column.name} className={classes} title={changed ? `Original: ${cell(compareTo?.[index]?.[column.name])}` : undefined}>
                     {cell(value)}

@@ -12,8 +12,8 @@ import { defaultScenario, scenarioById } from './scenarios';
 import { threatFromSchema } from './threat';
 import type { Threat } from './threat';
 import type {
-  ApiHealth, AuditMode, Candidate, ColumnSpec, Dataset, ExportFormat, LabResult, Registry, ResearchQuery,
-  RowUnit, SearchResult, ViewId,
+  ApiHealth, AuditMode, Candidate, ColumnSpec, Dataset, DatasetSemantics, ExportFormat, LabResult, Registry, ResearchQuery,
+  RowUnit, SearchResult, SemanticOverrides, ViewId,
 } from './types';
 
 /* One in-memory workspace. Raw rows never leave component state: nothing here is written to
@@ -37,7 +37,7 @@ const VIEWS: ViewId[] = ['workbench', 'map', 'lab', 'intent', 'pareto', 'report'
 const BUSY_KEYS: BusyKey[] = ['boot', 'apply', 'assess', 'search', 'schema', 'import', 'audit', 'export', 'clear'];
 const BUSY_LABEL: Record<BusyKey, string> = {
   boot: 'loading the demo', apply: 'the candidate evaluation', assess: 'the re-evaluation', search: 'the candidate search',
-  schema: 'saving classifications', import: 'the import', audit: 'the external audit', export: 'the export', clear: 'clearing the session',
+  schema: 'saving classifications or inspecting field semantics', import: 'the import', audit: 'the external audit', export: 'the export', clear: 'clearing the session',
 };
 
 function loadPrefs(): UiPrefs {
@@ -139,6 +139,8 @@ export interface Workspace {
   recoverSession: (clearExisting?: boolean) => Promise<void>;
   importOriginal: (dataset: Dataset) => void;
   saveSchema: (schema: ColumnSpec[], rowUnit?: { entityColumn?: string | null; oneRowPerPersonConfirmed?: boolean }, thenApply?: boolean) => Promise<boolean>;
+  /** Runs through the same single-flight `schema` gate as saveSchema. Updates only `dataset.semantic`, and only for the dataset that was inspected. */
+  inspectSemantics: (allowRemote: boolean, overrides?: SemanticOverrides) => Promise<DatasetSemantics | null>;
   apply: (options?: { steps?: RecipeStep[] }) => Promise<Candidate | null>;
   assess: () => Promise<boolean>;
   runSearch: (maxCandidates: number) => Promise<boolean>;
@@ -345,17 +347,17 @@ export function WorkspaceProvider({ children }: { children: ReactNode }) {
 
   const controls = useMemo(() => (dataset ? {
     steps, known: threat.known, secret: threat.secret, membershipKnown: threat.membershipKnown,
-    workload, workloadDirty, schema: dataset.schema, rowUnit: dataset.rowUnit ?? null,
+    workload, workloadDirty, schema: dataset.schema, rowUnit: dataset.rowUnit ?? null, semanticRevision: dataset.semantic?.revision ?? null,
   } : null), [dataset, steps, threat, workload, workloadDirty]);
   const stale = useMemo<StaleReason[]>(() => {
     if (!active || !controls) return [];
     const all = staleReasons(active, controls);
-    return baseline?.candidateId === active.candidateId ? all.filter(reason => reason !== 'recipe') : all;
+    return all;
   }, [active, controls, baseline]);
   const staleFor = useCallback((candidate: Candidate): StaleReason[] => {
     if (!controls) return [];
     const all = staleReasons(candidate, controls);
-    return candidate.candidateId === baseline?.candidateId || candidate.candidateId !== activeId ? all.filter(reason => reason !== 'recipe') : all;
+    return candidate.candidateId !== activeId ? all.filter(reason => reason !== 'recipe') : all;
   }, [activeId, baseline, controls]);
   const baselineUsable = useMemo(() => {
     if (!baseline || !controls) return false;
@@ -511,6 +513,19 @@ export function WorkspaceProvider({ children }: { children: ReactNode }) {
     return Boolean(done);
   }, [dataset, notify, run, steps, threat, workload.length]);
 
+  /* ----- field semantics ----- */
+  /* The run callback only talks to the service. The dataset is touched afterwards, and only when `run` hands back the
+     latest, same-session result; the functional update re-checks the id so a replaced dataset can never receive it.
+     Semantics describe columns: schema, steps, threat, workload and every frozen candidate are left exactly as they are. */
+  const inspectSemantics = useCallback(async (allowRemote: boolean, overrides: SemanticOverrides = {}) => {
+    if (!dataset) return null;
+    const datasetId = dataset.datasetId;
+    const semantic = await run('schema', 'Field semantics could not be inspected.', signal => api.inspectSemantics(datasetId, allowRemote, overrides, signal));
+    if (!semantic) return null;
+    setDataset(current => (current && current.datasetId === datasetId ? { ...current, semantic } : current));
+    return semantic;
+  }, [dataset, run]);
+
   /* ----- presets (never silently discard extra methods) ----- */
   const applyPreset = useCallback((id: PresetId, keepExtras: boolean) => {
     if (!dataset) return;
@@ -661,7 +676,7 @@ export function WorkspaceProvider({ children }: { children: ReactNode }) {
     if (!candidate) return;
     const dirty = active && !isAudit(active) && !sameSteps(normalizeSteps(steps, threat.known), active.recipe.steps);
     setActiveId(id);
-    if (!isAudit(candidate) && candidate.recipe.steps.length && baseline?.candidateId !== id) {
+    if (!isAudit(candidate)) {
       setStepsState(seedSteps(candidate.recipe.steps));
       if (dirty) notify(`Restored the recipe of ${meta[id]?.label ?? 'this candidate'}. Your unevaluated edits were replaced.`, 'warn');
     }
@@ -765,7 +780,7 @@ export function WorkspaceProvider({ children }: { children: ReactNode }) {
     baseline, baselineUsable, candidates, active, select, meta, labelOf, findCandidate, stale, staleFor,
     search, compare, toggleCompare, registry, lab,
     busy, cancel, toasts, notify, dismissToast,
-    loadDemo, recoverSession, importOriginal, saveSchema, apply, assess, runSearch, adopt, runAudit, exportCandidate, clearSession,
+    loadDemo, recoverSession, importOriginal, saveSchema, inspectSemantics, apply, assess, runSearch, adopt, runAudit, exportCandidate, clearSession,
   };
   return <Context.Provider value={value}>{children}</Context.Provider>;
 }

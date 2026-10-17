@@ -16,7 +16,7 @@
 
 Use fictional/synthetic demonstration data on a trusted local computer. The service binds loopback, restricts browser origins and keeps its working tables in process memory; it has no authentication, per-user isolation, encrypted database, secure memory erasure, machine-wide egress policy or production health-data deployment controls. Public hosting/tunnels are outside this design.
 
-CSV only: no spreadsheets, hidden sheets, arbitrary metadata, document attachments or genomic/sequence parser. Intake is bounded to 50 MB, 100,000 rows and 80 API columns. The process session holds at most eight datasets and 160 candidates. Large exact subset maps and searches are synchronous and may take time; this is not a distributed compute service.
+CSV, JSON record tables and single-sheet values-only XLSX are supported. Formula cells and multi-sheet workbooks are rejected; no hidden-sheet, arbitrary embedded metadata, document attachment or genomic/sequence scanner is supplied. Intake is bounded to 50 MB, 100,000 rows and 80 API columns. The local process session holds at most eight datasets and 160 candidates. Large exact subset maps and searches are synchronous and may take time; this is not a distributed compute service.
 
 Role and type suggestions require owner review. ZIP leading zeroes are preserved, but imported CSV does not carry trusted unit metadata. Weight must be reviewed as kg or explicitly converted from lb before kg bands. The default three-digit ZIP operation does not evaluate population exceptions or establish Safe Harbor.
 
@@ -33,3 +33,5 @@ Synthetic audit mode runs descriptive diagnostics and marks unimplemented attack
 Reports exclude raw table previews, internal row alignment and HMAC keys. The API rejects research target/group/filter references to reviewed direct identifiers. Dataset display names, schema, other query definitions, cohort labels and aggregate values remain. Small cohorts, filters and misclassified identifying labels can themselves disclose information; review reports before sharing. Reports do not include a complete audit trail, input-file fingerprint, independent expert determination or general prior-release analysis. Downloaded files persist until the user removes them.
 
 When the proposed sharing is unjustified by the evidence, use a governed enclave or a separately reviewed aggregate-query mechanism instead. Those are governance alternatives, not systems supplied by this prototype.
+
+Optional Jev interprets approved schema metadata using a constrained ontology. It can misclassify or abstain; probabilities are interpretation metadata, not privacy probabilities. Provider failure leaves local rules and all core computations available. The configured cost ceiling is per process, with additional durable hosted per-visitor attempt limits; it is not a global cross-worker spend promise.

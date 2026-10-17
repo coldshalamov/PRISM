@@ -1,0 +1,67 @@
+[
+  {
+    "name": "PAT_ID",
+    "dtype": "text",
+    "role": "direct_identifier",
+    "importance": 1.0,
+    "sensitivityReason": "Declared fictional demonstration schema; semantic interpretation is separately reviewable."
+  },
+  {
+    "name": "DOS",
+    "dtype": "date",
+    "role": "quasi_identifier",
+    "importance": 1.0,
+    "sensitivityReason": "Declared fictional demonstration schema; semantic interpretation is separately reviewable."
+  },
+  {
+    "name": "HOSP_SITE",
+    "dtype": "category",
+    "role": "quasi_identifier",
+    "importance": 1.0,
+    "sensitivityReason": "Declared fictional demonstration schema; semantic interpretation is separately reviewable."
+  },
+  {
+    "name": "DX_CODE",
+    "dtype": "category",
+    "role": "sensitive",
+    "importance": 1.0,
+    "sensitivityReason": "Declared fictional demonstration schema; semantic interpretation is separately reviewable."
+  },
+  {
+    "name": "AGE",
+    "dtype": "integer",
+    "role": "quasi_identifier",
+    "importance": 1.0,
+    "sensitivityReason": "Declared fictional demonstration schema; semantic interpretation is separately reviewable.",
+    "unit": "years"
+  },
+  {
+    "name": "ZIP",
+    "dtype": "category",
+    "role": "quasi_identifier",
+    "importance": 1.0,
+    "sensitivityReason": "Declared fictional demonstration schema; semantic interpretation is separately reviewable."
+  },
+  {
+    "name": "HT_CM",
+    "dtype": "float",
+    "role": "quasi_identifier",
+    "importance": 1.0,
+    "sensitivityReason": "Declared fictional demonstration schema; semantic interpretation is separately reviewable.",
+    "unit": "cm"
+  },
+  {
+    "name": "TX_RESP",
+    "dtype": "boolean",
+    "role": "research_target",
+    "importance": 1.0,
+    "sensitivityReason": "Declared fictional demonstration schema; semantic interpretation is separately reviewable."
+  },
+  {
+    "name": "NOTES",
+    "dtype": "text",
+    "role": "sensitive",
+    "importance": 1.0,
+    "sensitivityReason": "Declared fictional demonstration schema; semantic interpretation is separately reviewable."
+  }
+]

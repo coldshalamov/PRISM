@@ -1,10 +1,11 @@
 {
   "application": "PRISM",
-  "status": "final_review_in_progress",
+  "status": "semantic_frontend_release_in_progress",
   "backend": {
-    "tests": 120,
-    "result": "passed",
-    "warning": "Starlette TestClient deprecation for legacy HTTPX; runtime HTTP acceptance remains separate"
+    "tests": 157,
+    "result": "passed integrated semantic checkpoint",
+    "laterFocused": "9 semantic pipeline/alternative tests passed after concrete attacker prerequisites; recipe identity and representation-aware severity directly checked",
+    "warning": "Starlette TestClient httpx deprecation; checks passed"
   },
   "originalKit": {
     "tests": 61,
@@ -23,23 +24,45 @@
       "Pareto Explorer",
       "Report"
     ],
-    "implementation": "all six implemented; Sonnet integrated",
+    "implementation": "six views plus Sonnet semantic extension integrated; Gemini repair pass finishing",
     "requiredConsecutiveAuditApprovals": 3,
     "actualConsecutiveAuditApprovals": 0,
-    "liveVerification": "real local all-view route, 24-candidate search (6 frontier), adoption, stale workload and all four export formats passed; responsive and final audits ongoing"
+    "liveVerification": "new local semantic workflow and 1440/768/390 responsive screens passed; final extension reviews and public revision pending",
+    "previousFrozenApprovals": 3
   },
   "model": {
     "frontend": "Claude Sonnet 5.5 XHigh through Devin3000.11.3, tungsten-shampoo, completed",
-    "improvement": "OpenCode Go gemini-4-argon-contributor running through npm OpenCode2.0.31; legacy1.19.0 credential error bypassed using correct installation"
+    "improvement": "Gemini4 Argon completed original pass; new semantic frontend pass found three concrete edge cases being repaired through correct npm OpenCode2.0.31",
+    "semanticFrontend": "Claude Sonnet5.5 XHigh via Devin, pickled-border, completed; controller integrated exact ontology, revisions, previews and group focus"
   },
-  "packaging": "wheel and source ZIP built; independent installed-wheel verification running; final metadata refresh pending",
+  "packaging": "earlier wheel smoke passed; final semantic wheel/source ZIP rebuild pending frontend freeze",
   "releaseCleared": false,
   "track": "Enterprise AI",
   "deployment": {
-    "demo": "https://prism-healthcare-taupe.vercel.app/",
+    "demo": "https://41d0bdfd-0065-4b0b-a973-efbe1c1a9c5e.archie.site/",
     "repository": "https://github.com/coldshalamov/PRISM",
-    "backend": "Archie Core dedicated table; Vercel Python compute and frontend",
-    "verified": "HTTPS480-row fixture75→20, exact replay, uploads403 and pitch PDF200; final frontend replacement pending"
+    "backend": "Archie HTML entry and Core durable fictional configuration; Vercel immutable frontend assets and deterministic Python; optional OpenRouter Jev",
+    "verified": "public d: Kit75→20, four downloads, architecture5000-row24search/6frontier. Semantic frontend revision pending publication.",
+    "publishedRevision": "r20261017d"
   },
-  "submission": "Enterprise AI selected, text and URLs entered; final screenshots and Save Draft pending; never submitted"
+  "submission": "Enterprise AI project text and canonical URLs saved successfully as draft; refreshed Jev copy and final screenshots pending; never submitted",
+  "semantic": {
+    "ontologyTypes": 145,
+    "families": 13,
+    "attackCategories": 24,
+    "provider": "OpenRouter Decisions API typesafe/jev-1.14",
+    "servedModel": "typesafe/jev-1.14-20261014",
+    "actualProviderVerified": true,
+    "coreOffline": true,
+    "sessionRemoteAttemptCap": 2,
+    "costCeilingScope": "server process, plus durable visitor attempt cap",
+    "benchmark": {
+      "rows": 480,
+      "sourceUnique": 480,
+      "defaultUnique": 96,
+      "externalUnique": 0,
+      "responseQueryError": 0
+    },
+    "localBrowser": "actual Jev requests, abstention, user correction, reassessment, draft preview, cached selection, all-field focus and unpaired external audit passed"
+  }
 }

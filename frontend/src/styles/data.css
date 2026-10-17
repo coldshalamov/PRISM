@@ -166,6 +166,9 @@
 .field-title small { color: var(--ink-3); display: inline-flex; align-items: center; gap: 4px; }
 .field-title small.risk-text { color: var(--risk-ink); font-weight: 500; }
 .field-param { display: flex; align-items: center; gap: 10px; }
+.field-param .seg { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); width: 100%; min-width: 0; }
+.field-param .seg button { min-width: 0; padding-inline: 6px; }
+.field-param input[type="range"] { flex: 1; min-width: 0; }
 .field-param.two { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
 .field-param.two label { display: grid; gap: 3px; font-size: 12px; color: var(--ink-3); }
 .field-param output { min-width: 84px; text-align: right; font-variant-numeric: tabular-nums; font-weight: 600; font-size: 12.5px; }

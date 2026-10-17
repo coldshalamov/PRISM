@@ -1,0 +1,136 @@
+{
+  "fictionalOnly": true,
+  "rows": 480,
+  "source": {
+    "rows": 480,
+    "combinationColumns": [
+      "DOS",
+      "HOSP_SITE",
+      "ZIP",
+      "AGE",
+      "HT_CM"
+    ],
+    "sampleUniqueRows": 480,
+    "sampleUniqueFraction": 1.0,
+    "queries": [
+      {
+        "id": "response-by-diagnosis",
+        "error": 0.0,
+        "pass": true,
+        "status": "implemented",
+        "issues": []
+      },
+      {
+        "id": "height-by-diagnosis",
+        "error": 0.0,
+        "pass": true,
+        "status": "implemented",
+        "issues": []
+      }
+    ]
+  },
+  "defaultCandidate": {
+    "rows": 480,
+    "combinationColumns": [
+      "DOS",
+      "HOSP_SITE",
+      "ZIP",
+      "AGE",
+      "HT_CM"
+    ],
+    "sampleUniqueRows": 96,
+    "sampleUniqueFraction": 0.2,
+    "queries": [
+      {
+        "id": "response-by-diagnosis",
+        "error": 0.0,
+        "pass": true,
+        "status": "implemented",
+        "issues": []
+      },
+      {
+        "id": "height-by-diagnosis",
+        "error": 0.0,
+        "pass": true,
+        "status": "implemented",
+        "issues": []
+      }
+    ]
+  },
+  "externalUnpairedAudit": {
+    "rows": 480,
+    "combinationColumns": [
+      "DOS",
+      "HOSP_SITE",
+      "AGE",
+      "HT_CM"
+    ],
+    "sampleUniqueRows": 0,
+    "sampleUniqueFraction": 0.0,
+    "queries": [
+      {
+        "id": "response-by-diagnosis",
+        "error": 0.0,
+        "pass": true,
+        "status": "implemented",
+        "issues": []
+      },
+      {
+        "id": "height-by-diagnosis",
+        "error": 1.1999999999999886,
+        "pass": true,
+        "status": "implemented",
+        "issues": []
+      }
+    ]
+  },
+  "externalGenerationForReproductionOnly": {
+    "seed": 42,
+    "steps": [
+      {
+        "method": "drop",
+        "columns": [
+          "PAT_ID",
+          "NOTES",
+          "ZIP"
+        ],
+        "params": {}
+      },
+      {
+        "method": "band",
+        "columns": [
+          "AGE"
+        ],
+        "params": {
+          "width": 20,
+          "origin": 0
+        }
+      },
+      {
+        "method": "date_generalize",
+        "columns": [
+          "DOS"
+        ],
+        "params": {
+          "precision": "year"
+        }
+      },
+      {
+        "method": "band",
+        "columns": [
+          "HT_CM"
+        ],
+        "params": {
+          "width": 20,
+          "origin": 0
+        }
+      }
+    ]
+  },
+  "limitations": [
+    "Exact sample distinguishability only; not population identification risk or release clearance.",
+    "External audit does not infer the generating recipe or original-to-release row correspondence.",
+    "Query results compare the selected analyses only; other scientific utility may differ."
+  ],
+  "verification": "Real local API intake, declared schema, candidate evaluation and unpaired external audit; CSV/JSON/XLSX source values match."
+}

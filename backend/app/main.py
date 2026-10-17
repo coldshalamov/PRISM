@@ -263,6 +263,8 @@ def make_candidate(data, frame, recipe, qi, sensitive, workload, lineage=None, n
             "threatModel": {"qi": qi, "sensitive": sensitive}, "workload": workload,
             "threatContext": context,
             "schema": copy.deepcopy(data["schema"]), "_frame": frame.copy(deep=True), "_lineage": lineage}
+    if recipe.get("version") != "external":
+        item["recipeHash"] = hashlib.sha256(json.dumps(recipe, sort_keys=True, separators=(",", ":"), allow_nan=False).encode()).hexdigest()
     if precomputed:
         for key in ("objectives", "feasible", "suppression_rate", "validation"):
             if key in precomputed:

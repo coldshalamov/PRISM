@@ -39,7 +39,7 @@ export function DeploymentBanner({ onDismiss }: { onDismiss: () => void }) {
       <div className="deploy-text">
         <b>Hosted fictional demo{deployment.provisional ? ' · confirming with the service…' : ''}</b>
         <p>
-          Every record here is invented. Actual Python calculations (uniqueness, exact linkage, research-question change) run on the hosted server{archie ? ' through Vercel while compact fictional session configuration is persisted in Archie Core' : ' rather than on this computer'}; no AI model is in the application runtime.
+          Every record here is invented. Actual Python calculations (uniqueness, exact linkage, research-question change) run on the hosted server{archie ? ' through Vercel while compact fictional session configuration is persisted in Archie Core' : ' rather than on this computer'}. Optional Jev interpretation classifies approved schema metadata; privacy and utility calculations remain deterministic.
           Uploads are turned off (up to {searchCap} candidates per search · {candidateCap} per session). To check private files, run PRISM locally on your own computer.
         </p>
       </div>

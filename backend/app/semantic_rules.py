@@ -88,6 +88,27 @@ def _prerequisite(test):
     }.get(test, "Current released columns, finite-table exact values and reviewed field meaning.")
 
 
+def _attacker_needs(test, columns):
+    """Separate an adversary's knowledge from this diagnostic's inputs."""
+    known = ", ".join(columns) if columns else "the contributing fields"
+    return {
+        "direct": "Access to the released table is enough to read a remaining direct identifier. No auxiliary matching database is required.",
+        "partition": f"Correct outside knowledge of a target's values for {known}, compatible encodings and knowledge that the target appears in this release. Unique groups alone do not establish those prerequisites.",
+        "small_cell": f"Knowledge of which small group a target belongs to on {known}, plus target membership. A small group is descriptive evidence, not a verified identification.",
+        "geography": f"Outside knowledge of the target's location or facility on {known}, matching geographic codes and release membership. No external geographic records were tested.",
+        "time": f"Outside knowledge of the target's dates or event times on {known}, compatible time precision and release membership. No appointment calendar was supplied.",
+        "spatiotemporal": f"External information about the target's appointment/event date, facility or location and demographic values on {known}, with compatible precision and known membership. PRISM counted current-table groups; it did not obtain or test that outside information.",
+        "conditional": f"Known group-defining values on {known} and knowledge of target membership, under the displayed majority-guessing assumptions. In-sample prediction is not a tested incremental disclosure attack.",
+        "homogeneity": f"Knowledge that the target belongs to a group defined by {known}. Homogeneous released values can reveal the group's sensitive value under those membership assumptions.",
+        "text": "Access to retained narrative cells can expose literal contact or identifier patterns directly. Contextual names and events may need outside background knowledge; the bounded pattern scan does not cover them exhaustively.",
+        "pseudonym": "Another record or release carrying the same stable token or a compatible mapping. Equality joins can associate records without reversing the token to a real identity.",
+        "rare": "Outside knowledge of a target's rare condition or event, compatible dates or group attributes and target membership. Rare-category counts do not show that this outside knowledge exists.",
+        "repeated": "Access to repeated entity keys or a trustworthy cross-record association. Real-world identity still requires an identifying mapping or outside information.",
+        "auxiliary": "Correct target-known attributes, compatible public transformation rules and known source membership for the simulated exact-match experiment. A real external attack additionally requires an independent auxiliary table and validation.",
+        "composition": "At least one additional overlapping release and a compatible join key or matching attributes. Single-release measurements do not test this combination.",
+    }.get(test, _prerequisite(test))
+
+
 def _partition(frame, columns):
     n = len(frame)
     if not n:
@@ -161,6 +182,8 @@ def lineage(semantic, frame, steps=None, *, external=False):
                 method = step["method"]
                 if method == "band":
                     representation, granularity = "numeric interval", "bucketed"
+                elif method == "centered_interval":
+                    representation, granularity = "recoverable centered integer interval", "exact"
                 elif method == "centered_interval":
                     representation, granularity = "user-centered interval (midpoint recoverable)", "generalized"
                 elif method == "round":
@@ -245,9 +268,14 @@ def evaluate(frame, semantic, schema, qi, sensitive, *, steps=None, external=Fal
             columns = select(families=("technical",), patterns=(r"(exif|file_path|author|device|ip_address)",))
         if test == "direct":
             columns, status = direct, "implemented"
-            measured = {"recognizedColumns": len(direct), "rows": len(frame)}
-            severity = "Severe" if direct else "Mild"
-            explanation = ("Recognized direct-identifier columns remain in the current output." if direct else
+            obscured = {c for step in (steps or []) if step.get("method") in {"mask", "pseudonymize", "redact"} for c in step.get("columns", [])}
+            varied = [c for c in direct if frame[c].nunique(dropna=True) > 1 and c not in obscured]
+            measured = {"recognizedColumns": len(direct), "rows": len(frame),
+                        "nonconstantUnobscuredColumns": len(varied),
+                        "distinctNonNullValues": {c: int(frame[c].nunique(dropna=True)) for c in direct},
+                        "mechanismKnown": not external}
+            severity = "Severe" if varied and not external else "Moderate" if direct else "Mild"
+            explanation = ("Recognized direct-identifier columns remain in the current output. Severity also considers observed distinct values and the known recipe; an identifier label alone does not establish literal identity disclosure. Masked or pseudonymous fields and unknown external mechanisms require representation review." if direct else
                            "The independent structured-name/format profiler found no recognized direct-identifier columns; this does not clear free text.")
             mitigation = ["Remove direct identifiers; consistent pseudonyms still permit association across records."]
         elif test in {"partition", "small_cell", "geography", "time", "spatiotemporal"}:
@@ -332,7 +360,7 @@ def evaluate(frame, semantic, schema, qi, sensitive, *, steps=None, external=Fal
         findings.append({"id": "semantic-" + attack, "attackId": attack, "title": title, "status": status,
                          "severity": severity, "columns": columns, "explanation": explanation,
                          "uncertainSemantics": uncertain,
-                         "attackerNeeds": _prerequisite(test), "measured": measured, "mitigations": mitigation,
+                         "attackerNeeds": _attacker_needs(test, columns), "testPrerequisites": _prerequisite(test), "measured": measured, "mitigations": mitigation,
                          "requiredSemanticClasses": _classes(test), "testId": test,
                          "utilityRisks": ["Coarsening, removal or perturbation can alter associations and subgroup estimates; compare the selected research workload."],
                          "limitations": limits[:1] + (["This category's prerequisites were not supplied; no attack was run."] if status == "unsupported" else []),

@@ -10,7 +10,7 @@ make it available on the public server.
 
 The local entry point, `app.main:app`, retains its loopback-only policy. The
 separate hosted entry point is `app.hosted_demo:app`. No backend credentials,
-database, model API, file path input, or external service is needed at runtime.
+database, model API, file path input, or external service is needed for the deterministic core. Optional Jev semantic interpretation uses explicitly approved minimized metadata when server credentials are configured; see SEMANTIC_ENGINE.md.
 The calculation engine makes no external data requests. The browser uses the
 same origin for both static assets and API calls.
 

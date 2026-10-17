@@ -76,6 +76,7 @@ function FieldRow({ spec }: { spec: ColumnSpec }) {
         </div>
       ) : null}
       {treatment.kind === 'band' && isWeightColumn(spec) && spec.unit && spec.unit.toLowerCase().startsWith('lb') ? <p className="field-hint">Pounds are converted to kilograms before banding.</p> : null}
+      {treatment.kind === 'centered_interval' ? <p className="field-hint risk-text">The midpoint reveals the exact original. Use fixed bands to reduce precision.</p> : null}
       {treatment.kind === 'zip_prefix' ? <p className="field-hint">Three digits do not establish HIPAA Safe Harbor.</p> : null}
     </li>
   );

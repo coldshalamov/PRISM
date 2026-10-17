@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { Beaker, ClipboardCheck, Database, FileUp, Play, Square } from 'lucide-react';
+import { Beaker, ClipboardCheck, Database, FileUp, Play, ScanSearch, Square } from 'lucide-react';
 import { isAudit, rowCountNote, rowsAligned } from '../analysis';
 import { CohortBars } from '../charts/CohortBars';
 import { CorrelationMatrix } from '../charts/CorrelationMatrix';
@@ -7,9 +7,10 @@ import { DistributionChart } from '../charts/DistributionChart';
 import { SubgroupTable } from '../charts/SubgroupTable';
 import { useDialogs } from '../dialogs';
 import { isFictional } from '../deployment';
+import { draftPreview } from '../draftPreview';
 import { num, plural } from '../format';
 import { useMedia } from '../hooks';
-import { columnTreatmentNote, recipeLabel } from '../recipe';
+import { columnTreatmentNote, normalizeSteps, recipeLabel, sameSteps } from '../recipe';
 import { EvidenceBanner } from '../ui/EvidenceBanner';
 import { Empty, Notice, Skeleton } from '../ui/Feedback';
 import { InspectorSlot, ToolbarSlot } from '../ui/Slots';
@@ -20,6 +21,7 @@ import { DataTable } from './workbench/DataTable';
 import type { TableColumn } from './workbench/DataTable';
 import { Ledger } from './workbench/Ledger';
 import { RecipeInspector } from './workbench/RecipeInspector';
+import { ProtectionPreference, SemanticPanel } from './workbench/SemanticPanel';
 
 type PaneTab = 'table' | 'dist' | 'corr' | 'sub';
 type PaneMode = 'both' | 'original' | 'protected';
@@ -38,6 +40,7 @@ function StartPanel() {
           <>
             <button type="button" className="btn primary" onClick={() => void ws.loadDemo('architecture')}><Database size={15} />Fictional oncology demo · 5,000</button>
             <button type="button" className="btn" onClick={() => void ws.loadDemo('kit')}><Beaker size={15} />Fictional benchmark · 480</button>
+            <button type="button" className="btn" onClick={() => ws.requestReplace('the semantic ambiguity demo', () => void ws.loadDemo('semantic'))}><ScanSearch size={15} />Semantic ambiguity demo</button>
             {deployment.uploadsAllowed ? <button type="button" className="btn" onClick={() => dialogs.open('import')}><FileUp size={15} />Import a CSV</button> : null}
           </>
         )}
@@ -61,10 +64,20 @@ export default function Workbench() {
   const [mode, setMode] = useState<PaneMode>('both');
   const [field, setField] = useState('');
   const [column, setColumn] = useState<string | null>(null);
+  const [findingColumns, setFindingColumns] = useState<string[]>([]);
   const [hoverRow, setHoverRow] = useState<number | null>(null);
   const leftScroll = useRef<HTMLDivElement | null>(null);
   const rightScroll = useRef<HTMLDivElement | null>(null);
   const syncing = useRef(false);
+  useEffect(() => { setFindingColumns([]); setColumn(null); }, [dataset?.datasetId]);
+  // A finding's contributor group belongs to its evaluated snapshot; a manually focused field may remain selected.
+  useEffect(() => { setFindingColumns([]); }, [active?.candidateId]);
+  const draftSteps = useMemo(() => normalizeSteps(ws.steps, ws.threat.known), [ws.steps, ws.threat.known]);
+  const recipeEdited = Boolean(dataset && ws.reviewed && !isAudit(active) && !sameSteps(draftSteps, active?.recipe.steps ?? []));
+  const draft = useMemo(() => dataset && recipeEdited ? draftPreview(dataset.preview, draftSteps, dataset.schema) : null, [dataset, draftSteps, recipeEdited]);
+  const showDraftValues = tab === 'table' && draft?.supported === true;
+  const visibleProtectedNames = showDraftValues ? draft.columns : active?.columns ?? [];
+  const visibleProtectedRows = showDraftValues ? draft.rows : active?.preview ?? [];
 
   const distributions = active?.utility.distributions ?? [];
   useEffect(() => {
@@ -74,7 +87,7 @@ export default function Workbench() {
   }, [distributions, field, column]);
   const dist = distributions.find(d => d.column === field) ?? distributions[0];
 
-  const aligned = rowsAligned(active, dataset);
+  const aligned = showDraftValues || rowsAligned(active, dataset);
   const sync = (from: React.RefObject<HTMLDivElement | null>, to: React.RefObject<HTMLDivElement | null>) => () => {
     if (!aligned) return;
     if (syncing.current) { syncing.current = false; return; }
@@ -83,14 +96,15 @@ export default function Workbench() {
     if (a && b && b.scrollTop !== a.scrollTop) { syncing.current = true; b.scrollTop = a.scrollTop; }
   };
 
-  const removedNames = useMemo(() => new Set((dataset?.schema ?? []).filter(spec => active && !active.columns.includes(spec.name)).map(spec => spec.name)), [dataset, active]);
+  const removedNames = useMemo(() => new Set((dataset?.schema ?? []).filter(spec => (active || showDraftValues) && !visibleProtectedNames.includes(spec.name)).map(spec => spec.name)), [dataset, active, showDraftValues, visibleProtectedNames]);
   const originalColumns = useMemo<TableColumn[]>(() => (dataset?.schema ?? []).map(spec => ({ name: spec.name, spec, removed: removedNames.has(spec.name) })), [dataset, removedNames]);
-  const protectedColumns = useMemo<TableColumn[]>(() => (active?.columns ?? []).map(name => {
-    const spec = (active?.schema ?? dataset?.schema)?.find(c => c.name === name);
-    const measuredUnit = active?.utility.distributions.find(item => item.column === name)?.unit;
-    const note = active && !isAudit(active) ? columnTreatmentNote(active.recipe.steps, name) : null;
+  const protectedColumns = useMemo<TableColumn[]>(() => visibleProtectedNames.map(name => {
+    const spec = (showDraftValues ? dataset?.schema : active?.schema ?? dataset?.schema)?.find(c => c.name === name);
+    const convertedDraft = showDraftValues && draftSteps.some(step => step.method === 'band' && step.columns.includes(name) && step.params.convertFrom === 'lb');
+    const measuredUnit = showDraftValues ? (convertedDraft ? 'kg' : spec?.unit) : active?.utility.distributions.find(item => item.column === name)?.unit;
+    const note = showDraftValues ? columnTreatmentNote(draftSteps, name) : active && !isAudit(active) ? columnTreatmentNote(active.recipe.steps, name) : null;
     return { name, spec: spec && measuredUnit ? { ...spec, unit: measuredUnit } : spec, note };
-  }), [active, dataset]);
+  }), [active, dataset, draftSteps, showDraftValues, visibleProtectedNames]);
 
   if (!dataset) return <StartPanel />;
 
@@ -102,6 +116,17 @@ export default function Workbench() {
   const tabId = 'panes';
   const external = isAudit(active);
   const sourceUnit = dist ? dataset.schema.find(spec => spec.name === dist.column)?.unit ?? null : null;
+  /* One shared column selection drives both panes. The correlation and subgroup views have no column to mark, so choosing a field there shows the table. */
+  const highlightColumn = (name: string | null) => {
+    setFindingColumns([]);
+    setColumn(name);
+    if (name) setTab('table');
+  };
+  const highlightColumns = (names: string[]) => {
+    setFindingColumns(names);
+    setColumn(names[0] ?? null);
+    if (names.length) setTab('table');
+  };
 
   const originalPane = (
     <section className="pane original" aria-label="Original data">
@@ -116,7 +141,7 @@ export default function Workbench() {
           <DataTable
             side="original" caption="Original data preview, first 30 rows" columns={originalColumns} rows={dataset.preview}
             aligned={aligned} hoverRow={hoverRow} onHoverRow={setHoverRow} scrollRef={leftScroll} onScroll={sync(leftScroll, rightScroll)}
-            selectedColumn={column} onSelectColumn={setColumn}
+            selectedColumn={column} highlightedColumns={findingColumns} onSelectColumn={highlightColumn}
           />
         ) : !active ? <NoCandidate /> : tab === 'dist' ? (dist ? <DistributionChart dist={dist} side="original" sourceUnit={sourceUnit} /> : <NoViz />)
           : tab === 'corr' ? <CorrelationMatrix correlations={active.utility.correlations} side="original" />
@@ -130,37 +155,42 @@ export default function Workbench() {
     <section className="pane protected" aria-label="Protected candidate">
       <header className="pane-head">
         <span className="swatch protected" aria-hidden="true" />
-        <h2>{external ? 'External release' : 'Candidate'}{protectedLabel ? <> · {protectedLabel}</> : null}</h2>
+        <h2>{showDraftValues ? 'Draft preview' : external ? 'External release' : 'Candidate'}{!showDraftValues && protectedLabel ? <> · {protectedLabel}</> : null}</h2>
         <span className="pane-meta">
-          {active ? <>{external ? 'unknown mechanism' : recipeLabel(active.recipe.steps)} · {num(active.rowCount, 0)} rows · {plural(active.columns.length, 'column')}</> : 'No candidate yet'}
+          {showDraftValues ? <>{recipeLabel(draftSteps)} · {visibleProtectedRows.length} preview rows · full assessment pending</> : active ? <>{external ? 'unknown mechanism' : recipeLabel(active.recipe.steps)} · {num(active.rowCount, 0)} rows · {plural(active.columns.length, 'column')}</> : 'No candidate yet'}
         </span>
-        {active ? <span className="pane-tag">{active.alignment === 'verified' ? 'Verified pairing' : 'Unknown pairing'}<Term id={active.alignment === 'verified' ? 'paired' : 'unpaired'} label="pairing" /></span> : null}
+        {recipeEdited ? <span className="pane-tag">Assessment pending</span> : active ? <span className="pane-tag">{active.alignment === 'verified' ? 'Verified pairing' : 'Unknown pairing'}<Term id={active.alignment === 'verified' ? 'paired' : 'unpaired'} label="pairing" /></span> : null}
       </header>
-      {note ? <p className="pane-note">{note}</p> : null}
+      {recipeEdited ? <p className="pane-note" role="status">{showDraftValues
+        ? 'Draft preview · full assessment pending. These values update on the preview rows only. Privacy and utility measurements still describe the last evaluated snapshot.'
+        : draft && !draft.supported
+          ? `Draft not previewed: ${draft.unsupportedMethods.join(', ')} require the full service. These values belong to ${protectedLabel ?? 'the last evaluated snapshot'}. Apply and evaluate to refresh.`
+          : `Draft recipe changed. Charts still describe ${protectedLabel ?? 'the last evaluated snapshot'}. Apply and evaluate to refresh full measurements.`}
+        {draft?.warnings.length ? <> {draft.warnings.join(' ')}</> : null}</p> : note ? <p className="pane-note">{note}</p> : null}
       <div className="pane-body">
-        {!active ? (
+        {!active && !showDraftValues ? (
           <NoCandidate />
         ) : tab === 'table' ? (
           <DataTable
-            side="protected" caption={`${external ? 'External release' : 'Candidate'} ${protectedLabel} preview, first ${active.preview.length} rows`}
-            columns={protectedColumns} rows={active.preview} compareTo={aligned ? dataset.preview : undefined} aligned={aligned}
+            side="protected" caption={showDraftValues ? 'Draft protected preview, full dataset assessment pending' : `${external ? 'External release' : 'Candidate'} ${protectedLabel} preview, first ${visibleProtectedRows.length} rows`}
+            columns={protectedColumns} rows={visibleProtectedRows} compareTo={aligned ? dataset.preview : undefined} aligned={aligned}
             hoverRow={hoverRow} onHoverRow={setHoverRow} scrollRef={rightScroll} onScroll={sync(rightScroll, leftScroll)}
-            selectedColumn={column} onSelectColumn={setColumn}
+            selectedColumn={column} highlightedColumns={findingColumns} onSelectColumn={highlightColumn}
           />
         ) : tab === 'dist' ? (dist ? <DistributionChart dist={dist} side="protected" sourceUnit={sourceUnit} /> : <NoViz />)
-          : tab === 'corr' ? <CorrelationMatrix correlations={active.utility.correlations} side="protected" />
+          : tab === 'corr' ? <CorrelationMatrix correlations={active!.utility.correlations} side="protected" />
             : (
               <>
-                <CohortBars queries={active.utility.queries} side="protected" workload={active.workload} schema={active.schema} />
-                <SubgroupTable subgroups={active.utility.subgroups} worst={active.utility.worstSubgroup} alignment={active.alignment} />
+                <CohortBars queries={active!.utility.queries} side="protected" workload={active!.workload} schema={active!.schema} />
+                <SubgroupTable subgroups={active!.utility.subgroups} worst={active!.utility.worstSubgroup} alignment={active!.alignment} />
               </>
             )}
       </div>
-      {active && tab === 'table' ? (
+      {(active || showDraftValues) && tab === 'table' ? (
         <p className="pane-foot">
-          {aligned
+          {showDraftValues ? 'Preview values only: no full-data risk, group-size or utility result is inferred. Apply and evaluate to create an exportable snapshot.' : aligned
             ? 'Rows correspond one-to-one (verified), so changed cells are highlighted.'
-            : external && active.alignment === 'verified'
+            : external && active?.alignment === 'verified'
               ? 'Owner correspondence is verified for evaluation, but these previews retain file order. Row-by-row highlighting is unavailable.'
             : 'Rows are independent: no identity correspondence is shown or implied. Compare columns, not rows.'}
         </p>
@@ -213,10 +243,12 @@ export default function Workbench() {
             <span className="notice-actions"><button type="button" className="btn primary" onClick={() => dialogs.open('review')}><ClipboardCheck size={15} />Review classifications</button></span>
           </Notice>
         ) : null}
+        <ProtectionPreference />
         <div className={`panes${showOriginal && showProtected ? '' : ' single'}`}>
           {showOriginal ? originalPane : null}
           {showProtected ? protectedPane : null}
         </div>
+        <SemanticPanel key={dataset.datasetId} selectedColumn={column} onSelectColumn={highlightColumn} onSelectColumns={highlightColumns} />
       </div>
       <Ledger onShowSubgroups={() => setTab('sub')} />
     </div>

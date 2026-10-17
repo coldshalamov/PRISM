@@ -28,7 +28,7 @@ The submission page collects track, project name, description, demo/repository/d
 
 The organizer advertises separate awards for the three best uses of Archie: $2,500, $1,000, and $500 across all tracks, compatible with track prizes. Public descriptions do not specify an all-Archie-hosting requirement or a minimum platform-use threshold. A functioning Archie backend is demonstrable usage, but award eligibility or ranking cannot be guaranteed from that alone. [Organizer Archie awards](https://luma.com/aihackathon26)
 
-For the implemented architecture, describe **Archie Core Postgres/GraphQL for durable fictional-session records, with Vercel hosting the frontend and Python computation**. Do not describe this hybrid deployment as entirely hosted by Archie, or point judges to Archie's unfinished generated prototype. Include the actual project integration and a working public demo in the handoff.
+For the implemented architecture, describe **Archie hosting the public HTML entry and Archie Core Postgres/GraphQL for durable fictional-session records, with Vercel serving immutable frontend assets and Python computation**. Do not describe this hybrid deployment as entirely hosted by Archie, or point judges to Archie's unfinished generated prototype. Include the actual project integration and a working public demo in the handoff.
 
 ## Participant agreement disclosures
 

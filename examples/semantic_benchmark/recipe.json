@@ -1,0 +1,52 @@
+{
+  "steps": [
+    {
+      "method": "drop",
+      "columns": [
+        "PAT_ID",
+        "NOTES"
+      ],
+      "params": {}
+    },
+    {
+      "method": "band",
+      "columns": [
+        "AGE"
+      ],
+      "params": {
+        "width": 10,
+        "origin": 0
+      }
+    },
+    {
+      "method": "zip_prefix",
+      "columns": [
+        "ZIP"
+      ],
+      "params": {
+        "length": 3
+      }
+    },
+    {
+      "method": "date_generalize",
+      "columns": [
+        "DOS"
+      ],
+      "params": {
+        "precision": "month"
+      }
+    },
+    {
+      "method": "round",
+      "columns": [
+        "HT_CM"
+      ],
+      "params": {
+        "decimals": 0
+      }
+    }
+  ],
+  "seed": 42,
+  "version": "1",
+  "releaseMode": "row_release"
+}
